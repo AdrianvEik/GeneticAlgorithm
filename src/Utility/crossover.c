@@ -265,8 +265,8 @@ void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_para
 	for (int i = 0; i < nearest_even; i += 2) {
 		crossover(gene_pool->pop_param_bin[gene_pool->selected_indexes[i]],
 			gene_pool->pop_param_bin[gene_pool->selected_indexes[i + 1]],
-			gene_pool->pop_param_bin_crossover_method_buffer[i],
-			gene_pool->pop_param_bin_crossover_method_buffer[i + 1],
+			gene_pool->pop_param_bin_cross_buffer[i],
+			gene_pool->pop_param_bin_cross_buffer[i + 1],
 			gene_pool->genes,
 			crossover_param);
 	}
@@ -286,7 +286,7 @@ void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_para
 		}
 		if (skip_index) {
 			for (int j = 0; j < gene_pool->genes; j++) {
-				gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]][j] = gene_pool->pop_param_bin_crossover_method_buffer[i][j];
+				gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]][j] = gene_pool->pop_param_bin_cross_buffer[i][j];
 			}
 		}
 	}

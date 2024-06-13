@@ -1,8 +1,9 @@
 
-#include "stdio.h"
-#include "stdlib.h"
-#include "math.h"
-#include "stdint.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <stdint.h>
+#include <string.h>
 
 #include "Genetic_Algorithm.h"
 
@@ -24,6 +25,8 @@
 
 void Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 	gene_pool_t gene_pool;
+	printf("cfgbin2int, %f", config_ga.fx_param.bin2double_factor);
+	printf("cfgtoursize, %d", config_ga.selection_param.selection_tournament_size);
 
 	gene_pool.genes = runtime_param.genes;
 	gene_pool.individuals = runtime_param.individuals;
@@ -37,7 +40,7 @@ void Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 	double best_res = 0.0f;
 	int convergence_counter = 0;
 
-	open_file(gene_pool);
+	open_file(gene_pool, runtime_param);
 
 	write_config(gene_pool, runtime_param, config_ga);
 
@@ -127,7 +130,10 @@ int main() {
 		runtime_param.individuals = 32;
 		runtime_param.genes = 2;
 		runtime_param.elitism = 2;
-
+		runtime_param.fully_qualified_basename = "C:/temp/GA\0";
+		//strcpy_s(runtime_param.fully_qualified_basename, 255, "C:/temp/GA\0");
+		printf("%s\n", runtime_param.fully_qualified_basename);
+		printf("%d\n", strlen(runtime_param.fully_qualified_basename));
 		Genetic_Algorithm(config_ga, runtime_param);
 	}
 	return 0;

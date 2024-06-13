@@ -4,7 +4,7 @@
     <ShowAllFiles>true</ShowAllFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Build|x64'">
-    <LocalDebuggerCommand>C:\Users\vanei\AppData\Local\Programs\Python\Python38\Python.exe $(ProjectDir)Genetic_Algorithm.py</LocalDebuggerCommand>
+    <LocalDebuggerCommand>Python.exe "$(ProjectDir)x64\DLL Build\Genetic_Algorithm.py"</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

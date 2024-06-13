@@ -705,7 +705,6 @@ void indexed_bubble_sort(double* arr, int* indices, int size) {
 	}
 }
 
-#pragma warning(disable:6011 6385)
 void indexed_merge_sort(double* arr, int* indices, int size) {
 	if (size > 1) {
 		int mid = size / 2;
@@ -755,10 +754,8 @@ void indexed_merge_sort(double* arr, int* indices, int size) {
 		free(L_indices);
 		free(R_indices);
 	}
-	#pragma warning(default:6011 6385)
 }
 
-#pragma warning(disable:6385)
 void indexed_inv_merge_sort(double* arr, int* indices, int size) {
 	if (size > 1) {
 		int mid = size / 2;
@@ -820,7 +817,6 @@ void indexed_inv_merge_sort(double* arr, int* indices, int size) {
 		free(L_indices);
 		free(R_indices);
 	}
-	#pragma warning(default:6385)
 }
 
 

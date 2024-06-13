@@ -58,6 +58,7 @@ struct config_ga_s {
 };
 
 struct runtime_param_s {
+	char* fully_qualified_basename;
 	int max_iterations; // DEFAULT = 1000
 	double convergence_threshold; // DEFAULT = 1e-8
 	int convergence_window; // DEFAULT = 100

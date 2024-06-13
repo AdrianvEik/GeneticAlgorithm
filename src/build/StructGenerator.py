@@ -16,7 +16,7 @@ def parse_c_structures(file_path):
     struct_dict = {}
     parent_struct_dcit = {}
     struct_pattern = re.compile(r"^struct\s+(\w+)\s*\{$")
-    field_pattern = re.compile(r"^\s*(int|double)\s+(\w+);$")
+    field_pattern = re.compile(r"^\s*(int|double|char)(\*)?\s+(\w+);")
     child_struct_pattern = re.compile(r"^\s*struct\s+(\w+)\s+(\w+);$")
     end_struct_pattern = re.compile(r"^\};$")
     
@@ -35,8 +35,11 @@ def parse_c_structures(file_path):
                     field_match = field_pattern.search(line)
                     child_struct_match = child_struct_pattern.search(line)
                     if field_match:
-                        dtype, field_name = field_match.groups()
-                        struct_dict[struct_name][field_name] = f"ctypes.c_{dtype}"
+                        dtype, pointer, field_name = field_match.groups()
+                        if pointer == "*":
+                            struct_dict[struct_name][field_name] = f"ctypes.c_{dtype}_p"
+                        else:
+                            struct_dict[struct_name][field_name] = f"ctypes.c_{dtype}"
                     elif child_struct_match:
                         child_struct_type, child_struct_name = child_struct_match.groups()
                         struct_dict[struct_name][child_struct_name] = child_struct_type
@@ -56,32 +59,6 @@ def parse_c_structures(file_path):
     return struct_dict
 
 
-def generate_python_structs(struct_dict):
-    """
-    Generates Python ctypes structure definitions based on the dictionary representation of C structures.
-
-    Args:
-    struct_dict (dict): A dictionary where keys are structure names and values are dictionaries of field names and their types.
-
-    Returns:
-    str: A string containing the Python ctypes structure definitions.
-    """
-    struct_definitions = []
-    for struct_name, fields in struct_dict.items():
-        struct_definition = f"class {struct_name}(ctypes.Structure):\n    _fields_ = ["
-        firstItem = True
-        for field_name, field_type in fields.items():
-            if firstItem:
-                firstItem = False
-            else:
-                struct_definition += ","
-            struct_definition += f"\n        (\"{field_name}\", {field_type})"
-        struct_definition += "\n    ]\n\n"
-        struct_definitions.append(struct_definition)
-    
-    len(struct_definitions)
-    return "\n".join(struct_definitions)
-
 def generate_advanced_python_structs(struct_dict):
     """
     Generates Python ctypes structure definitions based on the dictionary representation of C structures.
@@ -96,7 +73,7 @@ def generate_advanced_python_structs(struct_dict):
     struct_definitions = ["import ctypes\n\n"]
     firstItem = True
     for struct_name, fields in struct_dict.items():
-        struct_definition = f"class __{struct_name}__(ctypes.Structure):\n    _fields_ = ["
+        struct_definition = f"class zz_{struct_name}__(ctypes.Structure):\n    _fields_ = ["
         firstItem = True
         for field_name, field_type in fields.items():
             if firstItem:
@@ -106,7 +83,7 @@ def generate_advanced_python_structs(struct_dict):
             if ctype_pattern.search(next(iter(fields.values()))):
                 struct_definition += f"\n        (\"{field_name}\", {field_type})"
             else:
-                struct_definition += f"\n        (\"{field_name}\", __{field_type}__)"
+                struct_definition += f"\n        (\"{field_name}\", zz_{field_type}__)"
         struct_definition += "\n    ]\n\n"
         struct_definitions.append(struct_definition)
 
@@ -117,6 +94,8 @@ def generate_advanced_python_structs(struct_dict):
                 struct_definition += f"\n    {field_name} = 0"
             elif field_type == "ctypes.c_double":
                 struct_definition += f"\n    {field_name} = 0.0"
+            elif field_type == "ctypes.c_char_p":
+                struct_definition += f"\n    {field_name}: str = \"\""
             else:
                 struct_definition += f"\n    {field_name} = {field_type}()"
         struct_definition += "\n    def __init__(\n            self"
@@ -125,13 +104,15 @@ def generate_advanced_python_structs(struct_dict):
                 struct_definition += f",\n            {field_name}: int = 0"
             elif field_type == "ctypes.c_double":
                 struct_definition += f",\n            {field_name}: float = 0.0"
+            elif field_type == "ctypes.c_char_p":
+                struct_definition += f",\n            {field_name}: str = \"\""
             else:
                 struct_definition += f",\n            {field_name}: {field_type} = {field_type}()"
         struct_definition += "\n        ):\n"
 
         for field_name, field_type in fields.items():
             struct_definition += f"        self.{field_name} = {field_name}\n"
-        struct_definition += f"    def cType(self):\n        return __{struct_name}__("
+        struct_definition += f"    def cType(self):\n        return zz_{struct_name}__("
         firstItem = True
         for field_name, field_type in fields.items():
             if firstItem:
@@ -163,6 +144,7 @@ def generate_py_file(file_path, targetpath):
     """
     struct_dict = parse_c_structures(file_path)
     python_structs = generate_advanced_python_structs(struct_dict)
+    
     with open(targetpath, 'w') as file:
         file.write(python_structs)
     

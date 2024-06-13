@@ -1,16 +1,20 @@
 import ctypes
 
 
-class zz_gene_pool_s(ctypes.Structure):
-    _fields_ = [
-        ("genes", ctypes.c_int),
-        ("individuals", ctypes.c_int),
-        ("elitism", ctypes.c_int),
-        ("iteration_number", ctypes.c_int)
-    ]
+# class zz_gene_pool_s__(ctypes.Structure):
+#     _fields_ = [
+#         ("pop_result_set", ctypes.c_double_p),
+#         ("flatten_result_set", ctypes.c_double_p),
+#         ("selected_indexes", ctypes.c_int_p),
+#         ("sorted_indexes", ctypes.c_int_p),
+#         ("genes", ctypes.c_int),
+#         ("individuals", ctypes.c_int),
+#         ("elitism", ctypes.c_int),
+#         ("iteration_number", ctypes.c_int)
+#     ]
 
 
-class zz_selection_param_s(ctypes.Structure):
+class zz_selection_param_s__(ctypes.Structure):
     _fields_ = [
         ("selection_method", ctypes.c_int),
         ("selection_div_param", ctypes.c_double),
@@ -20,7 +24,7 @@ class zz_selection_param_s(ctypes.Structure):
     ]
 
 
-class zz_flatten_param_s(ctypes.Structure):
+class zz_flatten_param_s__(ctypes.Structure):
     _fields_ = [
         ("flatten_method", ctypes.c_int),
         ("flatten_factor", ctypes.c_double),
@@ -29,14 +33,14 @@ class zz_flatten_param_s(ctypes.Structure):
     ]
 
 
-class zz_crossover_param_s(ctypes.Structure):
+class zz_crossover_param_s__(ctypes.Structure):
     _fields_ = [
         ("crossover_method", ctypes.c_int),
         ("crossover_prob", ctypes.c_double)
     ]
 
 
-class zz_mutation_param_s(ctypes.Structure):
+class zz_mutation_param_s__(ctypes.Structure):
     _fields_ = [
         ("mutation_method", ctypes.c_int),
         ("mutation_prob", ctypes.c_double),
@@ -44,7 +48,7 @@ class zz_mutation_param_s(ctypes.Structure):
     ]
 
 
-class zz_fx_param_s(ctypes.Structure):
+class zz_fx_param_s__(ctypes.Structure):
     _fields_ = [
         ("fx_method", ctypes.c_int),
         ("fx_optim_mode", ctypes.c_int),
@@ -53,18 +57,19 @@ class zz_fx_param_s(ctypes.Structure):
     ]
 
 
-class zz_config_ga_s(ctypes.Structure):
+class zz_config_ga_s__(ctypes.Structure):
     _fields_ = [
-        ("selection_param", zz_selection_param_s),
-        ("flatten_param", zz_flatten_param_s),
-        ("crossover_param", zz_crossover_param_s),
-        ("mutation_param", zz_mutation_param_s),
-        ("fx_param", zz_fx_param_s)
+        ("selection_param", zz_selection_param_s__),
+        ("flatten_param", zz_flatten_param_s__),
+        ("crossover_param", zz_crossover_param_s__),
+        ("mutation_param", zz_mutation_param_s__),
+        ("fx_param", zz_fx_param_s__)
     ]
 
 
-class zz_runtime_param_s(ctypes.Structure):
+class zz_runtime_param_s__(ctypes.Structure):
     _fields_ = [
+        ("fully_qualified_basename", ctypes.c_char_p),
         ("max_iterations", ctypes.c_int),
         ("convergence_threshold", ctypes.c_double),
         ("convergence_window", ctypes.c_int),
@@ -74,29 +79,45 @@ class zz_runtime_param_s(ctypes.Structure):
     ]
 
 
-class gene_pool_s:
-    genes = 0
-    individuals = 0
-    elitism = 0
-    iteration_number = 0
-    def __init__(
-            self,
-            genes: int = 0,
-            individuals: int = 0,
-            elitism: int = 0,
-            iteration_number: int = 0
-        ):
-        self.genes = genes
-        self.individuals = individuals
-        self.elitism = elitism
-        self.iteration_number = iteration_number
-    def cType(self):
-        return zz_gene_pool_s(
-            ctypes.c_int(self.genes),
-            ctypes.c_int(self.individuals),
-            ctypes.c_int(self.elitism),
-            ctypes.c_int(self.iteration_number)
-        )
+# class gene_pool_s:
+#     pop_result_set = ctypes.c_double_p()
+#     flatten_result_set = ctypes.c_double_p()
+#     selected_indexes = ctypes.c_int_p()
+#     sorted_indexes = ctypes.c_int_p()
+#     genes = 0
+#     individuals = 0
+#     elitism = 0
+#     iteration_number = 0
+#     def __init__(
+#             self,
+#             pop_result_set: ctypes.c_double_p = ctypes.c_double_p(),
+#             flatten_result_set: ctypes.c_double_p = ctypes.c_double_p(),
+#             selected_indexes: ctypes.c_int_p = ctypes.c_int_p(),
+#             sorted_indexes: ctypes.c_int_p = ctypes.c_int_p(),
+#             genes: int = 0,
+#             individuals: int = 0,
+#             elitism: int = 0,
+#             iteration_number: int = 0
+#         ):
+#         self.pop_result_set = pop_result_set
+#         self.flatten_result_set = flatten_result_set
+#         self.selected_indexes = selected_indexes
+#         self.sorted_indexes = sorted_indexes
+#         self.genes = genes
+#         self.individuals = individuals
+#         self.elitism = elitism
+#         self.iteration_number = iteration_number
+#     def cType(self):
+#         return zz_gene_pool_s__(
+#             ctypes.c_double_p(self.pop_result_set),
+#             ctypes.c_double_p(self.flatten_result_set),
+#             ctypes.c_int_p(self.selected_indexes),
+#             ctypes.c_int_p(self.sorted_indexes),
+#             ctypes.c_int(self.genes),
+#             ctypes.c_int(self.individuals),
+#             ctypes.c_int(self.elitism),
+#             ctypes.c_int(self.iteration_number)
+#         )
 
 
 class selection_param_s:
@@ -119,7 +140,7 @@ class selection_param_s:
         self.selection_temp_param = selection_temp_param
         self.selection_tournament_size = selection_tournament_size
     def cType(self):
-        return zz_selection_param_s(
+        return zz_selection_param_s__(
             ctypes.c_int(self.selection_method),
             ctypes.c_double(self.selection_div_param),
             ctypes.c_double(self.selection_prob_param),
@@ -145,7 +166,7 @@ class flatten_param_s:
         self.flatten_bias = flatten_bias
         self.flatten_optim_mode = flatten_optim_mode
     def cType(self):
-        return zz_flatten_param_s(
+        return zz_flatten_param_s__(
             ctypes.c_int(self.flatten_method),
             ctypes.c_double(self.flatten_factor),
             ctypes.c_double(self.flatten_bias),
@@ -164,7 +185,7 @@ class crossover_param_s:
         self.crossover_method = crossover_method
         self.crossover_prob = crossover_prob
     def cType(self):
-        return zz_crossover_param_s(
+        return zz_crossover_param_s__(
             ctypes.c_int(self.crossover_method),
             ctypes.c_double(self.crossover_prob)
         )
@@ -184,7 +205,7 @@ class mutation_param_s:
         self.mutation_prob = mutation_prob
         self.mutation_rate = mutation_rate
     def cType(self):
-        return zz_mutation_param_s(
+        return zz_mutation_param_s__(
             ctypes.c_int(self.mutation_method),
             ctypes.c_double(self.mutation_prob),
             ctypes.c_int(self.mutation_rate)
@@ -208,7 +229,7 @@ class fx_param_s:
         self.bin2double_factor = bin2double_factor
         self.bin2double_bias = bin2double_bias
     def cType(self):
-        return zz_fx_param_s(
+        return zz_fx_param_s__(
             ctypes.c_int(self.fx_method),
             ctypes.c_int(self.fx_optim_mode),
             ctypes.c_double(self.bin2double_factor),
@@ -236,7 +257,7 @@ class config_ga_s:
         self.mutation_param = mutation_param
         self.fx_param = fx_param
     def cType(self):
-        return zz_config_ga_s(
+        return zz_config_ga_s__(
             self.selection_param.cType(),
             self.flatten_param.cType(),
             self.crossover_param.cType(),
@@ -246,6 +267,7 @@ class config_ga_s:
 
 
 class runtime_param_s:
+    fully_qualified_basename: str = ""
     max_iterations = 0
     convergence_threshold = 0.0
     convergence_window = 0
@@ -254,6 +276,7 @@ class runtime_param_s:
     elitism = 0
     def __init__(
             self,
+            fully_qualified_basename: str = "",
             max_iterations: int = 0,
             convergence_threshold: float = 0.0,
             convergence_window: int = 0,
@@ -261,6 +284,7 @@ class runtime_param_s:
             individuals: int = 0,
             elitism: int = 0
         ):
+        self.fully_qualified_basename = fully_qualified_basename
         self.max_iterations = max_iterations
         self.convergence_threshold = convergence_threshold
         self.convergence_window = convergence_window
@@ -268,7 +292,8 @@ class runtime_param_s:
         self.individuals = individuals
         self.elitism = elitism
     def cType(self):
-        return zz_runtime_param_s(
+        return zz_runtime_param_s__(
+            ctypes.c_char_p(self.fully_qualified_basename),
             ctypes.c_int(self.max_iterations),
             ctypes.c_double(self.convergence_threshold),
             ctypes.c_int(self.convergence_window),

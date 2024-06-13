@@ -1,5 +1,6 @@
 
 #include "../helper/struct.h"
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7,11 +8,35 @@ FILE* fileptr = NULL;
 FILE* fileptrcsv = NULL;
 FILE* fileptrconfig = NULL;
 
-void open_file(gene_pool_t gene_pool)
+void open_file(gene_pool_t gene_pool, runtime_param_t runtime_param)
 {
-	if(fopen_s (&fileptr, "c:/temp/param.bin", "wb") != 0 ||
-	   fopen_s (&fileptrcsv, "c:/temp/param.csv", "w") != 0 ||
-	   fopen_s (&fileptrconfig, "c:/temp/config.json", "w") != 0)
+	int fully_qualified_basename_size = strlen(runtime_param.fully_qualified_basename)+1;
+	char* filename_csv = malloc(fully_qualified_basename_size + 4);
+	char* filename_bin = malloc(fully_qualified_basename_size + 4);
+	char* filename_json = malloc(fully_qualified_basename_size + 5);
+
+	if (fully_qualified_basename_size == 0) {
+		printf("File name is empty");
+		exit(1);
+	}
+
+	if (filename_csv == NULL || filename_bin == NULL || filename_json == NULL) {
+		printf("Memory allocation failed");
+		exit(255);
+	}
+
+	strcpy_s(filename_csv, fully_qualified_basename_size, runtime_param.fully_qualified_basename);
+	strcat_s(filename_csv, fully_qualified_basename_size+4, ".csv");
+
+	strcpy_s(filename_bin, fully_qualified_basename_size, runtime_param.fully_qualified_basename);
+	strcat_s(filename_bin, fully_qualified_basename_size+4, ".bin");
+
+	strcpy_s(filename_json, fully_qualified_basename_size, runtime_param.fully_qualified_basename);
+	strcat_s(filename_json, fully_qualified_basename_size+5, ".json");
+
+	if(fopen_s (&fileptr, filename_bin, "wb") != 0 ||
+	   fopen_s (&fileptrcsv, filename_csv, "w") != 0 ||
+	   fopen_s (&fileptrconfig, filename_json, "w") != 0)
 	{
 		printf("Error opening file!\n");
 		exit(1);
