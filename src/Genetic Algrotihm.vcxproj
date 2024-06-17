@@ -52,9 +52,12 @@
     <ClInclude Include="Utility\selection.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Analysis\analysis.py" />
     <None Include="build\StructGenerator.py" />
     <None Include="Genetic_Algorithm.py" />
     <None Include="Logging\Logging.py" />
+    <None Include="Logging\__init__.py" />
+    <None Include="__init__.py" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     
 
-    dll = ctypes.CDLL(r"C:\Users\vanei\source\repos\Genetic Algorithm - C Branch\src\x64\DLL Build\Genetic Algrotihm.dll")
+    dll = ctypes.CDLL(r"D:\School\Libraries\GeneticAlgorithm\src\x64\DLL Build\Genetic Algrotihm.dll")
     geneticalgorithm = dll.Genetic_Algorithm
     print(geneticalgorithm)
     

@@ -85,5 +85,8 @@
     <None Include="Logging\Logging.py" />
     <None Include="Genetic_Algorithm.py" />
     <None Include="build\StructGenerator.py" />
+    <None Include="Analysis\analysis.py" />
+    <None Include="Logging\__init__.py" />
+    <None Include="__init__.py" />
   </ItemGroup>
 </Project>
