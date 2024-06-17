@@ -6,10 +6,10 @@
 
 
 // Convesrion functions
-void ndbit2int32(int** valarr, int genes, int individuals,
-	double factor, double bias, double** result);
-void int2ndbit32(double** valarr, int genes, int individuals,
-	double factor, double bias, int** result);
+void ndbit2int32(unsigned int** valarr, int genes, int individuals,
+	double* lower, double* upper, double** result);
+//void int2ndbit32(double** valarr, int genes, int individuals,
+//	double factor, double bias, int** result);
 void ndbit2int(int** valarr, int bitsize, int genes, int individuals,
 	double factor, double bias, double** result);
 void int2ndbit(double** valarr, int bitsize, int genes, int individuals,
@@ -44,15 +44,15 @@ void indexed_merge_sort(double* arr, int* indices, int size);
 void indexed_inv_merge_sort(double* arr, int* indices, int size);
 
 // random 32 bit integer in binary
-int random_int32();
+unsigned int random_int32();
 void seed_intXOR32();
-int random_intXOR32();
-int intXORshift32(int a);
+unsigned int random_intXOR32();
+unsigned int intXORshift32(unsigned int a);
 
 // usefull for debugging and eventual conversion to numpy arrays
-void convert_int32_to_binary(int** valarr, int genes, int individuals,
-	double factor, double bias);
-void convert_binary_to_int32(int** valarr, int genes, int individuals,
-	double factor, double bias);
+//void convert_int32_to_binary(int** valarr, int genes, int individuals,
+//	double factor, double bias);
+//void convert_binary_to_int32(int** valarr, int genes, int individuals,
+//	double factor, double bias);
 
 #endif

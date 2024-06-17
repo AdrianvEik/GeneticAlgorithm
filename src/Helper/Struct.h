@@ -3,8 +3,8 @@
 #define STRUCT_H
 
 struct gene_pool_s {
-	int** pop_param_bin;
-	int** pop_param_bin_cross_buffer;
+	unsigned int** pop_param_bin;
+	unsigned int** pop_param_bin_cross_buffer;
 	double** pop_param_double;
 	double* pop_result_set;
 	double* flatten_result_set;
@@ -45,8 +45,8 @@ struct mutation_param_s {
 struct fx_param_s {
 	int fx_method; // DEFAULT = 0
 	int fx_optim_mode; // DEFAULT = 0
-	double bin2double_factor; // DEFAULT = 5
-	double bin2double_bias; // DEFAULT = 0
+	double* lower; // DEFAULT = 5
+	double* upper; // DEFAULT = 0
 };
 
 struct config_ga_s {

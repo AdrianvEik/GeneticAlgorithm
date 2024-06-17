@@ -25,7 +25,7 @@
 
 void Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 	gene_pool_t gene_pool;
-	printf("cfgbin2int, %f", config_ga.fx_param.bin2double_factor);
+	printf("cfgbin2int, %f", config_ga.fx_param);
 	printf("cfgtoursize, %d", config_ga.selection_param.selection_tournament_size);
 
 	gene_pool.genes = runtime_param.genes;
@@ -106,8 +106,12 @@ int main() {
 		fx_param_t fx_param;
 		fx_param.fx_method = fx_method_Wheelers_Ridge;
 		fx_param.fx_optim_mode = 0;
-		fx_param.bin2double_factor = 5.0f;
-		fx_param.bin2double_bias = 0.0f;
+		fx_param.lower = malloc(sizeof(double) * 2);
+		fx_param.lower[0] = 0.0f;
+		fx_param.lower[1] = 0.0f;
+		fx_param.upper = malloc(sizeof(double) * 2);
+		fx_param.upper[0] = 3.0f;
+		fx_param.upper[1] = 3.0f;
 
 		selection_param_t selection_param;
 		selection_param.selection_method = 0;

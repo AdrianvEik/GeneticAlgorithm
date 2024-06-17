@@ -21,10 +21,10 @@ if __name__ == "__main__":
                                             selection_temp_param=10.0,
                                             selection_tournament_size=0)
     
-    cfg.fx_param = fx_param_s(bin2double_bias=0.0,
+    cfg.fx_param = fx_param_s(lower=[0.0, 0.0],
                               fx_method=1,
                               fx_optim_mode=0,
-                              bin2double_factor=3.0)
+                              upper=[3.0, 3.0])
     
     cfg.crossover_param = crossover_param_s(crossover_method=6,
                                             crossover_prob=0.5)
@@ -53,7 +53,6 @@ if __name__ == "__main__":
     print(geneticalgorithm)
     
     geneticalgorithm.argtypes = [zz_config_ga_s__, zz_runtime_param_s__] 
-    print(cfg.fx_param.cType().bin2double_factor)
     for i in range(0, 10):
         print(i)
         geneticalgorithm(cfg.cType(), rtime_param.cType())

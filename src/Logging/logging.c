@@ -142,8 +142,8 @@ void write_config(gene_pool_t gene_pool, runtime_param_t run_param, config_ga_t 
 	fprintf(fileptrconfig, "\"fx_param\":{\n");
 	fprintf(fileptrconfig, "\"fx_method\":%d,\n", config_ga.fx_param.fx_method);
 	fprintf(fileptrconfig, "\"fx_optim_mode\":%d,\n", config_ga.fx_param.fx_optim_mode);
-	fprintf(fileptrconfig, "\"bin2double_factor\":%f,\n", config_ga.fx_param.bin2double_factor);
-	fprintf(fileptrconfig, "\"bin2double_bias\":%f\n", config_ga.fx_param.bin2double_bias);
+	fprintf(fileptrconfig, "\"bin2double_factor\":%f,\n", config_ga.fx_param.lower);
+	fprintf(fileptrconfig, "\"bin2double_bias\":%f\n", config_ga.fx_param.upper);
 	fprintf(fileptrconfig, "}\n");
 
 	fprintf(fileptrconfig, "}\n");

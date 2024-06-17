@@ -10,8 +10,8 @@
 #define PI   3.14159265358979323846264338327950288419716939937510f
 
 
-void ndbit2int32(int** valarr, int genes, int individuals,
-	double factor, double bias, double** result) {
+void ndbit2int32(unsigned int** valarr, int genes, int individuals,
+	double* lower, double* upper, double** result) {
 	/*
 	Convert an array of bitarrays to an array of doubles
 
@@ -40,68 +40,67 @@ void ndbit2int32(int** valarr, int genes, int individuals,
 	:rtype: void
 	*/
 
-	int temp;
+	double max_int;
+	max_int = pow(2, 8 * sizeof(int));
 
 	for (int i = 0; i < individuals; i++) {
 		for (int j = 0; j < genes; j++) {
 			// result[i][j] = (double) temp[i][j] / (pow(2, bitsize - 1)) * factor + bias;
-			if (valarr[i][j] < 0) {
-				temp = ~(valarr[i][j] & 0x7fffffff) + 1;
-			}
-			else {
-				temp = valarr[i][j];
-			}
-			result[i][j] = (double)temp * factor / (pow(2, 8 * sizeof(int) - 1)) + bias;
+			
+			result[i][j] = ((double)valarr[i][j] * (upper[j] - lower[j]) + lower[j]) / max_int;
+			//result[i][j] = (double)temp * factor / (pow(2, 8 * sizeof(int) - 1)) + bias;
 		}
 	}
 }
 
-void int2ndbit32(double** valarr, int genes, int individuals,
-	double factor, double bias, int** result) {
-
-	/*
-	Convert an array of integers to an array of bitarrays
-
-	:param valarr: The array of integers to be converted to bitarrays (a)
-	:type valarr: array of doubles (double **)
-
-	:param bitsize: The size of the bitarrays
-	:type bitsize: int
-
-	:param genes: The number of genes in the bitarrays (n = genes * bitsize; n = a * bitsize)
-	:type genes: int
-
-	:param individuals: the number of individuals in the bitarrays (m = individuals; m = a)
-	:type individuals: int
-
-	:param result: The array of bitarrays to be filled with the converted values (m x n)
-	:type result: array of ints (int **)
-
-	:param factor: The factor of the uniform distribution.
-	:type factor: double
-
-	:param bias: The bias of the uniform distribution.
-	:type bias: double
-
-	:return: void
-	:rtype: void
-	*/
-
-	// normalise the values and apply the factor and bias and cast to integers
-	int temp;
-	for (int i = 0; i < individuals; i++) {
-		for (int j = 0; j < genes; j++) {
-			temp = (int)round((valarr[i][j] - bias) * pow(2, 8 * sizeof(int) - 1) / factor);
-			if (temp < 0) {
-				result[i][j] = ~(temp - 1) | 0x80000000; // bitflip and subtract 1
-			}
-			else {
-				result[i][j] = temp;
-			}
-		}
-	}
-
-}
+//void int2ndbit32(double** valarr, int genes, int individuals,
+//	double* lower, double* upper, int** result) {
+//
+//	/*
+//	Convert an array of integers to an array of bitarrays
+//
+//	:param valarr: The array of integers to be converted to bitarrays (a)
+//	:type valarr: array of doubles (double **)
+//
+//	:param bitsize: The size of the bitarrays
+//	:type bitsize: int
+//
+//	:param genes: The number of genes in the bitarrays (n = genes * bitsize; n = a * bitsize)
+//	:type genes: int
+//
+//	:param individuals: the number of individuals in the bitarrays (m = individuals; m = a)
+//	:type individuals: int
+//
+//	:param result: The array of bitarrays to be filled with the converted values (m x n)
+//	:type result: array of ints (int **)
+//
+//	:param factor: The factor of the uniform distribution.
+//	:type factor: double
+//
+//	:param bias: The bias of the uniform distribution.
+//	:type bias: double
+//
+//	:return: void
+//	:rtype: void
+//	*/
+//
+//	// normalise the values and apply the factor and bias and cast to integers
+//	int temp;
+//	int max_int;
+//	max_int = pow(2, 8 * sizeof(int) - 1);
+//	for (int i = 0; i < individuals; i++) {
+//		for (int j = 0; j < genes; j++) {
+//			temp = (int)round((valarr[i][j] - lower[j]) * max_int / (upper[j] - lower[j]));
+//			if (temp < 0) {
+//				result[i][j] = ~(temp - 1) | 0x80000000; // bitflip and subtract 1
+//			}
+//			else {
+//				result[i][j] = temp;
+//			}
+//		}
+//	}
+//
+//}
 
 void ndbit2int(int** valarr, int bitsize, int genes, int individuals,
 	double factor, double bias, double** result) {
@@ -658,12 +657,12 @@ void roulette_wheel(double* probabilities, int size, int ressize, int* result) {
 int intXOR32_seed = 0;
 int intXOR32_generated = 0;
 
-int random_int32() {
+unsigned int random_int32() {
 	srand((unsigned int)time(0));
 	return (rand() << 30) | (rand() << 15) | (rand());
 }
 
-int random_intXOR32() {
+unsigned int random_intXOR32() {
 	if (intXOR32_generated > 100 || intXOR32_seed == 0) {
 		seed_intXOR32();
 		intXOR32_generated = 0;
@@ -681,7 +680,7 @@ void seed_intXOR32() {
 	}
 }
 
-int intXORshift32(int a) {
+unsigned int intXORshift32(unsigned int a) {
 	a ^= a << 13;
 	a ^= a >> 17;
 	a ^= a << 5;
@@ -820,58 +819,58 @@ void indexed_inv_merge_sort(double* arr, int* indices, int size) {
 }
 
 
-void convert_int32_to_binary(int** valarr, int genes, int individuals,
-	double factor, double bias) {
-
-
-	double** temp = (double**)malloc(individuals * sizeof(double*));
-	if (temp == NULL) {
-		printf("Memory allocation failed");
-		exit(255);
-	}
-
-	for (int i = 0; i < individuals; i++) {
-		temp[i] = (double*)malloc(genes * sizeof(double) * 8 * sizeof(int));
-		if (temp[i] == NULL) {
-			printf("Memory allocation failed");
-			exit(255);
-		}
-	}
-
-	ndbit2int32(valarr, genes, individuals, factor, bias, temp);
-	int2ndbit(temp, 8 * sizeof(int), genes, individuals, factor, bias, valarr);
-
-	for (int i = 0; i < individuals; i++) {
-		free(temp[i]);
-	}
-
-	free(temp);
-}
-
-void convert_binary_to_int32(int** valarr, int genes, int individuals,
-	double factor, double bias) {
-
-	double** temp = (double**)malloc(individuals * sizeof(double*));
-	if (temp == NULL) {
-		printf("Memory allocation failed");
-		exit(255);
-	}
-
-	for (int i = 0; i < individuals; i++) {
-		temp[i] = (double*)malloc(genes * sizeof(double) * 8 * sizeof(int));
-		if (temp[i] == NULL) {
-			printf("Memory allocation failed");
-			exit(255);
-		}
-	}
-
-
-	ndbit2int(valarr, 8 * sizeof(int), genes, individuals, factor, bias, temp);
-	int2ndbit32(temp, genes, individuals, factor, bias, valarr);
-
-	for (int i = 0; i < individuals; i++) {
-		free(temp[i]);
-	}
-
-	free(temp);
-}
+//void convert_int32_to_binary(int** valarr, int genes, int individuals,
+//	double factor, double bias) {
+//
+//
+//	double** temp = (double**)malloc(individuals * sizeof(double*));
+//	if (temp == NULL) {
+//		printf("Memory allocation failed");
+//		exit(255);
+//	}
+//
+//	for (int i = 0; i < individuals; i++) {
+//		temp[i] = (double*)malloc(genes * sizeof(double) * 8 * sizeof(int));
+//		if (temp[i] == NULL) {
+//			printf("Memory allocation failed");
+//			exit(255);
+//		}
+//	}
+//
+//	ndbit2int32(valarr, genes, individuals, factor, bias, temp);
+//	int2ndbit(temp, 8 * sizeof(int), genes, individuals, factor, bias, valarr);
+//
+//	for (int i = 0; i < individuals; i++) {
+//		free(temp[i]);
+//	}
+//
+//	free(temp);
+//}
+//
+//void convert_binary_to_int32(int** valarr, int genes, int individuals,
+//	double factor, double bias) {
+//
+//	double** temp = (double**)malloc(individuals * sizeof(double*));
+//	if (temp == NULL) {
+//		printf("Memory allocation failed");
+//		exit(255);
+//	}
+//
+//	for (int i = 0; i < individuals; i++) {
+//		temp[i] = (double*)malloc(genes * sizeof(double) * 8 * sizeof(int));
+//		if (temp[i] == NULL) {
+//			printf("Memory allocation failed");
+//			exit(255);
+//		}
+//	}
+//
+//
+//	ndbit2int(valarr, 8 * sizeof(int), genes, individuals, factor, bias, temp);
+//	int2ndbit32(temp, genes, individuals, factor, bias, valarr);
+//
+//	for (int i = 0; i < individuals; i++) {
+//		free(temp[i]);
+//	}
+//
+//	free(temp);
+//}

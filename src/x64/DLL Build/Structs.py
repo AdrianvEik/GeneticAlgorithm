@@ -1,17 +1,5 @@
 import ctypes
-
-
-# class zz_gene_pool_s__(ctypes.Structure):
-#     _fields_ = [
-#         ("pop_result_set", ctypes.c_double_p),
-#         ("flatten_result_set", ctypes.c_double_p),
-#         ("selected_indexes", ctypes.c_int_p),
-#         ("sorted_indexes", ctypes.c_int_p),
-#         ("genes", ctypes.c_int),
-#         ("individuals", ctypes.c_int),
-#         ("elitism", ctypes.c_int),
-#         ("iteration_number", ctypes.c_int)
-#     ]
+import numpy
 
 
 class zz_selection_param_s__(ctypes.Structure):
@@ -52,8 +40,8 @@ class zz_fx_param_s__(ctypes.Structure):
     _fields_ = [
         ("fx_method", ctypes.c_int),
         ("fx_optim_mode", ctypes.c_int),
-        ("bin2double_factor", ctypes.c_double),
-        ("bin2double_bias", ctypes.c_double)
+        ("lower", ctypes.POINTER(ctypes.c_double)),
+        ("upper", ctypes.POINTER(ctypes.c_double))
     ]
 
 
@@ -77,47 +65,6 @@ class zz_runtime_param_s__(ctypes.Structure):
         ("individuals", ctypes.c_int),
         ("elitism", ctypes.c_int)
     ]
-
-
-# class gene_pool_s:
-#     pop_result_set = ctypes.c_double_p()
-#     flatten_result_set = ctypes.c_double_p()
-#     selected_indexes = ctypes.c_int_p()
-#     sorted_indexes = ctypes.c_int_p()
-#     genes = 0
-#     individuals = 0
-#     elitism = 0
-#     iteration_number = 0
-#     def __init__(
-#             self,
-#             pop_result_set: ctypes.c_double_p = ctypes.c_double_p(),
-#             flatten_result_set: ctypes.c_double_p = ctypes.c_double_p(),
-#             selected_indexes: ctypes.c_int_p = ctypes.c_int_p(),
-#             sorted_indexes: ctypes.c_int_p = ctypes.c_int_p(),
-#             genes: int = 0,
-#             individuals: int = 0,
-#             elitism: int = 0,
-#             iteration_number: int = 0
-#         ):
-#         self.pop_result_set = pop_result_set
-#         self.flatten_result_set = flatten_result_set
-#         self.selected_indexes = selected_indexes
-#         self.sorted_indexes = sorted_indexes
-#         self.genes = genes
-#         self.individuals = individuals
-#         self.elitism = elitism
-#         self.iteration_number = iteration_number
-#     def cType(self):
-#         return zz_gene_pool_s__(
-#             ctypes.c_double_p(self.pop_result_set),
-#             ctypes.c_double_p(self.flatten_result_set),
-#             ctypes.c_int_p(self.selected_indexes),
-#             ctypes.c_int_p(self.sorted_indexes),
-#             ctypes.c_int(self.genes),
-#             ctypes.c_int(self.individuals),
-#             ctypes.c_int(self.elitism),
-#             ctypes.c_int(self.iteration_number)
-#         )
 
 
 class selection_param_s:
@@ -215,25 +162,25 @@ class mutation_param_s:
 class fx_param_s:
     fx_method = 0
     fx_optim_mode = 0
-    bin2double_factor = 0.0
-    bin2double_bias = 0.0
+    lower = [0, 0]
+    upper = [0, 0]
     def __init__(
             self,
             fx_method: int = 0,
             fx_optim_mode: int = 0,
-            bin2double_factor: float = 0.0,
-            bin2double_bias: float = 0.0
+            lower: list = [0, 0],
+            upper: list = [0, 0]
         ):
         self.fx_method = fx_method
         self.fx_optim_mode = fx_optim_mode
-        self.bin2double_factor = bin2double_factor
-        self.bin2double_bias = bin2double_bias
+        self.lower = lower
+        self.upper = upper
     def cType(self):
         return zz_fx_param_s__(
             ctypes.c_int(self.fx_method),
             ctypes.c_int(self.fx_optim_mode),
-            ctypes.c_double(self.bin2double_factor),
-            ctypes.c_double(self.bin2double_bias)
+            numpy.array(self.lower).ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            numpy.array(self.upper).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
         )
 
 

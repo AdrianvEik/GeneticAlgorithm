@@ -37,7 +37,10 @@ def parse_c_structures(file_path):
                     if field_match:
                         dtype, pointer, field_name = field_match.groups()
                         if pointer == "*":
-                            struct_dict[struct_name][field_name] = f"ctypes.c_{dtype}_p"
+                            if dtype == "char":
+                                struct_dict[struct_name][field_name] = f"ctypes.c_{dtype}_p"
+                            else:
+                                struct_dict[struct_name][field_name] = f"ctypes.POINTER(ctypes.c_{dtype})"
                         else:
                             struct_dict[struct_name][field_name] = f"ctypes.c_{dtype}"
                     elif child_struct_match:
@@ -70,9 +73,12 @@ def generate_advanced_python_structs(struct_dict):
     str: A string containing the Python ctypes structure definitions.
     """
     ctype_pattern = re.compile(r"^ctypes\.c_")
-    struct_definitions = ["import ctypes\n\n"]
+    cpointer_pattern = re.compile(r"^ctypes\.POINTER")
+    struct_definitions = ["import ctypes\nimport numpy\n\n"]
     firstItem = True
     for struct_name, fields in struct_dict.items():
+        if struct_name == "gene_pool_s":
+            continue
         struct_definition = f"class zz_{struct_name}__(ctypes.Structure):\n    _fields_ = ["
         firstItem = True
         for field_name, field_type in fields.items():
@@ -88,6 +94,8 @@ def generate_advanced_python_structs(struct_dict):
         struct_definitions.append(struct_definition)
 
     for struct_name, fields in struct_dict.items():
+        if struct_name == "gene_pool_s":
+            continue
         struct_definition = f"class {struct_name}:"
         for field_name, field_type in fields.items():
             if field_type == "ctypes.c_int":
@@ -96,6 +104,8 @@ def generate_advanced_python_structs(struct_dict):
                 struct_definition += f"\n    {field_name} = 0.0"
             elif field_type == "ctypes.c_char_p":
                 struct_definition += f"\n    {field_name}: str = \"\""
+            elif cpointer_pattern.search(field_type):
+                struct_definition += f"\n    {field_name} = [0, 0]"
             else:
                 struct_definition += f"\n    {field_name} = {field_type}()"
         struct_definition += "\n    def __init__(\n            self"
@@ -106,6 +116,8 @@ def generate_advanced_python_structs(struct_dict):
                 struct_definition += f",\n            {field_name}: float = 0.0"
             elif field_type == "ctypes.c_char_p":
                 struct_definition += f",\n            {field_name}: str = \"\""
+            elif cpointer_pattern.search(field_type):
+                struct_definition += f",\n            {field_name}: list = [0, 0]"
             else:
                 struct_definition += f",\n            {field_name}: {field_type} = {field_type}()"
         struct_definition += "\n        ):\n"
@@ -119,8 +131,10 @@ def generate_advanced_python_structs(struct_dict):
                 firstItem = False
             else:
                 struct_definition += ","
-            if ctype_pattern.search(next(iter(fields.values()))):
+            if ctype_pattern.search(field_type):
                 struct_definition += f"\n            {field_type}(self.{field_name})"
+            elif cpointer_pattern.search(field_type):
+                struct_definition += f"\n            numpy.array(self.{field_name}).ctypes.data_as({field_type})"
             else:
                 struct_definition += f"\n            self.{field_name}.cType()"
         struct_definition += "\n        )\n\n"
