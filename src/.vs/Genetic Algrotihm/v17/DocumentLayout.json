@@ -3,116 +3,56 @@
   "WorkspaceRootPath": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Analysis\\Analysis.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Analysis\\Analysis.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Genetic_Algorithm.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\Logging.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Logger\\Logging.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\x64\\DLL Build\\Genetic_Algorithm.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:x64\\DLL Build\\Genetic_Algorithm.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\crossover.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\crossover.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Analysis\\analysis.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Analysis\\analysis.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\__init__.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:__init__.py||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\__init__.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Logger\\__init__.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\x64\\DLL Build\\Structs.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:x64\\DLL Build\\Structs.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Genetic_Algorithm.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\pop.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\pop.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\logging.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Logger\\logging.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logging\\__init__.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Logging\\__init__.py||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\School\\Libraries\\GeneticAlgorithm\\src\\x64\\DLL Build\\Genetic_Algorithm.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:x64\\DLL Build\\Genetic_Algorithm.py||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\flatten.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\flatten.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\pop.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\pop.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logging\\logging.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Logging\\logging.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\School\\Libraries\\GeneticAlgorithm\\src\\x64\\DLL Build\\Structs.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:x64\\DLL Build\\Structs.py||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\build\\StructGenerator.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:build\\StructGenerator.py||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Genetic_Algorithm.py||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Helper.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\Helper.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Helper.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\Helper.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\mutation.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\mutation.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Struct.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\Struct.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Function\\Function.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Function\\Function.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\logging.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Logger\\logging.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\process.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\process.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\flatten.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\flatten.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\selection.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\selection.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Helper.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\Helper.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\pop.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\pop.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\build\\StructGenerator.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:build\\StructGenerator.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Genetic_Algorithm.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Function\\Function.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Function\\Function.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\selection.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\selection.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\mutation.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\mutation.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\crossover.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\crossover.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\process.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\process.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -122,7 +62,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 246,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Document",
@@ -135,112 +75,77 @@
               "ViewState": "AQIAAPsBAAAAAAAAAAAnwAoCAAA6AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2024-05-09T20:03:18.937Z",
-              "IsPinned": true
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "__init__.py",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\__init__.py",
-              "RelativeDocumentMoniker": "__init__.py",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\__init__.py",
-              "RelativeToolTip": "__init__.py",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEzSURBVDhPpZOxioNAGITHwzJlCpuABxYWKVLkAezFtxAs7a5NKQeBpEtjESGgb\u002BAD2AgWNoKChZZ2SWeKwN66eMGNEkjywYC7vzP4Dyh8578Eb1KpP0Af8JY67xd9\u002BAguoKoqpiiKYNs2uxNFEbquIwxD5HmOw\u002BGA\u002BXzOZh1cgCzLCIIARVFgv99D0zQ4joPT6YQ4juG6LtbrNQu9M\u002Bygg5qIqqqkbVtiWRY5n89kt9txu/9rsgPf95EkCS6XCzzPw/V6RdM0/XTMKGC73cIwDCwWC2Y\u002BHo8wTROr1QqKomCz2WA2m/VvUx5XoD1wnylJEknTlM06yrIkNIjNmHcY0JlpQffzUMvlkml4N\u002Bqgrmvcbrf\u002BxJNlGdMjow5ehQugK07qGVyAIAiTesbHK3z0OwPAH6D4xld\u002BSxLJAAAAAElFTkSuQmCC",
-              "WhenOpened": "2024-06-17T19:27:49.998Z",
+              "IsPinned": true,
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 8,
+              "Title": "selection.c",
+              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\selection.c",
+              "RelativeDocumentMoniker": "Utility\\selection.c",
+              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\selection.c",
+              "RelativeToolTip": "Utility\\selection.c",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAXAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2024-06-20T09:46:47.425Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "logging.py",
               "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\logging.py",
               "RelativeDocumentMoniker": "Logger\\logging.py",
               "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\logging.py",
               "RelativeToolTip": "Logger\\logging.py",
-              "ViewState": "AQIAAFwAAAAAAAAAAAAAAGcAAAAEAAAA",
+              "ViewState": "AQIAADMAAAAAAAAAAAAAAEAAAAAAAAAA",
               "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEzSURBVDhPpZOxioNAGITHwzJlCpuABxYWKVLkAezFtxAs7a5NKQeBpEtjESGgb\u002BAD2AgWNoKChZZ2SWeKwN66eMGNEkjywYC7vzP4Dyh8578Eb1KpP0Af8JY67xd9\u002BAguoKoqpiiKYNs2uxNFEbquIwxD5HmOw\u002BGA\u002BXzOZh1cgCzLCIIARVFgv99D0zQ4joPT6YQ4juG6LtbrNQu9M\u002Bygg5qIqqqkbVtiWRY5n89kt9txu/9rsgPf95EkCS6XCzzPw/V6RdM0/XTMKGC73cIwDCwWC2Y\u002BHo8wTROr1QqKomCz2WA2m/VvUx5XoD1wnylJEknTlM06yrIkNIjNmHcY0JlpQffzUMvlkml4N\u002Bqgrmvcbrf\u002BxJNlGdMjow5ehQugK07qGVyAIAiTesbHK3z0OwPAH6D4xld\u002BSxLJAAAAAElFTkSuQmCC",
               "WhenOpened": "2024-06-17T19:26:40.914Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "__init__.py",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\__init__.py",
-              "RelativeDocumentMoniker": "Logger\\__init__.py",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\__init__.py",
-              "RelativeToolTip": "Logger\\__init__.py",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEzSURBVDhPpZOxioNAGITHwzJlCpuABxYWKVLkAezFtxAs7a5NKQeBpEtjESGgb\u002BAD2AgWNoKChZZ2SWeKwN66eMGNEkjywYC7vzP4Dyh8578Eb1KpP0Af8JY67xd9\u002BAguoKoqpiiKYNs2uxNFEbquIwxD5HmOw\u002BGA\u002BXzOZh1cgCzLCIIARVFgv99D0zQ4joPT6YQ4juG6LtbrNQu9M\u002Bygg5qIqqqkbVtiWRY5n89kt9txu/9rsgPf95EkCS6XCzzPw/V6RdM0/XTMKGC73cIwDCwWC2Y\u002BHo8wTROr1QqKomCz2WA2m/VvUx5XoD1wnylJEknTlM06yrIkNIjNmHcY0JlpQffzUMvlkml4N\u002Bqgrmvcbrf\u002BxJNlGdMjow5ehQugK07qGVyAIAiTesbHK3z0OwPAH6D4xld\u002BSxLJAAAAAElFTkSuQmCC",
-              "WhenOpened": "2024-06-17T19:26:35.928Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "__init__.py",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logging\\__init__.py",
-              "RelativeDocumentMoniker": "Logging\\__init__.py",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logging\\__init__.py",
-              "RelativeToolTip": "Logging\\__init__.py",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEzSURBVDhPpZOxioNAGITHwzJlCpuABxYWKVLkAezFtxAs7a5NKQeBpEtjESGgb\u002BAD2AgWNoKChZZ2SWeKwN66eMGNEkjywYC7vzP4Dyh8578Eb1KpP0Af8JY67xd9\u002BAguoKoqpiiKYNs2uxNFEbquIwxD5HmOw\u002BGA\u002BXzOZh1cgCzLCIIARVFgv99D0zQ4joPT6YQ4juG6LtbrNQu9M\u002Bygg5qIqqqkbVtiWRY5n89kt9txu/9rsgPf95EkCS6XCzzPw/V6RdM0/XTMKGC73cIwDCwWC2Y\u002BHo8wTROr1QqKomCz2WA2m/VvUx5XoD1wnylJEknTlM06yrIkNIjNmHcY0JlpQffzUMvlkml4N\u002Bqgrmvcbrf\u002BxJNlGdMjow5ehQugK07qGVyAIAiTesbHK3z0OwPAH6D4xld\u002BSxLJAAAAAElFTkSuQmCC",
-              "WhenOpened": "2024-06-17T19:21:49.037Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "analysis.py",
               "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Analysis\\analysis.py",
               "RelativeDocumentMoniker": "Analysis\\analysis.py",
               "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Analysis\\analysis.py",
               "RelativeToolTip": "Analysis\\analysis.py",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAABBAAAA",
+              "ViewState": "AQIAAH4AAAAAAAAAAAAAAIoAAAAEAAAA",
               "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEzSURBVDhPpZOxioNAGITHwzJlCpuABxYWKVLkAezFtxAs7a5NKQeBpEtjESGgb\u002BAD2AgWNoKChZZ2SWeKwN66eMGNEkjywYC7vzP4Dyh8578Eb1KpP0Af8JY67xd9\u002BAguoKoqpiiKYNs2uxNFEbquIwxD5HmOw\u002BGA\u002BXzOZh1cgCzLCIIARVFgv99D0zQ4joPT6YQ4juG6LtbrNQu9M\u002Bygg5qIqqqkbVtiWRY5n89kt9txu/9rsgPf95EkCS6XCzzPw/V6RdM0/XTMKGC73cIwDCwWC2Y\u002BHo8wTROr1QqKomCz2WA2m/VvUx5XoD1wnylJEknTlM06yrIkNIjNmHcY0JlpQffzUMvlkml4N\u002Bqgrmvcbrf\u002BxJNlGdMjow5ehQugK07qGVyAIAiTesbHK3z0OwPAH6D4xld\u002BSxLJAAAAAElFTkSuQmCC",
               "WhenOpened": "2024-06-17T15:50:26.881Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "Helper.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Helper.h",
-              "RelativeDocumentMoniker": "Helper\\Helper.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Helper.h",
-              "RelativeToolTip": "Helper\\Helper.h",
-              "ViewState": "AQIAAB4AAAAAAAAAAAAAADEAAAAMAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-06-13T20:19:16.017Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "Genetic_Algorithm.c",
               "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.c",
               "RelativeDocumentMoniker": "Genetic_Algorithm.c",
               "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.c",
               "RelativeToolTip": "Genetic_Algorithm.c",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAATAAAA",
+              "ViewState": "AQIAADAAAAAAAAAAAAAAADoAAAAGAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2024-05-09T20:25:40.226Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 9,
               "Title": "Helper.c",
               "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Helper.c",
               "RelativeDocumentMoniker": "Helper\\Helper.c",
               "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Helper.c",
               "RelativeToolTip": "Helper\\Helper.c",
-              "ViewState": "AQIAAIUCAAAAAAAAAAAuwK0CAAANAAAA",
+              "ViewState": "AQIAAFACAAAAAAAAAAAnwF8CAAATAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-05-09T20:02:50.971Z"
+              "WhenOpened": "2024-05-09T20:02:50.971Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 11,
               "Title": "StructGenerator.py",
               "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\build\\StructGenerator.py",
               "RelativeDocumentMoniker": "build\\StructGenerator.py",
@@ -252,129 +157,59 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 3,
               "Title": "Structs.py",
               "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\x64\\DLL Build\\Structs.py",
               "RelativeDocumentMoniker": "x64\\DLL Build\\Structs.py",
               "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\x64\\DLL Build\\Structs.py",
               "RelativeToolTip": "x64\\DLL Build\\Structs.py",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAADAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAHEAAAA0AAAA",
               "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEzSURBVDhPpZOxioNAGITHwzJlCpuABxYWKVLkAezFtxAs7a5NKQeBpEtjESGgb\u002BAD2AgWNoKChZZ2SWeKwN66eMGNEkjywYC7vzP4Dyh8578Eb1KpP0Af8JY67xd9\u002BAguoKoqpiiKYNs2uxNFEbquIwxD5HmOw\u002BGA\u002BXzOZh1cgCzLCIIARVFgv99D0zQ4joPT6YQ4juG6LtbrNQu9M\u002Bygg5qIqqqkbVtiWRY5n89kt9txu/9rsgPf95EkCS6XCzzPw/V6RdM0/XTMKGC73cIwDCwWC2Y\u002BHo8wTROr1QqKomCz2WA2m/VvUx5XoD1wnylJEknTlM06yrIkNIjNmHcY0JlpQffzUMvlkml4N\u002Bqgrmvcbrf\u002BxJNlGdMjow5ehQugK07qGVyAIAiTesbHK3z0OwPAH6D4xld\u002BSxLJAAAAAElFTkSuQmCC",
-              "WhenOpened": "2024-06-06T21:47:17.387Z"
+              "WhenOpened": "2024-06-06T21:47:17.387Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 1,
               "Title": "Genetic_Algorithm.py",
               "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\x64\\DLL Build\\Genetic_Algorithm.py",
               "RelativeDocumentMoniker": "x64\\DLL Build\\Genetic_Algorithm.py",
               "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\x64\\DLL Build\\Genetic_Algorithm.py",
               "RelativeToolTip": "x64\\DLL Build\\Genetic_Algorithm.py",
-              "ViewState": "AQIAACIAAAAAAAAAAAAqwDsAAAAXAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAC8AAAAAAAAA",
               "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEzSURBVDhPpZOxioNAGITHwzJlCpuABxYWKVLkAezFtxAs7a5NKQeBpEtjESGgb\u002BAD2AgWNoKChZZ2SWeKwN66eMGNEkjywYC7vzP4Dyh8578Eb1KpP0Af8JY67xd9\u002BAguoKoqpiiKYNs2uxNFEbquIwxD5HmOw\u002BGA\u002BXzOZh1cgCzLCIIARVFgv99D0zQ4joPT6YQ4juG6LtbrNQu9M\u002Bygg5qIqqqkbVtiWRY5n89kt9txu/9rsgPf95EkCS6XCzzPw/V6RdM0/XTMKGC73cIwDCwWC2Y\u002BHo8wTROr1QqKomCz2WA2m/VvUx5XoD1wnylJEknTlM06yrIkNIjNmHcY0JlpQffzUMvlkml4N\u002Bqgrmvcbrf\u002BxJNlGdMjow5ehQugK07qGVyAIAiTesbHK3z0OwPAH6D4xld\u002BSxLJAAAAAElFTkSuQmCC",
-              "WhenOpened": "2024-06-06T18:07:30.112Z"
+              "WhenOpened": "2024-06-06T18:07:30.112Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 0,
               "Title": "Genetic_Algorithm.py",
               "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.py",
               "RelativeDocumentMoniker": "Genetic_Algorithm.py",
               "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.py",
               "RelativeToolTip": "Genetic_Algorithm.py",
-              "ViewState": "AQIAAAkAAAAAAAAAAAAAADsAAAAXAAAA",
-              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAANqSURBVDhPbVNdaFxFGD0zc\u002B/d/2S7m802aZosllaUaiMR0/pDRA0iUrGgovalaMCiPljBRwmLDz74UqQirVZCxYIPSkVBA5UWSav0R6JJU9iGbLK/2WZ3c/fe3bvZe3dmvLuW4oMHhnk6Z77vnDMEdzAtp5VSHZFlx79/tRU8WLfxJOH2DxrBiecTt8ojm5tjfzb8z1icfPVj4st0l8T5Z6RDjOTy203Nd9jS1Neu2rE9N\u002Bygj7cFtJZtBUTz2kQwWwxr9UfmzGCzqrffeOWn4avJZFJ0NMh07u3RPsa/a9RbiYsrDp0XYVeYgLXa0BwbI1THLlWXxRYj2Rqt1Oeyn\u002BrXcyeMJaPaFUgW3n2OCn4udaOk/f7Fbxjp2wXbclAqllDd0BFUe7DNH0HDaCK/WoRlbkFGd4zj6JvX4E7BJo4duH\u002BLk9dL6w3iLTAcP3YS\u002B3aPIejpgd208dSBSRycfBGDsSGkbqZQ0w3Q9z9eU18\u002BusHfOWwobcDXlIzobRVoUzhOG2bdwAO79yGo9UDYEjMzM9ArNejVGiABNjr2IfF5H2Jm4hR1CI0ZUiG3bRXSATTVA7Nm4teL55FOp2EaJrgj0HY4hOj6hvHQsico6i8wR\u002Bxno\u002B89dqjKtcebRR3WH2lQwXDqzElcujzn7m0hHh3AyM4EPJoH\u002BXwelmXho7dU6Ni5lr0dTiqmZMOdMsSIjSu5PL7\u002BdgaFXBGO1catm8uo5HVEwhEYhtE9HQyyEqaiv1xq6FihNaEMb0kKgzPX4SYya1m0Gg5ES3bTKOQKWFxcRCaTgW3bXQEQgSeiS/LCxGlJXfPia44XBdvjktA1rUPmnZu7jv0POk4wwh9uNtd7lXJb22ZxCttNYHtkAEdenYJH9UK4TVz4ewGzs7Mol8v/Mu\u002BAg3TCuEdR1KiyJVRTOIjylko21is4\u002B81Zd0IKKSRM07y793/RGUyAuq/Il0hi/pNxSfCBqDuTPLcZus9rkqlYCr2Uw0ck3HC7pI7RZclQccX37vFjIEAQkiLF9M8fLQaqPecVJpeUvkBYi4WGvKE4i4V7Gw8O2/X\u002BflX1xv1U9AewEOmFHQvA7Z0wBP3LIezc3e\u002BMC9PK0KAap/XgIdoKPL2D0zOn9/48H/Na91qCHckL9mxGsIAP\u002BN4DdlxlcjUUWKn8AxLluker7ModAAAAAElFTkSuQmCC",
-              "WhenOpened": "2024-06-06T22:22:50.234Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "mutation.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\mutation.c",
-              "RelativeDocumentMoniker": "Utility\\mutation.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\mutation.c",
-              "RelativeToolTip": "Utility\\mutation.c",
-              "ViewState": "AQIAABgAAAAAAAAAAAAAACsAAAAiAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-05-09T20:24:53.976Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "Function.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Function\\Function.c",
-              "RelativeDocumentMoniker": "Function\\Function.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Function\\Function.c",
-              "RelativeToolTip": "Function\\Function.c",
-              "ViewState": "AQIAACsAAAAAAAAAAAAuwDgAAAAMAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-05-09T20:26:11.811Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "Struct.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Struct.h",
-              "RelativeDocumentMoniker": "Helper\\Struct.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Struct.h",
-              "RelativeToolTip": "Helper\\Struct.h",
-              "ViewState": "AQIAAAMAAAAAAAAAAAAAAA8AAAAWAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-09T21:21:12.842Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "crossover.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\crossover.c",
-              "RelativeDocumentMoniker": "Utility\\crossover.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\crossover.c",
-              "RelativeToolTip": "Utility\\crossover.c",
-              "ViewState": "AQIAABQAAAAAAAAAAADwvyABAABlAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-05-09T20:22:11.303Z",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAhAAAA",
+              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEzSURBVDhPpZOxioNAGITHwzJlCpuABxYWKVLkAezFtxAs7a5NKQeBpEtjESGgb\u002BAD2AgWNoKChZZ2SWeKwN66eMGNEkjywYC7vzP4Dyh8578Eb1KpP0Af8JY67xd9\u002BAguoKoqpiiKYNs2uxNFEbquIwxD5HmOw\u002BGA\u002BXzOZh1cgCzLCIIARVFgv99D0zQ4joPT6YQ4juG6LtbrNQu9M\u002Bygg5qIqqqkbVtiWRY5n89kt9txu/9rsgPf95EkCS6XCzzPw/V6RdM0/XTMKGC73cIwDCwWC2Y\u002BHo8wTROr1QqKomCz2WA2m/VvUx5XoD1wnylJEknTlM06yrIkNIjNmHcY0JlpQffzUMvlkml4N\u002Bqgrmvcbrf\u002BxJNlGdMjow5ehQugK07qGVyAIAiTesbHK3z0OwPAH6D4xld\u002BSxLJAAAAAElFTkSuQmCC",
+              "WhenOpened": "2024-06-06T22:22:50.234Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 7,
               "Title": "process.c",
               "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\process.c",
               "RelativeDocumentMoniker": "Utility\\process.c",
               "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\process.c",
               "RelativeToolTip": "Utility\\process.c",
-              "ViewState": "AQIAACEAAAAAAAAAAAAuwCkAAAALAAAA",
+              "ViewState": "AQIAAB4AAAAAAAAAAAAYwDgAAAASAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-05-09T20:24:58.45Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "flatten.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\flatten.c",
-              "RelativeDocumentMoniker": "Utility\\flatten.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\flatten.c",
-              "RelativeToolTip": "Utility\\flatten.c",
-              "ViewState": "AQIAABoAAAAAAAAAAAAAAGsAAAA1AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-05-09T20:24:01.978Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "pop.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\pop.h",
-              "RelativeDocumentMoniker": "Utility\\pop.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\pop.h",
-              "RelativeToolTip": "Utility\\pop.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-09T20:03:17.636Z",
+              "WhenOpened": "2024-05-09T20:24:58.45Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 12,
               "Title": "Genetic_Algorithm.h",
               "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.h",
               "RelativeDocumentMoniker": "Genetic_Algorithm.h",
@@ -383,90 +218,40 @@
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-06-06T19:24:41.89Z"
-            },
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "FloatingWindowState": {
+        "Id": "82e0e8bd-5f5a-4834-8421-d5f6264f5b37",
+        "Display": 1,
+        "X": 366,
+        "Y": 287,
+        "Width": 1559,
+        "Height": 798,
+        "WindowState": 2
+      },
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "logging.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logging\\logging.h",
-              "RelativeDocumentMoniker": "Logging\\logging.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logging\\logging.h",
-              "RelativeToolTip": "Logging\\logging.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAA1AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-06-06T21:09:25.95Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "Function.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Function\\Function.h",
-              "RelativeDocumentMoniker": "Function\\Function.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Function\\Function.h",
-              "RelativeToolTip": "Function\\Function.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-09T20:27:07.408Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
-              "Title": "mutation.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\mutation.h",
-              "RelativeDocumentMoniker": "Utility\\mutation.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\mutation.h",
-              "RelativeToolTip": "Utility\\mutation.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-09T20:24:56.16Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "flatten.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\flatten.h",
-              "RelativeDocumentMoniker": "Utility\\flatten.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\flatten.h",
-              "RelativeToolTip": "Utility\\flatten.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAgAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-09T20:24:04.318Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "selection.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\selection.h",
-              "RelativeDocumentMoniker": "Utility\\selection.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\selection.h",
-              "RelativeToolTip": "Utility\\selection.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAiAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-09T20:20:17.567Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "process.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\process.h",
-              "RelativeDocumentMoniker": "Utility\\process.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\process.h",
-              "RelativeToolTip": "Utility\\process.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-09T20:20:14.626Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "crossover.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\crossover.h",
-              "RelativeDocumentMoniker": "Utility\\crossover.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\crossover.h",
-              "RelativeToolTip": "Utility\\crossover.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAGAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-09T20:19:54.111Z"
+              "DocumentIndex": 6,
+              "Title": "logging.c",
+              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\logging.c",
+              "RelativeDocumentMoniker": "Logger\\logging.c",
+              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\logging.c",
+              "RelativeToolTip": "Logger\\logging.c",
+              "ViewState": "AQIAADMAAAAAAAAAAAAAAEMAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2024-06-20T11:45:23.118Z",
+              "EditorCaption": ""
             }
           ]
         }

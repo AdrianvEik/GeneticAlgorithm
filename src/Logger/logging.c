@@ -71,15 +71,15 @@ void write_param(gene_pool_t gene_pool, int iteration)
 
 	for (int i = 0; i < gene_pool.individuals; i++)
 	{
-		fwrite(&gene_pool.pop_result_set[i], paramsetsize, 1, fileptr);
+		fwrite(&gene_pool.pop_result_set[gene_pool.sorted_indexes[i]], paramsetsize, 1, fileptr);
 	
 
 		fprintf(fileptrcsv, "%d, %d, %f, ", iteration, i, gene_pool.pop_result_set[gene_pool.sorted_indexes[i]]);
 		for (int j = 0; j < gene_pool.genes; j++)
 		{
-			fwrite(&gene_pool.pop_param_double[i][j], paramsetsize, 1, fileptr);
+			fwrite(&gene_pool.pop_param_double[gene_pool.sorted_indexes[i]][j], paramsetsize, 1, fileptr);
 
-			fprintf(fileptrcsv, "%f, ", gene_pool.pop_param_double[i][j]);
+			fprintf(fileptrcsv, "%f, ", gene_pool.pop_param_double[gene_pool.sorted_indexes[i]][j]);
 		}
 		fprintf(fileptrcsv, "\n");
 	}

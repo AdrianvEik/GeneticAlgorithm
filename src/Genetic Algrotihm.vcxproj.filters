@@ -42,7 +42,7 @@
     <ClCompile Include="Utility\selection.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Logging\logging.c">
+    <ClCompile Include="Logger\logging.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,7 +77,7 @@
     <ClInclude Include="Utility\selection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Logging\logging.h">
+    <ClInclude Include="Logger\logging.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
