@@ -39,6 +39,7 @@
     <ClCompile Include="Utility\selection.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\vcpkg\vcpkg\installed\x64-windows\include\pthread.h" />
     <ClInclude Include="Function\Function.h" />
     <ClInclude Include="Helper\Helper.h" />
     <ClInclude Include="Helper\Struct.h" />
@@ -187,10 +188,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>Python.exe "$(ProjectDir)build\StructGenerator.py"</Command>

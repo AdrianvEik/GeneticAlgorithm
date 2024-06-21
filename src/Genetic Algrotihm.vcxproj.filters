@@ -80,6 +80,9 @@
     <ClInclude Include="Logger\logging.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\vcpkg\vcpkg\installed\x64-windows\include\pthread.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Logging\Logging.py" />

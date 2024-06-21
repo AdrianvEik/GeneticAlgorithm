@@ -5,10 +5,12 @@
 #include <stdint.h>
 #include <string.h>
 
+#include <windows.h>
+#include <pthread.h>
+
 #include "Genetic_Algorithm.h"
 
 #include "Utility/process.h"
-
 #include "Utility/pop.h"
 #include "Utility/crossover.h"
 #include "Utility/mutation.h"
@@ -21,6 +23,8 @@
 #include "Helper/Struct.h"
 
 #include "Logger/logging.h"
+
+
 
 
 void Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
@@ -44,45 +48,47 @@ void Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 
 	write_config(gene_pool, runtime_param, config_ga);
 
-	// // While < iterations
-	for (int i = 0; i < runtime_param.max_iterations; i++) {
+	//// // While < iterations
+	//for (int i = 0; i < runtime_param.max_iterations; i++) {
 
-		// Process Population
-		process_pop(&gene_pool, &config_ga);
+	//	// Process Population
+	//	process_pop(&gene_pool, &config_ga);
 
-		write_param(gene_pool, i);
+	//	write_param(gene_pool, i);
 
-		best_res = gene_pool.pop_result_set[gene_pool.sorted_indexes[gene_pool.individuals - 1]];
+	//	best_res = gene_pool.pop_result_set[gene_pool.sorted_indexes[gene_pool.individuals - 1]];
 
-		// Check for convergence & runtime params
+	//	// Check for convergence & runtime params
 
-		if (fabs(best_res - previous_best_res) < runtime_param.convergence_threshold) {
-			convergence_counter++;
-			if (convergence_counter > runtime_param.convergence_window) {
-				printf("Converged at iteration: %d\n", i);
-				break;
-			}
-		}
-		else {
-			convergence_counter = 0;
-		}
+	//	if (fabs(best_res - previous_best_res) < runtime_param.convergence_threshold) {
+	//		convergence_counter++;
+	//		if (convergence_counter > runtime_param.convergence_window) {
+	//			printf("Converged at iteration: %d\n", i);
+	//			break;
+	//		}
+	//	}
+	//	else {
+	//		convergence_counter = 0;
+	//	}
 
-		if (best_res - previous_best_res > 0.0f) {
-			printf("Iteration: %d Gain: %0.3f best res: %0.3f (idx = %d), 2nd best res: %0.3f (idx = %d) 3rd best res %0.3f (idx = %d)\n", i,
-				(best_res - previous_best_res),
-				gene_pool.pop_result_set[gene_pool.sorted_indexes[gene_pool.individuals - 1]], gene_pool.sorted_indexes[gene_pool.individuals - 1],
-				gene_pool.pop_result_set[gene_pool.sorted_indexes[gene_pool.individuals - 2]], gene_pool.sorted_indexes[gene_pool.individuals - 2],
-				gene_pool.pop_result_set[gene_pool.sorted_indexes[gene_pool.individuals - 3]], gene_pool.sorted_indexes[gene_pool.individuals - 3]);
-		}
+	//	if (best_res - previous_best_res > 0.0f) {
+	//		printf("Iteration: %d Gain: %0.3f best res: %0.3f (idx = %d), 2nd best res: %0.3f (idx = %d) 3rd best res %0.3f (idx = %d)\n", i,
+	//			(best_res - previous_best_res),
+	//			gene_pool.pop_result_set[gene_pool.sorted_indexes[gene_pool.individuals - 1]], gene_pool.sorted_indexes[gene_pool.individuals - 1],
+	//			gene_pool.pop_result_set[gene_pool.sorted_indexes[gene_pool.individuals - 2]], gene_pool.sorted_indexes[gene_pool.individuals - 2],
+	//			gene_pool.pop_result_set[gene_pool.sorted_indexes[gene_pool.individuals - 3]], gene_pool.sorted_indexes[gene_pool.individuals - 3]);
+	//	}
 
-		previous_best_res = best_res;
-	}
+	//	previous_best_res = best_res;
+	//}
+
 	close_file();
 
 	// Free pop_parameter_bin
 	free_gene_pool(&gene_pool);
-
 }
+
+
 
 int main() {
 	for (int i = 0; i < 10; i++) {
