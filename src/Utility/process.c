@@ -4,7 +4,7 @@
 
 #include "../Helper/Helper.h"
 #include "../Helper/Struct.h"
-
+#include "../Helper/multiprocessing.h"
 #include "flatten.h"
 #include "../Function/Function.h"
 #include "selection.h"
@@ -35,11 +35,11 @@ void eliminate_duplicates(gene_pool_t* gene_pool) {
 	}
 }
 
-void process_pop(gene_pool_t* gene_pool, config_ga_t* config_ga) {
+void process_pop(gene_pool_t* gene_pool, config_ga_t* config_ga, task_param_t* task) {
 	// TODO: check individual even nr 
 	// TODO: refractor individuals and genes to _count
 
-	process_fx(gene_pool, &(config_ga->fx_param)); // pop, individuals, genes -> ?
+	process_fx(gene_pool, &(config_ga->fx_param), task->lower, task->upper); // pop, individuals, genes -> ?
 
 	process_flatten(gene_pool, &(config_ga->flatten_param));
 

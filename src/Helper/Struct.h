@@ -16,13 +16,7 @@ struct gene_pool_s {
 	int iteration_number;
 };
 
-struct thread_param_s {
-	int thread_id;
-	int job_id; 
-	int status;
-	int* lower;
-	int* upper;
-};
+
 
 struct selection_param_s {
 	int selection_method; // DEFAULT = 0
@@ -73,6 +67,7 @@ struct runtime_param_s {
 	int genes; // DEFAULT = 2
 	int individuals; // DEFAULT = 32
 	int elitism; // DEFAULT = 2
+	int task_count; // DEFAULT = 32
 };	
 
 typedef struct gene_pool_s gene_pool_t;
@@ -83,7 +78,6 @@ typedef struct mutation_param_s mutation_param_t;
 typedef struct fx_param_s fx_param_t;
 typedef struct config_ga_s config_ga_t;
 typedef struct runtime_param_s runtime_param_t;
-typedef struct thread_param_s thread_param_t;
 
 
 #endif // STRUCT_H

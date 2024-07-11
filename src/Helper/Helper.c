@@ -47,7 +47,7 @@ void ndbit2int32(unsigned int** valarr, int genes, int individuals,
 		for (int j = 0; j < genes; j++) {
 			// result[i][j] = (double) temp[i][j] / (pow(2, bitsize - 1)) * factor + bias;
 			
-			result[i][j] = ((double)valarr[i][j] * (upper[j] - lower[j]) + lower[j]) / max_int;
+			result[i][j] = (double)(valarr[i][j] * (upper[j] - lower[j])) / max_int + lower[j];
 			//result[i][j] = (double)temp * factor / (pow(2, 8 * sizeof(int) - 1)) + bias;
 		}
 	}

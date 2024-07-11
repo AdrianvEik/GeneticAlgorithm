@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../Helper/multiprocessing.h"
+
 FILE* fileptr = NULL;
 FILE* fileptrcsv = NULL;
 FILE* fileptrconfig = NULL;
@@ -83,6 +85,55 @@ void write_param(gene_pool_t gene_pool, int iteration)
 		}
 		fprintf(fileptrcsv, "\n");
 	}
+}
+
+void write_thread_result(runtime_param_t run_param, config_ga_t config_ga, thread_param_t thread_param){
+	if (fileptrconfig == NULL)
+	{
+		printf("Error opening file!\n");
+		exit(1);
+	}
+	// Write runtime parameters as binary header
+	fwrite(&run_param.max_iterations, sizeof(int), 1, fileptrconfig);
+	fwrite(&run_param.convergence_window, sizeof(int), 1, fileptrconfig);
+	fwrite(&run_param.convergence_threshold, sizeof(double), 1, fileptrconfig);
+
+	// Write GA parameters as binary header
+	fwrite(&config_ga.selection_param.selection_method, sizeof(int), 1, fileptrconfig);
+	fwrite(&config_ga.selection_param.selection_div_param, sizeof(double), 1, fileptrconfig);
+	fwrite(&config_ga.selection_param.selection_prob_param, sizeof(double), 1, fileptrconfig);
+	fwrite(&config_ga.selection_param.selection_temp_param, sizeof(double), 1, fileptrconfig);
+	fwrite(&config_ga.selection_param.selection_tournament_size, sizeof(int), 1, fileptrconfig);
+
+	fwrite(&config_ga.flatten_param.flatten_method, sizeof(int), 1, fileptrconfig);
+	fwrite(&config_ga.flatten_param.flatten_factor, sizeof(double), 1, fileptrconfig);
+	fwrite(&config_ga.flatten_param.flatten_bias, sizeof(double), 1, fileptrconfig);
+	fwrite(&config_ga.flatten_param.flatten_optim_mode, sizeof(int), 1, fileptrconfig);
+
+	fwrite(&config_ga.crossover_param.crossover_method, sizeof(int), 1, fileptrconfig);
+	fwrite(&config_ga.crossover_param.crossover_prob, sizeof(double), 1, fileptrconfig);
+
+	fwrite(&config_ga.mutation_param.mutation_method, sizeof(int), 1, fileptrconfig);
+	fwrite(&config_ga.mutation_param.mutation_prob, sizeof(double), 1, fileptrconfig);
+	fwrite(&config_ga.mutation_param.mutation_rate, sizeof(int), 1, fileptrconfig);
+
+	fwrite(&config_ga.fx_param.fx_method, sizeof(int), 1, fileptrconfig);
+	fwrite(&config_ga.fx_param.fx_optim_mode, sizeof(int), 1, fileptrconfig);
+
+	// Write thread parameters
+	fwrite(&thread_param.thread_id, sizeof(int), 1, fileptrconfig);
+
+	// Write task list
+	for (int i = 0; i < run_param.task_count; i++) {
+		fwrite(&thread_param.task_list[i].thread_id, sizeof(int), 1, fileptrconfig);
+		fwrite(&thread_param.task_list[i].task_id, sizeof(int), 1, fileptrconfig);
+		fwrite(&thread_param.task_list[i].status, sizeof(int), 1, fileptrconfig);
+		fwrite(thread_param.task_list[i].lower, sizeof(double), run_param.genes, fileptrconfig);
+		fwrite(thread_param.task_list[i].upper, sizeof(double), run_param.genes, fileptrconfig);
+		fwrite(thread_param.task_list[i].paramset, sizeof(double), run_param.genes, fileptrconfig);
+		fwrite(&thread_param.task_list[i].result, sizeof(double), 1, fileptrconfig);
+	}
+
 }
 
 void write_config(gene_pool_t gene_pool, runtime_param_t run_param, config_ga_t config_ga)
