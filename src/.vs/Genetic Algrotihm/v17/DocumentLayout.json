@@ -7,10 +7,6 @@
       "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Logger\\logging.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Logger\\logging.py||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Logger\\logging.py||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Helper\\MultiProcessing.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\MultiProcessing.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -77,6 +73,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\x64\\DLL Build\\Genetic_Algorithm.py||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:x64\\DLL Build\\Genetic_Algorithm.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Logger\\logging.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Logger\\logging.py||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
   "DocumentGroupContainers": [
@@ -90,7 +90,7 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 4,
               "Title": "pop.c",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Utility\\pop.c",
               "RelativeDocumentMoniker": "Utility\\pop.c",
@@ -116,7 +116,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 18,
               "Title": "logging.py",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Logger\\logging.py",
               "RelativeDocumentMoniker": "Logger\\logging.py",
@@ -124,12 +124,11 @@
               "RelativeToolTip": "Logger\\logging.py",
               "ViewState": "AQIAAE4AAAAAAAAAAAAAAGEAAAAoAAAA",
               "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAUjSURBVEhLlVVvbBRFFP/t7N5d77jz7LU9amhaS8vfGIxBExKNxKokYIMCKv0ifABEgoSCCEZCQ9LEKjGGCIE2REoUP9hICR\u002BKqUEMikYSEQWKIqRUhLb8u165Y\u002B/P7uz4Zm6vcLWG\u002BEvevnk7M\u002B/N\u002B83btxrug5r\u002B3a2mY8wTVkpnwqnrn9h43p1SaBlqeLg3XfThnof2vey\u002BugshxJgBlsS2VmZsrSvuD0w/fbuYWSILw7ZhcJsblrW\u002Bb\u002Bqmj\u002BW6lnjDYj\u002B01j03S0I9tTsNtXkUCgJsvLJu6fiAtZON8wRPmiU4YpbB0hzonMOwKAAF0bkDL3OOvlraE48Y1sLelA8H4mE8V5Ka8mnZnj9dVyNg8rGpv3F9\u002B40Vt2f6E/ssrgVPXBuHw6kSZMm5JgSY44DogU464jExv/R8XVi3FhZB4GfTj6jOEbbFs8rjKKgMtlxdeyGiZ2vjjgd7V39C3AGORZIVpEmUHmVn5Zr83F1b8ELaVQYezQmlhY60UCYc291s0wa5KW/LsRI6w8jcPTank42C8khEBKXztKMrZ3Jjf/cdDB41carzIprXbiPefWrukUmPYkdLK271JnD2xB9YtuR1dRApCl1DVblBDiqApsGrApDkTy6xefvb\u002BOxgO5YvXoUFz7\u002BCivJKdHd8i2jpeLzUMB9dX3WBrkbtycNb6b/oOT7c6JrQtoqthhiIWXHuwYDtw/crtiteB4\u002BZeHHlHAwOXsPhfd9gV/sOpMwUNq15F1XTKmAmUrnDEPdU7q47wHeRXvh0OEn7tGVbc5hvMF6RP/0Vu6ggg0NtX\u002BPEod8wfHsYre27ER\u002BKI3knCTNJztW9FDpX0OmODQ2sxDvDMLGXpTVeLrlP0SXf4t4cn7RR4p3338Ks\u002BscwY/Y0DMWG0HGgA\u002BHwg2hueg\u002BTa6agaUsTFi1alFvsoiPSjCiPwT4Vh9ZvbmZpboyXp79JFEX1zEhFSJzpOY2enp5ctZAk4kmsXrMKK5evxLmz57BhwwaUlpaqtXnUeU9i6fAhaCl\u002BxFoQ/ZUNc0\u002BtPL0s02cCMTcDgfBUH7774VjOdrOSev/\u002Bz1FcXIzq6mqEQiG0tbW5rnOgG8Dcsl8gDLZd2iwNrSJJGdR4UrghKVIZ5Ep1pMbdrOS7fMX09fUpPRpZKsypwSuC10e6pM0yjl4Vs72KogEuaz3nJCfuB5Z/R4HvB6pa6IxrmcTc6dJmGcHKE46BfipRWaZ5RznJO8/ZwhlVMWNABpAiPOxNabMkZw/E6PTXKQsphfS4FMnxGG1gLCjnaiTq5JNd5f6wsl3k6Uldt5GJc1gmB7ccVe\u002BXLl1yV/03OPVPmSjpGmkzKtGomqEmKDh9gYoWaoAhHbqPURvRRkRWzv0gnbs00b9p7mwGrh1xMh7OM8R/hjr8PRUjx/8XOeeUBWlha8tU7554tuUJ7hi76P4fh8PoMqmrcgNfTO9GQBMIEKtB\u002Bvn4aUw5wUPb5d\u002BWkqKxQIy\u002Bod9pfZDm5boQ6XEkRUJcLvg5VJ/54DVysY2YKxcUaF3ZBdQHb2CCl3oPOaLEqM41ZMh5ivQd\u002Bn4SND5oBUDFglrDQpQ5CNLqIgowgfFYQQCJKcc3hjKRks0QrJFO6cv8XYsIXU/TjO4fXyj\u002Bq9iGNjklmJEPkCTdmQmginFU6pbMUjAher2OZ/XT4Y7ufwXIY\u002BK55kkC3o/My5NmGsHswqtPNfzkTmE4XT8v6\u002BANamdP9jreyE2HiajGB0LA2lmhzi/dZQTgH/DyE3Hn7Qs\u002BAAAAAElFTkSuQmCC",
-              "WhenOpened": "2024-06-17T19:26:40.914Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-17T19:26:40.914Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 6,
               "Title": "Function.c",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Function\\Function.c",
               "RelativeDocumentMoniker": "Function\\Function.c",
@@ -141,7 +140,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "Genetic_Algorithm.c",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Genetic_Algorithm.c",
               "RelativeDocumentMoniker": "Genetic_Algorithm.c",
@@ -149,12 +148,11 @@
               "RelativeToolTip": "Genetic_Algorithm.c",
               "ViewState": "AQIAAPAAAAAAAAAAAAAvwPwAAAAOAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-05-09T20:25:40.226Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-05-09T20:25:40.226Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 5,
               "Title": "Helper.c",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Helper\\Helper.c",
               "RelativeDocumentMoniker": "Helper\\Helper.c",
@@ -166,7 +164,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 7,
               "Title": "process.c",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Utility\\process.c",
               "RelativeDocumentMoniker": "Utility\\process.c",
@@ -178,7 +176,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "multiprocessing.c",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Helper\\multiprocessing.c",
               "RelativeDocumentMoniker": "Helper\\multiprocessing.c",
@@ -186,12 +184,11 @@
               "RelativeToolTip": "Helper\\multiprocessing.c",
               "ViewState": "AQIAACQAAAAAAAAAAAAAAFcAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-06-27T19:30:04.265Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-27T19:30:04.265Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "multiprocessing.h",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Helper\\multiprocessing.h",
               "RelativeDocumentMoniker": "Helper\\multiprocessing.h",
@@ -199,12 +196,11 @@
               "RelativeToolTip": "Helper\\multiprocessing.h",
               "ViewState": "AQIAAAAAAAAAAAAAAAAvwAoAAAAPAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-06-27T19:29:44.811Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-27T19:29:44.811Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 14,
               "Title": "StructGenerator.py",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\build\\StructGenerator.py",
               "RelativeDocumentMoniker": "build\\StructGenerator.py",
@@ -216,7 +212,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 10,
               "Title": "Function.h",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Function\\Function.h",
               "RelativeDocumentMoniker": "Function\\Function.h",
@@ -228,7 +224,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 8,
               "Title": "Struct.h",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Helper\\Struct.h",
               "RelativeDocumentMoniker": "Helper\\Struct.h",
@@ -240,7 +236,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 9,
               "Title": "process.h",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Utility\\process.h",
               "RelativeDocumentMoniker": "Utility\\process.h",
@@ -252,7 +248,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 11,
               "Title": "analysis.py",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Analysis\\analysis.py",
               "RelativeDocumentMoniker": "Analysis\\analysis.py",
@@ -264,7 +260,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 16,
               "Title": "Structs.py",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\x64\\DLL Build\\Structs.py",
               "RelativeDocumentMoniker": "x64\\DLL Build\\Structs.py",
@@ -276,7 +272,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 17,
               "Title": "Genetic_Algorithm.py",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\x64\\DLL Build\\Genetic_Algorithm.py",
               "RelativeDocumentMoniker": "x64\\DLL Build\\Genetic_Algorithm.py",
@@ -288,7 +284,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 12,
               "Title": "Genetic_Algorithm.py",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Genetic_Algorithm.py",
               "RelativeDocumentMoniker": "Genetic_Algorithm.py",
@@ -300,7 +296,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 13,
               "Title": "selection.c",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Utility\\selection.c",
               "RelativeDocumentMoniker": "Utility\\selection.c",
@@ -312,7 +308,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 15,
               "Title": "Genetic_Algorithm.h",
               "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\Genetic Algorithm - C Branch\\src\\Genetic_Algorithm.h",
               "RelativeDocumentMoniker": "Genetic_Algorithm.h",
