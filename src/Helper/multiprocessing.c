@@ -81,7 +81,7 @@ task_param_t* make_task_list(runtime_param_t* runtime_param, config_ga_t config_
 
 	task_param_t* task_list = (task_param_t*)malloc(sizeof(task_param_t) * generated_task_count);
 
-	generate_task(task_list, &task_id, runtime_param[0], config_ga, 0, tasks_per_gene, position);
+	generate_task(task_list, &task_id, *runtime_param, config_ga, 0, tasks_per_gene, position);
 
 	free(position);
 	free(tasks_per_gene);

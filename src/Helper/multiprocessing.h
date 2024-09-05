@@ -19,6 +19,9 @@ struct thread_param_s {
 	int thread_id;
 	int task_id;
 	int status;
+	FILE* fileptr;
+	FILE* fileptrcsv;
+	FILE* fileptrconfig;
 	struct task_param_s* task_list;
 	struct config_ga_s config_ga;
 	struct runtime_param_s runtime_param;

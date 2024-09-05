@@ -11,10 +11,11 @@ class GeneticAlgorithm:
                                            individuals=32, elitism=4,
                                         convergence_threshold=1e-8,
                                         convergence_window=1000,
-                                        fully_qualified_basename=f"C:\\temp\\GA_{experiment_name}".encode('ansi')
+                                        fully_qualified_basename=f"C:\\temp\\GA_{experiment_name}".encode('ansi'),
+                                        task_count=64
                                         )
         
-        dll = ctypes.CDLL(r"D:\School\Libraries\GeneticAlgorithm\src\x64\DLL Build\Genetic Algrotihm.dll")
+        dll = ctypes.CDLL(r"C:\Users\vanei\source\repos\Genetic Algorithm - C Branch\src\x64\DLL Build\Genetic Algrotihm.dll")
         self.geneticalgorithm = dll.Genetic_Algorithm
         self.geneticalgorithm.argtypes = [zz_config_ga_s__, zz_runtime_param_s__] 
         
@@ -45,3 +46,8 @@ class GeneticAlgorithm:
     def run(self):
         self.geneticalgorithm(self.cfg.cType(), self.rtime_param.cType())
         return None
+
+
+if __name__ == "__main__":
+    ga = GeneticAlgorithm("exp")
+    ga.run()

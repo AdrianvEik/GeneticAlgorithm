@@ -2,16 +2,6 @@ import ctypes
 import numpy
 
 
-class zz_thread_param_s__(ctypes.Structure):
-    _fields_ = [
-        ("thread_id", ctypes.c_int),
-        ("job_id", ctypes.c_int),
-        ("status", ctypes.c_int),
-        ("lower", ctypes.POINTER(ctypes.c_int)),
-        ("upper", ctypes.POINTER(ctypes.c_int))
-    ]
-
-
 class zz_selection_param_s__(ctypes.Structure):
     _fields_ = [
         ("selection_method", ctypes.c_int),
@@ -73,37 +63,9 @@ class zz_runtime_param_s__(ctypes.Structure):
         ("convergence_window", ctypes.c_int),
         ("genes", ctypes.c_int),
         ("individuals", ctypes.c_int),
-        ("elitism", ctypes.c_int)
+        ("elitism", ctypes.c_int),
+        ("task_count", ctypes.c_int)
     ]
-
-
-class thread_param_s:
-    thread_id = 0
-    job_id = 0
-    status = 0
-    lower = [0, 0]
-    upper = [0, 0]
-    def __init__(
-            self,
-            thread_id: int = 0,
-            job_id: int = 0,
-            status: int = 0,
-            lower: list = [0, 0],
-            upper: list = [0, 0]
-        ):
-        self.thread_id = thread_id
-        self.job_id = job_id
-        self.status = status
-        self.lower = lower
-        self.upper = upper
-    def cType(self):
-        return zz_thread_param_s__(
-            ctypes.c_int(self.thread_id),
-            ctypes.c_int(self.job_id),
-            ctypes.c_int(self.status),
-            numpy.array(self.lower).ctypes.data_as(ctypes.POINTER(ctypes.c_int)),
-            numpy.array(self.upper).ctypes.data_as(ctypes.POINTER(ctypes.c_int))
-        )
 
 
 class selection_param_s:
@@ -260,6 +222,7 @@ class runtime_param_s:
     genes = 0
     individuals = 0
     elitism = 0
+    task_count = 0
     def __init__(
             self,
             fully_qualified_basename: str = "",
@@ -268,7 +231,8 @@ class runtime_param_s:
             convergence_window: int = 0,
             genes: int = 0,
             individuals: int = 0,
-            elitism: int = 0
+            elitism: int = 0,
+            task_count: int = 0
         ):
         self.fully_qualified_basename = fully_qualified_basename
         self.max_iterations = max_iterations
@@ -277,6 +241,7 @@ class runtime_param_s:
         self.genes = genes
         self.individuals = individuals
         self.elitism = elitism
+        self.task_count = task_count
     def cType(self):
         return zz_runtime_param_s__(
             ctypes.c_char_p(self.fully_qualified_basename),
@@ -285,6 +250,7 @@ class runtime_param_s:
             ctypes.c_int(self.convergence_window),
             ctypes.c_int(self.genes),
             ctypes.c_int(self.individuals),
-            ctypes.c_int(self.elitism)
+            ctypes.c_int(self.elitism),
+            ctypes.c_int(self.task_count)
         )
 
