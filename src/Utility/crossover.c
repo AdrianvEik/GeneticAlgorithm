@@ -5,6 +5,7 @@
 #include "crossover.h"
 #include "../Helper/Helper.h"
 #include "../Helper/Struct.h"
+#include "../Helper/intel_rand.h"
 
 
 // Path: Utility/crossover.c
@@ -101,7 +102,7 @@ void uniform_crossover32(int* parent1, int* parent2, int* child1, int* child2, i
 
 	for (int i = 0; i < genes; i++) {
 
-		mask = random_intXOR32();
+		mask = rdrand();
 
 		child1[i] = (parent1[i] & ~mask) | (parent2[i] & mask);
 		child2[i] = (parent1[i] & mask) | (parent2[i] & ~mask);

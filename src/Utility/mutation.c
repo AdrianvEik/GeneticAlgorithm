@@ -3,6 +3,7 @@
 #include "math.h"
 
 #include "../Helper/Helper.h"
+#include "../Helper/intel_rand.h"
 #include "../Helper/Struct.h"
 
 #include "mutation.h"
@@ -41,8 +42,8 @@ void mutate32(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {
 	for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
 		for (int j = 0; j < mutation_param->mutation_rate; j++) { // check if works
 			// ensure that the selected gene is positive
-			mutation_gene = random_intXOR32() % gene_pool->genes;
-			mutation_bit = (int)1 << (random_intXOR32() % sizeof(int) * 8);
+			mutation_gene = rdrand() % gene_pool->genes;
+			mutation_bit = (int)1 << (rdrand() % sizeof(int) * 8);
 			gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]][mutation_gene] ^= mutation_bit;
 		}
 

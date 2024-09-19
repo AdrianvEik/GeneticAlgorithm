@@ -6,6 +6,7 @@
 #include "time.h"
 
 #include "Helper.h"
+#include "intel_rand.h"
 #undef PI
 #define PI   3.14159265358979323846264338327950288419716939937510f
 
@@ -640,7 +641,7 @@ void roulette_wheel(double* probabilities, int size, int ressize, int* result) {
 
 	// generate random numbers and select the indices
 	for (int i = 0; i < ressize; i++) {
-		double randnum = ((double)random_intXOR32()) * normaliser;
+		double randnum = ((double)rdrand()) * normaliser;
 
 		for (int j = 0; j < size; j++) {
 			if (randnum < cumsum[j]) {
@@ -654,38 +655,39 @@ void roulette_wheel(double* probabilities, int size, int ressize, int* result) {
 	free(cumsum);
 }
 
-int intXOR32_seed = 0;
-int intXOR32_generated = 0;
+//int intXOR32_seed = 0;
+//int intXOR32_generated = 0;
 
-unsigned int random_int32() {
-	srand((unsigned int)time(0));
-	return (rand() << 30) | (rand() << 15) | (rand());
-}
-
-unsigned int random_intXOR32() {
-	if (intXOR32_generated > 100 || intXOR32_seed == 0) {
-		seed_intXOR32();
-		intXOR32_generated = 0;
-	}
-	int a = intXOR32_seed;
-	intXOR32_seed = intXORshift32(a);
-	intXOR32_generated++;
-	return a;
-}
-
-void seed_intXOR32() {
-	if (intXOR32_seed == 0) {
-		intXOR32_seed = random_int32();
-		printf("seed: %d\n", intXOR32_seed);
-	}
-}
-
-unsigned int intXORshift32(unsigned int a) {
-	a ^= a << 13;
-	a ^= a >> 17;
-	a ^= a << 5;
-	return a;
-}
+//unsigned int random_int32() {
+//	srand((unsigned int)time(0));
+//	return (rand() << 30) | (rand() << 15) | (rand());
+//}
+//
+//unsigned int random_intXOR32() {
+//	if (intXOR32_generated > 100 || intXOR32_seed == 0) {
+//		seed_intXOR32();
+//		intXOR32_generated = 0;
+//	}
+//	int a = intXOR32_seed;
+//	intXOR32_seed = intXORshift32(a);
+//	intXOR32_generated++;
+//	return a;
+//}
+//
+//void seed_intXOR32() {
+//	if (intXOR32_seed == 0) {
+//		intXOR32_seed = random_int32();
+//		printf("seed: %d\n", intXOR32_seed);
+//	}
+//}
+//
+//
+//unsigned int intXORshift32(unsigned int a) {
+//	a ^= a << 13;
+//	a ^= a >> 17;
+//	a ^= a << 5;
+//	return a;
+//}
 
 void indexed_bubble_sort(double* arr, int* indices, int size) {
 	int swapped = 1;

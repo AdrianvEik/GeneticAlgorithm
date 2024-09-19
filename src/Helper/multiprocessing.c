@@ -61,13 +61,13 @@ task_param_t* make_task_list(runtime_param_t* runtime_param, config_ga_t config_
 				tasks_per_gene[i] = minimum_tasks_per_gene;
 			}
 			else {
-				tasks_per_gene[i] = (int) pow(remaining_tasks, 1.0 / (runtime_param->genes - i));
+				tasks_per_gene[i] = (int) nearbyint(pow(remaining_tasks, 1.0 / (runtime_param->genes - i)));
 
 			}
 		}
 		remaining_tasks /= tasks_per_gene[i];
 		generated_task_count *= tasks_per_gene[i];
-
+		printf("Tasks per gene %d: %d\n", i, tasks_per_gene[i]);
 	}
 	
 

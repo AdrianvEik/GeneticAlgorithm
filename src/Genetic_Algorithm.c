@@ -25,7 +25,18 @@
 
 #include "Logger/logging.h"
 
-void *process_task(thread_param_t* thread_param) {
+pthread_mutex_t current_task_id_lock = PTHREAD_MUTEX_INITIALIZER;
+int current_task_id = 0;
+
+int get_task_id() {
+	pthread_mutex_lock(&current_task_id_lock);
+    int task_id = current_task_id;
+    current_task_id++;
+    pthread_mutex_unlock(&current_task_id_lock);
+    return task_id;
+}
+
+void process_task(thread_param_t* thread_param) {
 	printf("Thread %d, Task %d\n", thread_param->thread_id, thread_param->task_id);
 	thread_param->status = 1; // In progress
 
@@ -111,6 +122,16 @@ void *process_task(thread_param_t* thread_param) {
 	thread_param->status = 2; // Completed
 }
 
+void* process_thread(thread_param_t* thread_param) {
+	int task_id = get_task_id();
+	while (task_id < thread_param->runtime_param.task_count) {
+		thread_param->task_id = task_id;
+		process_task(thread_param);
+		task_id = get_task_id();
+	}
+	return NULL;
+}
+
 void start_threads(task_param_t* task_list, runtime_param_t runtime_param, config_ga_t config_ga) {
 	const parallel = 1;
 
@@ -133,13 +154,12 @@ void start_threads(task_param_t* task_list, runtime_param_t runtime_param, confi
 					}
 				}
 				printf("Best result: %f\n", best_result);
-
 			}
 
 		}
 	}
 	else {
-		int NTHREADS = runtime_param.task_count;
+		int NTHREADS = 8;
 
 		pthread_t *thread_id;
 
@@ -163,8 +183,8 @@ void start_threads(task_param_t* task_list, runtime_param_t runtime_param, confi
 			thread_param[i].config_ga = config_ga;
 
 			thread_param[i].thread_id = i;
-			thread_param[i].task_id = i;
-			retid = pthread_create(&thread_id[i], NULL, (void *) process_task, (void *) & thread_param[i]);
+			//thread_param[i].task_id = i;
+			retid = pthread_create(&thread_id[i], NULL, (void *) process_thread, (void *) & thread_param[i]);
 
 			if(retid)
             {
@@ -178,8 +198,10 @@ void start_threads(task_param_t* task_list, runtime_param_t runtime_param, confi
 			pthread_join(thread_id[j], NULL);
 		}
 
+		pthread_mutex_destroy(&current_task_id_lock);
 		free(thread_param);
 		free(thread_id);
+
 	}
 }
 
@@ -218,6 +240,15 @@ int main() {
 	int repeats = 1;
 	for (int i = 0; i < repeats; i++) {
 		printf("\n Run number: %d\n", i);
+		runtime_param_t runtime_param;
+		runtime_param.max_iterations = 10000;
+		runtime_param.convergence_threshold = 1e-8;
+		runtime_param.convergence_window = 1000;
+		runtime_param.individuals = 32;
+		runtime_param.genes = 4;
+		runtime_param.elitism = 2;
+		runtime_param.fully_qualified_basename = "C:/temp/GA\0";
+		runtime_param.task_count = 64;
 
 		flatten_param_t flatten_param;
 		flatten_param.flatten_method = 0;
@@ -238,12 +269,10 @@ int main() {
 		fx_param.fx_method = fx_method_Styblinski_Tang;
 		fx_param.lower = malloc(sizeof(double) * 3);
 		fx_param.upper = malloc(sizeof(double) * 3);
-		fx_param.lower[0] = -5.0f;
-		fx_param.upper[0] = 5.0f;
-		fx_param.lower[1] = -5.0f;
-		fx_param.upper[1] = 5.0f;
-		fx_param.lower[2] = -5.0f;
-		fx_param.upper[2] = 5.0f;
+		for (int i = 0; i < runtime_param.genes; i++) {
+			fx_param.lower[i] = -5.0f;
+            fx_param.upper[i] = 5.0f;
+		}
 
 		selection_param_t selection_param;
 		selection_param.selection_method = 0;
@@ -259,15 +288,7 @@ int main() {
 		config_ga.mutation_param = mutation_param;
 		config_ga.fx_param = fx_param;
 
-		runtime_param_t runtime_param;
-		runtime_param.max_iterations = 10000;
-		runtime_param.convergence_threshold = 1e-8;
-		runtime_param.convergence_window = 1000;
-		runtime_param.individuals = 32;
-		runtime_param.genes = 3;
-		runtime_param.elitism = 2;
-		runtime_param.fully_qualified_basename = "C:/temp/GA\0";
-		runtime_param.task_count = 64;
+
 		//strcpy_s(runtime_param.fully_qualified_basename, 255, "C:/temp/GA\0");
 		//printf("%s\n", runtime_param.fully_qualified_basename);
 		//printf("%d\n", strlen(runtime_param.fully_qualified_basename));

@@ -44,10 +44,10 @@ void indexed_merge_sort(double* arr, int* indices, int size);
 void indexed_inv_merge_sort(double* arr, int* indices, int size);
 
 // random 32 bit integer in binary
-unsigned int random_int32();
-void seed_intXOR32();
-unsigned int random_intXOR32();
-unsigned int intXORshift32(unsigned int a);
+//unsigned int random_int32();
+//void seed_intXOR32();
+//unsigned int random_intXOR32();
+//unsigned int intXORshift32(unsigned int a);
 
 // usefull for debugging and eventual conversion to numpy arrays
 //void convert_int32_to_binary(int** valarr, int genes, int individuals,

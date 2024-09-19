@@ -30,6 +30,7 @@
     <ClCompile Include="Function\Function.c" />
     <ClCompile Include="Helper\Helper.c" />
     <ClCompile Include="Genetic_Algorithm.c" />
+    <ClCompile Include="Helper\intel_rand.c" />
     <ClCompile Include="Helper\multiprocessing.c" />
     <ClCompile Include="Logger\logging.c" />
     <ClCompile Include="Utility\crossover.c" />
@@ -43,6 +44,7 @@
     <ClInclude Include="..\..\..\..\vcpkg\vcpkg\installed\x64-windows\include\pthread.h" />
     <ClInclude Include="Function\Function.h" />
     <ClInclude Include="Helper\Helper.h" />
+    <ClInclude Include="Helper\intel_rand.h" />
     <ClInclude Include="Helper\multiprocessing.h" />
     <ClInclude Include="Helper\Struct.h" />
     <ClInclude Include="Genetic_Algorithm.h" />

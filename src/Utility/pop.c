@@ -6,6 +6,7 @@
 #include "pop.h"
 #include "../Helper/Helper.h"
 #include "../Helper/Struct.h"
+#include "../Helper/intel_rand.h"
 
 
 void bitpop(int bitsize, int genes, int individuals, int** result) {
@@ -52,7 +53,7 @@ void bitpop32(int genes, int* result) {
 	*/
 
 	for (int j = 0; j < genes; j++) {
-		result[j] = random_intXOR32();
+		result[j] = rdrand();
 	}
 
 }
