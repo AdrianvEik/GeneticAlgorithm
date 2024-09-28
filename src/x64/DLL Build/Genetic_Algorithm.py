@@ -12,7 +12,7 @@ class GeneticAlgorithm:
                                         convergence_threshold=1e-8,
                                         convergence_window=1000,
                                         fully_qualified_basename=f"C:\\temp\\GA_{experiment_name}".encode('ansi'),
-                                        task_count=64
+                                        task_count=16
                                         )
         
         dll = ctypes.CDLL(r"C:\Users\vanei\source\repos\Genetic Algorithm - C Branch\src\x64\DLL Build\Genetic Algrotihm.dll")
@@ -26,10 +26,13 @@ class GeneticAlgorithm:
                                         selection_temp_param=10.0,
                                         selection_tournament_size=0)
         
-        self.cfg.fx_param = fx_param_s(lower=[0.0, 0.0],
-                                        fx_method=1,
-                                        fx_optim_mode=0,
-                                        upper=[3.0, 3.0])
+        self.cfg.fx_param = fx_param_s(fx_method=1,
+                                        fx_optim_mode=0)
+
+        self.cfg.pop_param = pop_param_s(sampling_type = 0,
+                                         sigma = 1
+                                         lower=[0, 0],
+                                         upper=[0, 0])
         
         self.cfg.crossover_param = crossover_param_s(crossover_method=6,
                                                     crossover_prob=0.5)

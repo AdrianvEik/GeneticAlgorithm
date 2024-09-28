@@ -1,2 +1,4 @@
 C:\Users\vanei\source\repos\Genetic Algorithm - C Branch\src\x64\DLL Build\pthreadVC3d.dll
 C:\Users\vanei\source\repos\Genetic Algorithm - C Branch\src\Genetic .479a36c1\x64\DLL Build\Genetic .AB24365C.Up2Date
+D:\School\Libraries\GeneticAlgorithm\src\x64\DLL Build\pthreadVC3d.dll
+D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\Genetic .AB24365C.Up2Date

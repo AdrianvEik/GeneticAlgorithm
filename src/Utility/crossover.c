@@ -39,16 +39,6 @@ void single_point_crossover32(int* parent1, int* parent2, int* child1, int* chil
 
 	}
 
-	// // copy the first part of parent1 to child1 and the first part of parent2 to child2
-	// for(int i; i<point; i++){
-	//     child1[i] = parent1[i];
-	//     child2[i] = parent2[i];
-	// }
-	// // for the other half, copy the values from the other parent
-	// for(int i; i<size; i++){
-	//     child1[i] = parent2[i];
-	//     child2[i] = parent1[i];
-	// }
 }
 
 void two_point_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes, mt_rand_t* mt_rand) {

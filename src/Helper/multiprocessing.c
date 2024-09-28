@@ -27,8 +27,8 @@ void generate_task(task_param_t* task_list, int* task_id, runtime_param_t runtim
 			}
 
 			for (int j = 0; j < runtime_param.genes; j++) {
-				task_list[*task_id].lower[j] = config_ga.fx_param.lower[j] + (config_ga.fx_param.upper[j] - config_ga.fx_param.lower[j]) / tasks_per_gene[j] * (position[j]);
-				task_list[*task_id].upper[j] = config_ga.fx_param.upper[j] - (config_ga.fx_param.upper[j] - config_ga.fx_param.lower[j]) / tasks_per_gene[j] * (tasks_per_gene[j] - position[j] - 1);
+				task_list[*task_id].lower[j] = config_ga.population_param.lower[j] + (config_ga.population_param.upper[j] - config_ga.population_param.lower[j]) / tasks_per_gene[j] * (position[j]);
+				task_list[*task_id].upper[j] = config_ga.population_param.upper[j] - (config_ga.population_param.upper[j] - config_ga.population_param.lower[j]) / tasks_per_gene[j] * (tasks_per_gene[j] - position[j] - 1);
 			}
 
 			(*task_id)++;

@@ -21,9 +21,9 @@ void process_selection(gene_pool_t* gene_pool, selection_param_t* selection_para
 #endif
 
 // Selection functions
-// void roulette_selection(gene_pool_t *gene_pool, selection_param_t *selection_param);
-// void rank_tournament_selection(gene_pool_t *gene_pool, selection_param_t *selection_param);
-// void rank_selection(gene_pool_t *gene_pool, selection_param_t *selection_param);
-// void rank_space_selection(gene_pool_t *gene_pool, selection_param_t *selection_param);
-// void boltzmann_selection(gene_pool_t *gene_pool, selection_param_t *selection_param);
+ //void roulette_selection(gene_pool_t *gene_pool, selection_param_t *selection_param);
+ //void rank_tournament_selection(gene_pool_t *gene_pool, selection_param_t *selection_param);
+ //void rank_selection(gene_pool_t *gene_pool, selection_param_t *selection_param);
+ //void rank_space_selection(gene_pool_t *gene_pool, selection_param_t *selection_param);
+ //void boltzmann_selection(gene_pool_t *gene_pool, selection_param_t *selection_param);
 

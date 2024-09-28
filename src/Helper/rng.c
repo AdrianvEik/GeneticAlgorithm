@@ -108,7 +108,7 @@ unsigned int random_int32() {
 mt_rand_t seedRand(uint32_t seed) {
 	mt_rand_t rand;
 
-	if (seed != NULL) {
+	if (seed == NULL) {
 		int bitseeker = 0x1;
 		int bitcount = 0;
 		while (bitcount < 5) {

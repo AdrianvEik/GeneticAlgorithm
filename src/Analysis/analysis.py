@@ -62,7 +62,7 @@ class Plot:
         for label, data in self.datasets.items():
             popparamdouble = data.popparamdouble
             config = data.paramset
-            plt.boxplot(popparamdouble.reshape(-1, config.gene_pool_param.genes), positions=range(len(config.gene_pool_param.genes)), labels=[f"{label} - Gene {i+1}" for i in range(len(config.gene_pool_param.genes))])
+            plt.boxplot(popparamdouble.reshape(-1, config.gene_pool_param.genes), positions=range(config.gene_pool_param.genes), labels=[f"{label} - Gene {i+1}" for i in range(config.gene_pool_param.genes)])
         
         plt.xlabel("Genes")
         plt.ylabel("Value")
@@ -141,9 +141,8 @@ class Plot:
         plt.show()
 
 if __name__ == "__main__":
-    ds = Dataset("C:\\temp\\GApython")
+    ds = Dataset("C:\\temp\\GAThread0")
     ds.read_data()
     
     plot = Plot(ds)
-    plot.plot_fitness()
-    plot.plot_convergence()
+    plot.boxplot_population()

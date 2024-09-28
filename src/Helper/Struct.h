@@ -16,7 +16,12 @@ struct gene_pool_s {
 	int iteration_number;
 };
 
-
+struct population_param_s {
+	int sampling_type; // DEFAULT =0
+	int sigma; // DEFAULT = 1
+	double* lower; // DEFAULT = 5
+	double* upper; // DEFAULT = 0
+};
 
 struct selection_param_s {
 	int selection_method; // DEFAULT = 0
@@ -47,11 +52,10 @@ struct mutation_param_s {
 struct fx_param_s {
 	int fx_method; // DEFAULT = 0
 	int fx_optim_mode; // DEFAULT = 0
-	double* lower; // DEFAULT = 5
-	double* upper; // DEFAULT = 0
 };
 
 struct config_ga_s {
+	struct population_param_s population_param;
 	struct selection_param_s selection_param;
 	struct flatten_param_s flatten_param;
 	struct crossover_param_s crossover_param;
@@ -76,6 +80,7 @@ typedef struct flatten_param_s flatten_param_t;
 typedef struct crossover_param_s crossover_param_t;
 typedef struct mutation_param_s mutation_param_t;
 typedef struct fx_param_s fx_param_t;
+typedef struct population_param_s population_param_t;
 typedef struct config_ga_s config_ga_t;
 typedef struct runtime_param_s runtime_param_t;
 

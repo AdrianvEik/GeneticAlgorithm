@@ -2,6 +2,15 @@ import ctypes
 import numpy
 
 
+class zz_population_param_s__(ctypes.Structure):
+    _fields_ = [
+        ("sampling_type", ctypes.c_int),
+        ("sigma", ctypes.c_int),
+        ("lower", ctypes.POINTER(ctypes.c_double)),
+        ("upper", ctypes.POINTER(ctypes.c_double))
+    ]
+
+
 class zz_selection_param_s__(ctypes.Structure):
     _fields_ = [
         ("selection_method", ctypes.c_int),
@@ -39,14 +48,13 @@ class zz_mutation_param_s__(ctypes.Structure):
 class zz_fx_param_s__(ctypes.Structure):
     _fields_ = [
         ("fx_method", ctypes.c_int),
-        ("fx_optim_mode", ctypes.c_int),
-        ("lower", ctypes.POINTER(ctypes.c_double)),
-        ("upper", ctypes.POINTER(ctypes.c_double))
+        ("fx_optim_mode", ctypes.c_int)
     ]
 
 
 class zz_config_ga_s__(ctypes.Structure):
     _fields_ = [
+        ("population_param", zz_population_param_s__),
         ("selection_param", zz_selection_param_s__),
         ("flatten_param", zz_flatten_param_s__),
         ("crossover_param", zz_crossover_param_s__),
@@ -66,6 +74,31 @@ class zz_runtime_param_s__(ctypes.Structure):
         ("elitism", ctypes.c_int),
         ("task_count", ctypes.c_int)
     ]
+
+
+class population_param_s:
+    sampling_type = 0
+    sigma = 0
+    lower = [0, 0]
+    upper = [0, 0]
+    def __init__(
+            self,
+            sampling_type: int = 0,
+            sigma: int = 0,
+            lower: list = [0, 0],
+            upper: list = [0, 0]
+        ):
+        self.sampling_type = sampling_type
+        self.sigma = sigma
+        self.lower = lower
+        self.upper = upper
+    def cType(self):
+        return zz_population_param_s__(
+            ctypes.c_int(self.sampling_type),
+            ctypes.c_int(self.sigma),
+            numpy.array(self.lower).ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
+            numpy.array(self.upper).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+        )
 
 
 class selection_param_s:
@@ -163,29 +196,22 @@ class mutation_param_s:
 class fx_param_s:
     fx_method = 0
     fx_optim_mode = 0
-    lower = [0, 0]
-    upper = [0, 0]
     def __init__(
             self,
             fx_method: int = 0,
-            fx_optim_mode: int = 0,
-            lower: list = [0, 0],
-            upper: list = [0, 0]
+            fx_optim_mode: int = 0
         ):
         self.fx_method = fx_method
         self.fx_optim_mode = fx_optim_mode
-        self.lower = lower
-        self.upper = upper
     def cType(self):
         return zz_fx_param_s__(
             ctypes.c_int(self.fx_method),
-            ctypes.c_int(self.fx_optim_mode),
-            numpy.array(self.lower).ctypes.data_as(ctypes.POINTER(ctypes.c_double)),
-            numpy.array(self.upper).ctypes.data_as(ctypes.POINTER(ctypes.c_double))
+            ctypes.c_int(self.fx_optim_mode)
         )
 
 
 class config_ga_s:
+    population_param = population_param_s()
     selection_param = selection_param_s()
     flatten_param = flatten_param_s()
     crossover_param = crossover_param_s()
@@ -193,12 +219,14 @@ class config_ga_s:
     fx_param = fx_param_s()
     def __init__(
             self,
+            population_param: population_param_s = population_param_s(),
             selection_param: selection_param_s = selection_param_s(),
             flatten_param: flatten_param_s = flatten_param_s(),
             crossover_param: crossover_param_s = crossover_param_s(),
             mutation_param: mutation_param_s = mutation_param_s(),
             fx_param: fx_param_s = fx_param_s()
         ):
+        self.population_param = population_param
         self.selection_param = selection_param
         self.flatten_param = flatten_param
         self.crossover_param = crossover_param
@@ -206,6 +234,7 @@ class config_ga_s:
         self.fx_param = fx_param
     def cType(self):
         return zz_config_ga_s__(
+            self.population_param.cType(),
             self.selection_param.cType(),
             self.flatten_param.cType(),
             self.crossover_param.cType(),

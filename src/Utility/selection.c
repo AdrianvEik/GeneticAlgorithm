@@ -23,7 +23,7 @@ void roulette_selection(gene_pool_t* gene_pool, selection_param_t* selection_par
 	roulette_wheel(gene_pool->flatten_result_set, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes, mt_rand);
 }
 
-void rank_tournament_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+void rank_tournament_selection(gene_pool_t* gene_pool, selection_param_t* selection_param, mt_rand_t* mt_rand) {
 	/*
 
 	:param pop: matrix of individuals as double (individuals x genes)
@@ -40,7 +40,7 @@ void rank_tournament_selection(gene_pool_t* gene_pool, selection_param_t* select
 
 
 }
-void rank_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+void rank_selection(gene_pool_t* gene_pool, selection_param_t* selection_param, mt_rand_t* mt_rand) {
 	/*
 
 	:param pop: matrix of individuals as double (individuals x genes)
@@ -57,7 +57,7 @@ void rank_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) 
 
 
 }
-void rank_space_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+void rank_space_selection(gene_pool_t* gene_pool, selection_param_t* selection_param, mt_rand_t* mt_rand) {
 	/*
 
 	:param pop: matrix of individuals as double (individuals x genes)
@@ -73,7 +73,7 @@ void rank_space_selection(gene_pool_t* gene_pool, selection_param_t* selection_p
 	*/
 
 }
-void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selection_param, mt_rand_t* mt_rand) {
 	/*
 
 	:param pop: matrix of individuals as double (individuals x genes)
@@ -97,16 +97,16 @@ void process_selection(gene_pool_t* gene_pool, selection_param_t* selection_para
 		roulette_selection(gene_pool, selection_param, mt_rand);
 	}
 	else if (selection_param->selection_method == selection_method_rank_tournament) {
-		rank_tournament_selection(gene_pool, selection_param);
+		rank_tournament_selection(gene_pool, selection_param, mt_rand);
 	}
 	else if (selection_param->selection_method == selection_method_rank) {
-		rank_selection(gene_pool, selection_param);
+		rank_selection(gene_pool, selection_param, mt_rand);
 	}
 	else if (selection_param->selection_method == selection_method_rank_space) {
-		rank_space_selection(gene_pool, selection_param);
+		rank_space_selection(gene_pool, selection_param, mt_rand);
 	}
 	else if (selection_param->selection_method == selection_method_boltzmann) {
-		boltzmann_selection(gene_pool, selection_param);
+		boltzmann_selection(gene_pool, selection_param, mt_rand);
 	}
 	else {
 		printf("Error: selection_method is not 0, 1, 2, 3 or 4\n");

@@ -192,9 +192,14 @@ void write_config(gene_pool_t gene_pool, thread_param_t thread_param)
 	fprintf(thread_param.fileptrconfig, "\"fx_param\":{\n");
 	fprintf(thread_param.fileptrconfig, "\"fx_method\":%d,\n", thread_param.config_ga.fx_param.fx_method);
 	fprintf(thread_param.fileptrconfig, "\"fx_optim_mode\":%d,\n", thread_param.config_ga.fx_param.fx_optim_mode);
-	fprintf(thread_param.fileptrconfig, "\"fx_lower\":%f,\n", thread_param.config_ga.fx_param.lower);
-	fprintf(thread_param.fileptrconfig, "\"fx_upper\":%f\n", thread_param.config_ga.fx_param.upper);
-	fprintf(thread_param.fileptrconfig, "}\n");
+	fprintf(thread_param.fileptrconfig, "},\n");
 
+	// pop_param
+	fprintf(thread_param.fileptrconfig, "\"population_param\":{\n");
+	fprintf(thread_param.fileptrconfig, "\"pop_sampling_type\":%d,\n", thread_param.config_ga.population_param.sampling_type);
+	fprintf(thread_param.fileptrconfig, "\"pop_sigma\":%d,\n", thread_param.config_ga.population_param.sigma);
+	fprintf(thread_param.fileptrconfig, "\"pop_lower\":%f,\n", thread_param.config_ga.population_param.lower);
+	fprintf(thread_param.fileptrconfig, "\"pop_upper\":%f\n", thread_param.config_ga.population_param.upper);
+	fprintf(thread_param.fileptrconfig, "}\n");
 	fprintf(thread_param.fileptrconfig, "}\n");
 }

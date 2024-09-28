@@ -41,7 +41,7 @@ void process_task(thread_param_t* thread_param, gene_pool_t* gene_pool) {
 	printf("Thread %d, Task %d\n", thread_param->thread_id, thread_param->task_id);
 	thread_param->status = 1; // In progress
 
-	fill_pop(gene_pool);
+	fill_pop(gene_pool, thread_param->config_ga.population_param);
 
 	double previous_best_res = 0.0f;
 	double best_res = 0.0f;
@@ -136,7 +136,7 @@ void* process_thread(thread_param_t* thread_param) {
 }
 
 void start_threads(task_param_t* task_list, runtime_param_t runtime_param, config_ga_t config_ga) {
-	const parallel = 1;
+	const parallel = 0;
 
 
 	if (parallel == 0) {
@@ -156,7 +156,7 @@ void start_threads(task_param_t* task_list, runtime_param_t runtime_param, confi
 
 	}
 	else {
-		int NTHREADS = 8;
+		int NTHREADS = 12;
 		init_thread_rng(NTHREADS+1);
 		seedRandThread(NTHREADS, NULL); // Seed main thread
 
@@ -217,7 +217,7 @@ void Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 
 	init_gene_pool(&gene_pool);
 
-	fill_pop(&gene_pool);
+	fill_pop(&gene_pool, config_ga.population_param);
 
 	double previous_best_res = 0.0f;
 	double best_res = 0.0f;
@@ -245,10 +245,10 @@ int main() {
 		runtime_param.convergence_threshold = 1e-8;
 		runtime_param.convergence_window = 1000;
 		runtime_param.individuals = 32;
-		runtime_param.genes = 4;
+		runtime_param.genes = 8;
 		runtime_param.elitism = 2;
 		runtime_param.fully_qualified_basename = "C:/temp/GA\0";
-		runtime_param.task_count = 64;
+		runtime_param.task_count = 1;
 
 		flatten_param_t flatten_param;
 		flatten_param.flatten_method = 0;
@@ -267,11 +267,16 @@ int main() {
 
 		fx_param_t fx_param;
 		fx_param.fx_method = fx_method_Styblinski_Tang;
-		fx_param.lower = malloc(sizeof(double) * 3);
-		fx_param.upper = malloc(sizeof(double) * 3);
+		fx_param.fx_optim_mode = 1;
+
+		population_param_t pop_param;
+		pop_param.sampling_type = pop_normal;
+		pop_param.sigma = 1;
+		pop_param.lower = malloc(sizeof(double) * runtime_param.genes);
+		pop_param.upper = malloc(sizeof(double) * runtime_param.genes);
 		for (int i = 0; i < runtime_param.genes; i++) {
-			fx_param.lower[i] = -5.0f;
-            fx_param.upper[i] = 5.0f;
+			pop_param.lower[i] = -5.0f;
+			pop_param.upper[i] = 5.0f;
 		}
 
 		selection_param_t selection_param;
@@ -287,6 +292,7 @@ int main() {
 		config_ga.crossover_param = crossover_param;
 		config_ga.mutation_param = mutation_param;
 		config_ga.fx_param = fx_param;
+		config_ga.population_param = pop_param;
 
 
 		//strcpy_s(runtime_param.fully_qualified_basename, 255, "C:/temp/GA\0");

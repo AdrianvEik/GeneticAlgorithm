@@ -48,8 +48,14 @@ class mutate_param_s:
 class fx_param_s:
     fx_method: int = 0
     fx_optim_mode: float = 0.0
-    fx_lower: List[float] = None
-    fx_upper: List[float] = None
+
+@dataclass
+class population_param_s:
+    pop_sampling_type: int = 0
+    pop_sigma: int = 0
+    pop_lower: List[float] = None
+    pop_upper: List[float] = None
+
 
 
 class Paramset:
@@ -62,6 +68,7 @@ class Paramset:
         self.crossover_param = crossover_param_s(**conifg_dict["crossover_param"])
         self.mutate_param = mutate_param_s(**conifg_dict["mutation_param"])
         self.fx_param = fx_param_s(**conifg_dict["fx_param"])
+        self.population_param = population_param_s(**conifg_dict["population_param"])
 
 
 class Dataset:
@@ -107,7 +114,7 @@ class Dataset:
 
             
 if __name__ == "__main__":
-    ds = dataset("C:\\temp\\GApython")
+    ds = dataset("C:\\temp\\GAThread0")
     ds.read_data()
     print(ds.iterations, len(ds.iterations))
     print(ds.resultset)
