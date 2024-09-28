@@ -125,7 +125,8 @@ mt_rand_t seedRand(uint32_t seed) {
 	return rand;
 }
 
-void init_thread_rng(int thread_count) {
+void init_thread_rng(int thread_cnt) {
+	thread_count = thread_cnt;
     mt_rand_lookup = (mt_rand_t*)malloc(sizeof(mt_rand_t) * thread_count);
     mt_rand_thread_mapper = (int*)malloc(sizeof(int) * thread_count);
 }
@@ -142,7 +143,7 @@ void seedRandThread(uint32_t thread_id, uint32_t seed) {
 
 mt_rand_t *getThreadRand() {
     int thread_id = pthread_getw32threadid_np(pthread_self());
-    for (int i = 0; i < sizeof(mt_rand_thread_mapper); i++) {
+    for (int i = 0; i < thread_count; i++) {
         if (mt_rand_thread_mapper[i] == thread_id) {
             return &mt_rand_lookup[i];
         }

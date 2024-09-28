@@ -16,6 +16,7 @@ typedef struct mt_rand_s mt_rand_t;
 
 mt_rand_t* mt_rand_lookup;
 int* mt_rand_thread_mapper;
+int thread_count;
 
 int rdrand();
 void init_thread_rng(int thread_count);
