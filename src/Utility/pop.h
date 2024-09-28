@@ -2,12 +2,14 @@
 #ifndef POP_H
 #define POP_H
 #include "../Helper/Struct.h"
+#include "../Helper/rng.h"
+
 
 void init_gene_pool(gene_pool_t* gene_pool);
 void free_gene_pool(gene_pool_t* gene_pool);
 
 void fill_pop(gene_pool_t* gene_pool);
-void fill_individual(gene_pool_t* gene_pool, int individual);
+void fill_individual(gene_pool_t* gene_pool, int individual, mt_rand_t* mt_rand);
 
 // void bitpop(int bitsize, int genes, int individuals, int** result);
 // void bitpop32(int genes, int individuals, int** result);

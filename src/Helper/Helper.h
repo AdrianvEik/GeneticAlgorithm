@@ -3,6 +3,7 @@
 #ifndef _HELPER_H
 #define _HELPER_H
 
+#include "../Helper/rng.h"
 
 
 // Convesrion functions
@@ -36,7 +37,7 @@ double gaussian(double x, double mu, double sigma);
 double cauchy(double x, double mu, double sigma);
 
 // Roulette wheel selection
-void roulette_wheel(double* probabilities, int size, int ressize, int* result);
+void roulette_wheel(double* probabilities, int size, int ressize, int* result, mt_rand_t* mt_rand);
 
 // sorting functions
 void indexed_bubble_sort(double* arr, int* indices, int size);

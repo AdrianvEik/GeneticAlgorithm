@@ -6,7 +6,7 @@
 #include "time.h"
 
 #include "Helper.h"
-#include "intel_rand.h"
+#include "rng.h"
 #undef PI
 #define PI   3.14159265358979323846264338327950288419716939937510f
 
@@ -606,7 +606,7 @@ double cauchy(double x, double mu, double sigma) {
 	return result;
 }
 
-void roulette_wheel(double* probabilities, int size, int ressize, int* result) {
+void roulette_wheel(double* probabilities, int size, int ressize, int* result, mt_rand_t* mt_rand) {
 
 	/*
 	Roulette wheel selection of an index based on probabilities
@@ -641,7 +641,7 @@ void roulette_wheel(double* probabilities, int size, int ressize, int* result) {
 
 	// generate random numbers and select the indices
 	for (int i = 0; i < ressize; i++) {
-		double randnum = ((double)rdrand()) * normaliser;
+		double randnum = ((double) gen_mt_rand(mt_rand)) * normaliser;
 
 		for (int j = 0; j < size; j++) {
 			if (randnum < cumsum[j]) {

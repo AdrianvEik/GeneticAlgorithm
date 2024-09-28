@@ -4,11 +4,12 @@
 
 #include "../Helper/Helper.h"
 #include "../Helper/Struct.h"
+#include "../Helper/rng.h"
 
 #include "selection.h"
 
 // Selection functions
-void roulette_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+void roulette_selection(gene_pool_t* gene_pool, selection_param_t* selection_param, mt_rand_t* mt_rand) {
 	/*
 
 	:param pop: matrix of normalised fitness values for the population (individuals x 1)
@@ -19,7 +20,7 @@ void roulette_selection(gene_pool_t* gene_pool, selection_param_t* selection_par
 	*/
 
 	// select individuals
-	roulette_wheel(gene_pool->flatten_result_set, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes);
+	roulette_wheel(gene_pool->flatten_result_set, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes, mt_rand);
 }
 
 void rank_tournament_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
@@ -91,9 +92,9 @@ void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selection_pa
 
 
 
-void process_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+void process_selection(gene_pool_t* gene_pool, selection_param_t* selection_param, mt_rand_t* mt_rand) {
 	if (selection_param->selection_method == selection_method_roulette) {
-		roulette_selection(gene_pool, selection_param);
+		roulette_selection(gene_pool, selection_param, mt_rand);
 	}
 	else if (selection_param->selection_method == selection_method_rank_tournament) {
 		rank_tournament_selection(gene_pool, selection_param);

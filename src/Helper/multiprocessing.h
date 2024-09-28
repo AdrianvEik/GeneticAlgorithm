@@ -1,4 +1,5 @@
-#include "Struct.h"
+#include "../Helper/Struct.h"
+#include "../Helper/rng.h"
 
 #ifndef MULTIPROCESSING_H
 #define MULTIPROCESSING_H

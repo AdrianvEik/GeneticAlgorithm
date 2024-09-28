@@ -22,6 +22,7 @@
 #include "Helper/Helper.h"
 #include "Helper/Struct.h"
 #include "Helper/multiprocessing.h"
+#include "Helper/rng.h"
 
 #include "Logger/logging.h"
 
@@ -36,21 +37,11 @@ int get_task_id() {
     return task_id;
 }
 
-void process_task(thread_param_t* thread_param) {
+void process_task(thread_param_t* thread_param, gene_pool_t* gene_pool) {
 	printf("Thread %d, Task %d\n", thread_param->thread_id, thread_param->task_id);
 	thread_param->status = 1; // In progress
 
-	gene_pool_t gene_pool;
-	//printf("cfgbin2int, %f", thread_param->config_ga.fx_param.lower[0]);
-	//printf("cfgtoursize, %d", thread_param->config_ga.selection_param.selection_tournament_size);
-
-	gene_pool.genes = thread_param->runtime_param.genes;
-	gene_pool.individuals = thread_param->runtime_param.individuals;
-	gene_pool.elitism = thread_param->runtime_param.elitism;
-
-	init_gene_pool(&gene_pool);
-
-	fill_pop(&gene_pool);
+	fill_pop(gene_pool);
 
 	double previous_best_res = 0.0f;
 	double best_res = 0.0f;
@@ -67,16 +58,16 @@ void process_task(thread_param_t* thread_param) {
 	strcat_s(log_file, 255, "Thread%d\0");
 	sprintf_s(log_file, 255, log_file, thread_param->task_id);
 
-	open_file(gene_pool, thread_param, log_file);
-	write_config(gene_pool, *thread_param);
+	open_file(*gene_pool, thread_param, log_file);
+	write_config(*gene_pool, *thread_param);
 	
 	for (int i = 0; i < thread_param->runtime_param.max_iterations; i++) {
 		// Process Population
-		process_pop(&gene_pool, &thread_param->config_ga, &(thread_param->task_list[thread_param->task_id]));
+		process_pop(gene_pool, &thread_param->config_ga, &(thread_param->task_list[thread_param->task_id]));
 
-		write_param(gene_pool, *thread_param, i);
+		write_param(*gene_pool, *thread_param, i);
 
-		best_res = gene_pool.pop_result_set[gene_pool.sorted_indexes[gene_pool.individuals - 1]];
+		best_res = gene_pool->pop_result_set[gene_pool->sorted_indexes[gene_pool->individuals - 1]];
 
 		// Check for convergence & runtime params
 
@@ -106,7 +97,7 @@ void process_task(thread_param_t* thread_param) {
 	printf("Thread %d, Task %d Param: ", thread_param->thread_id, thread_param->task_id);
 
 	for (int i = 0; i < thread_param->runtime_param.genes; i++) {
-		thread_param->task_list[thread_param->task_id].paramset[i] = gene_pool.pop_param_double[gene_pool.sorted_indexes[gene_pool.individuals - 1]][i];
+		thread_param->task_list[thread_param->task_id].paramset[i] = gene_pool->pop_param_double[gene_pool->sorted_indexes[gene_pool->individuals - 1]][i];
 		printf("%f ", thread_param->task_list[thread_param->task_id].paramset[i]);
 
 	}
@@ -116,50 +107,58 @@ void process_task(thread_param_t* thread_param) {
 
 	close_file(*thread_param);
 
-	// Free pop_parameter_bin
-	free_gene_pool(&gene_pool);
-
 	thread_param->status = 2; // Completed
 }
 
 void* process_thread(thread_param_t* thread_param) {
 	int task_id = get_task_id();
+
+	seedRandThread(thread_param->thread_id, NULL);
+
+	gene_pool_t gene_pool;
+	//printf("cfgbin2int, %f", thread_param->config_ga.fx_param.lower[0]);
+	//printf("cfgtoursize, %d", thread_param->config_ga.selection_param.selection_tournament_size);
+
+	gene_pool.genes = thread_param->runtime_param.genes;
+	gene_pool.individuals = thread_param->runtime_param.individuals;
+	gene_pool.elitism = thread_param->runtime_param.elitism;
+
+	init_gene_pool(&gene_pool);
+
 	while (task_id < thread_param->runtime_param.task_count) {
 		thread_param->task_id = task_id;
-		process_task(thread_param);
+		process_task(thread_param, &gene_pool);
 		task_id = get_task_id();
 	}
+
+	free_gene_pool(&gene_pool);
 	return NULL;
 }
 
 void start_threads(task_param_t* task_list, runtime_param_t runtime_param, config_ga_t config_ga) {
 	const parallel = 1;
 
+
 	if (parallel == 0) {
+		init_thread_rng(1);
+
 		thread_param_t thread_param;
 		thread_param.task_list = task_list;
 		thread_param.runtime_param = runtime_param;
 		thread_param.config_ga = config_ga;
 
+		seedRandThread(0, NULL);
+
 		double best_result = 0.0f;
-		for (int i = 0; i < runtime_param.task_count; i++) {
-			thread_param.thread_id = 0;
-			thread_param.task_id = i;
-			process_task(&thread_param);
+		thread_param.thread_id = 0;
+		thread_param.task_id = 0;
+		process_thread(&thread_param);
 
-			if (TRUE) {
-				for (int j = 0; j <= i; j++) {
-					if (task_list[j].result > best_result) {
-						best_result = task_list[j].result;
-					}
-				}
-				printf("Best result: %f\n", best_result);
-			}
-
-		}
 	}
 	else {
 		int NTHREADS = 8;
+		init_thread_rng(NTHREADS+1);
+		seedRandThread(NTHREADS, NULL); // Seed main thread
 
 		pthread_t *thread_id;
 
@@ -201,6 +200,7 @@ void start_threads(task_param_t* task_list, runtime_param_t runtime_param, confi
 		pthread_mutex_destroy(&current_task_id_lock);
 		free(thread_param);
 		free(thread_id);
+		free_thread_rng();
 
 	}
 }

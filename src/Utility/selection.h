@@ -3,6 +3,7 @@
 #define SELECTION_H
 
 #include "../Helper/Struct.h"
+#include "../Helper/rng.h"
 
 
 // Selection functions
@@ -15,7 +16,7 @@ static const int selection_method_boltzmann = 4;
 
 // gen purpose
 
-void process_selection(gene_pool_t* gene_pool, selection_param_t* selection_param);
+void process_selection(gene_pool_t* gene_pool, selection_param_t* selection_param, mt_rand_t* mt_rand);
 
 #endif
 

@@ -48,7 +48,7 @@
     <ClCompile Include="Helper\multiprocessing.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Helper\intel_rand.c">
+    <ClCompile Include="Helper\rng.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -92,7 +92,7 @@
     <ClInclude Include="Helper\multiprocessing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Helper\intel_rand.h">
+    <ClInclude Include="Helper\rng.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
