@@ -51,55 +51,6 @@ void ndbit2int32(unsigned int** valarr, int genes, int individuals,
 	}
 }
 
-void int2ndbit32(double** valarr, int genes, int individuals,
-	double* lower, double* upper, int** result) {
-
-	/*
-	Convert an array of integers to an array of bitarrays
-
-	:param valarr: The array of integers to be converted to bitarrays (a)
-	:type valarr: array of doubles (double **)
-
-	:param bitsize: The size of the bitarrays
-	:type bitsize: int
-
-	:param genes: The number of genes in the bitarrays (n = genes * bitsize; n = a * bitsize)
-	:type genes: int
-
-	:param individuals: the number of individuals in the bitarrays (m = individuals; m = a)
-	:type individuals: int
-
-	:param result: The array of bitarrays to be filled with the converted values (m x n)
-	:type result: array of ints (int **)
-
-	:param factor: The factor of the uniform distribution.
-	:type factor: double
-
-	:param bias: The bias of the uniform distribution.
-	:type bias: double
-
-	:return: void
-	:rtype: void
-	*/
-
-	// normalise the values and apply the factor and bias and cast to integers
-	int temp;
-	int max_int;
-	max_int = pow(2, 8 * sizeof(int) - 1);
-	for (int i = 0; i < individuals; i++) {
-		for (int j = 0; j < genes; j++) {
-			temp = (int)round((valarr[i][j] - lower[j]) * max_int / (upper[j] - lower[j]));
-			if (temp < 0) {
-				result[i][j] = ~(temp - 1) | 0x80000000; // bitflip and subtract 1
-			}
-			else {
-				result[i][j] = temp;
-			}
-		}
-	}
-
-}
-
 
 void sigmoid(double* x, double* result, int size) {
 	/*
@@ -151,9 +102,7 @@ double gaussian(double x, double mu, double sigma) {
 	sigma is the standard deviation
 	*/
 
-	double result = (1 / (sigma * sqrt(2 * PI))) * exp(-pow(x - mu, 2) / (2 * pow(sigma, 2)));
-
-	return result;
+	return (1 / (sigma * sqrt(2 * PI))) * exp(-pow(x - mu, 2) / (2 * pow(sigma, 2)));
 }
 
 double cauchy(double x, double mu, double sigma) {
@@ -165,9 +114,7 @@ double cauchy(double x, double mu, double sigma) {
 	sigma is the standard deviation
 	*/
 
-	double result = (1 / PI) * (sigma / (pow(x - mu, 2) + pow(sigma, 2)));
-
-	return result;
+	return (1 / PI) * (sigma / (pow(x - mu, 2) + pow(sigma, 2)));
 }
 
 void roulette_wheel(double* probabilities, int size, int ressize, int* result, mt_rand_t* mt_rand) {

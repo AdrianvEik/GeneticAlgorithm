@@ -40,10 +40,10 @@ void open_file(gene_pool_t gene_pool, thread_param_t* thread_param, char* log_fi
 		printf("Error opening file!\n");
 		exit(1);
 	}
-	fprintf(thread_param->fileptrcsv, "iteration, individual, result, ");
+	fprintf(thread_param->fileptrcsv, "iteration;individual;result;");
 	for (int i = 0; i < gene_pool.genes; i++)
 	{
-		fprintf(thread_param->fileptrcsv, "gene%d, ", i);
+		fprintf(thread_param->fileptrcsv, "gene%d;", i);
 	}
 	fprintf(thread_param->fileptrcsv, "\n");
 
@@ -73,12 +73,12 @@ void write_param(gene_pool_t gene_pool, thread_param_t thread_param, int iterati
 		fwrite(&gene_pool.pop_result_set[gene_pool.sorted_indexes[i]], paramsetsize, 1, thread_param.fileptr);
 	
 
-		fprintf(thread_param.fileptrcsv, "%d, %d, %f, ", iteration, i, gene_pool.pop_result_set[gene_pool.sorted_indexes[i]]);
+		fprintf(thread_param.fileptrcsv, "%d;%d;%f;", iteration, i, gene_pool.pop_result_set[gene_pool.sorted_indexes[i]]);
 		for (int j = 0; j < gene_pool.genes; j++)
 		{
 			fwrite(&gene_pool.pop_param_double[gene_pool.sorted_indexes[i]][j], paramsetsize, 1, thread_param.fileptr);
 
-			fprintf(thread_param.fileptrcsv, "%f, ", gene_pool.pop_param_double[gene_pool.sorted_indexes[i]][j]);
+			fprintf(thread_param.fileptrcsv, "%f;", gene_pool.pop_param_double[gene_pool.sorted_indexes[i]][j]);
 		}
 		fprintf(thread_param.fileptrcsv, "\n");
 	}

@@ -9,8 +9,7 @@
 // Convesrion functions
 void ndbit2int32(unsigned int** valarr, int genes, int individuals,
 	double* lower, double* upper, double** result);
-void int2ndbit32(double valarr, int genes, int individuals,
-	double factor, double bias, int** result);
+
 
 
 // Mathemathical functions

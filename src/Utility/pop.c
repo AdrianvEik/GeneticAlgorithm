@@ -30,20 +30,20 @@ void bitpop32(int genes, int* result, mt_rand_t* mt_rand) {
 
 }
 
-inline uint32_t float2bin(double val, double lower, double upper) {
+inline uint32_t double2bin(double val, double lower, double upper) {
     /*
-    Convert an integer to a bitarray.
+    Convert an integer to a double. andersom!
 
-    :param val: The integer to be converted to a bitarray.
+    :param val: The integer to be converted to a double.
     :type val: int
 
-    :return: The bitarray.
+    :return: The double.
     :rtype: int
     */	
-	return ((val - lower) / (upper - lower)) * pow(2, 8 * sizeof(uint32_t));
+	return ((val - lower) / (upper - lower)) * UINT32_MAX;
 }
 
-void normal_bit_pop_boxmuller(int** result, int individuals, int genes, population_param_t pop_param, mt_rand_t* mt_rand) {
+void normal_bit_pop_boxmuller(int** result, int individuals, int genes, mt_rand_t* mt_rand) {
 	/*
 	Fill a matrix with bits according to a normal distribution.
 	using the following probability density function:
@@ -71,37 +71,30 @@ void normal_bit_pop_boxmuller(int** result, int individuals, int genes, populati
 				   shape = (individuals, genes * bitsize)
 	:type result: int**
 	*/
-
-	// make scale and loc in for loop
-	double scale;
-	double loc;
-    uint8_t extra = genes % 2;
+	double U1, U2;
 	double z1, z2;
-	float U1, U2;
-	uint32_t res1, res2;
 
-	// Apply the scale vector [s0, s1 ... sn] and [l0, l1, ... ln]
 	// Error currently seems to be located in the latter half of the genes
 	for (int i = 0; i < individuals; i++) {
-		for (int j = 0; j < (int)floorf(genes/ 2); j += 2) { // I think this causes the error
-            U1 = ((float) gen_mt_rand(mt_rand) / UINT32_MAX);
-            U2 = ((float) gen_mt_rand(mt_rand) / UINT32_MAX);
+		for (int j = 0; j < genes; j += 2) { 
+            U1 = ((double) gen_mt_rand(mt_rand) / UINT32_MAX);
+            U2 = ((double) gen_mt_rand(mt_rand) / UINT32_MAX);
 
-            scale = 1/pop_param.sigma * (pop_param.upper[i] - pop_param.lower[i])/2;
-            loc = (pop_param.upper[i] + pop_param.lower[i]) / 2;
+			// ln 0 = inf
+            if (U1 == 0) {
+                U1 = 1;
+            }
 
-			z1 = sqrtf(-2 * logf(U1)) * cosf(2 * PI * U2);
-			z2 = sqrtf(-2 * logf(U1)) * sinf(2 * PI * U2); // Maybe the sin messes up?
+			z1 = sqrt(-2 * log(U1)) * cos(2 * PI * U2);
+			z2 = sqrt(-2 * log(U1)) * sin(2 * PI * U2); 
 
-
-			res1 = float2bin((z1 * scale) + loc, pop_param.lower[i], pop_param.upper[i]);
-			res2 = float2bin((z2 * scale) + loc, pop_param.lower[i], pop_param.upper[i]);
-			result[i][j] = res1;
-			result[i][j + 1] = res2;
+            // Box muller generates normalised values between -6.7 and 6.7 (using int32 resolution)
+			result[i][j] = double2bin((z1), -6.7, 6.7);
+            if (j <= genes) { // Check if the next gene is within the bounds of the genes
+				result[i][j+1] = double2bin((z2), -6.7, 6.7);
+			}
 		}
-        if (extra) { // Add the last one
-            result[i][genes - 1] = float2bin((sqrtf(-2 * logf(gen_mt_rand(mt_rand))) * cosf(2 * PI * gen_mt_rand(mt_rand)) * scale) + loc, pop_param.lower[i], pop_param.upper[i]);
-        }
+        
 	}
 }
 
@@ -134,7 +127,7 @@ void cauchy_bit_pop(int** result, int individuals, int genes, population_param_t
 	double scale;
 	double loc;
 
-	double cauchyfloat;
+	double cauchydouble;
 	double scaledcauchy;
 
 	for (int i = 0; i < individuals; i++) {
@@ -142,10 +135,10 @@ void cauchy_bit_pop(int** result, int individuals, int genes, population_param_t
 			scale = 1 / pop_param.sigma * (pop_param.upper[i] - pop_param.lower[i]) / 2;
 			loc = (pop_param.upper[i] + pop_param.lower[i]) / 2;
 			
-			cauchyfloat = cauchy((gen_mt_rand(mt_rand) << 32) | gen_mt_rand(mt_rand), 0, 1);
-            scaledcauchy = (cauchyfloat * scale) + loc;
+			cauchydouble = cauchy((gen_mt_rand(mt_rand) << 32) | gen_mt_rand(mt_rand), 0, 1);
+            scaledcauchy = (cauchydouble * scale) + loc;
 			
-			result[i][j] = float2bin(scaledcauchy, pop_param.lower[i], pop_param.upper[i]);
+			result[i][j] = double2bin(scaledcauchy, pop_param.lower[i], pop_param.upper[i]);
 		}
 	}
 }
@@ -203,7 +196,7 @@ void fill_pop(gene_pool_t* gene_pool, population_param_t pop_param) {
 			fill_individual(gene_pool, i, mt_rand);
 		}
 	else if (pop_param.sampling_type == pop_normal) {
-		normal_bit_pop_boxmuller(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes, pop_param, mt_rand);
+		normal_bit_pop_boxmuller(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes, mt_rand);
 	}
 	else if (pop_param.sampling_type == pop_cauchy) {
 		cauchy_bit_pop(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes, pop_param, mt_rand);
