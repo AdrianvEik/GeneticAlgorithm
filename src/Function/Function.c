@@ -70,6 +70,16 @@ void process_fx(gene_pool_t* gene_pool, fx_param_t* fx_param, double* lower, dou
 			gene_pool->pop_result_set[i] = fx_param->fx_optim_mode * wheelers_ridge_fx(gene_pool->pop_param_double[i], gene_pool->genes);
 		}
 	}
+    else if (fx_param->fx_method == fx_method_pointer) {
+        if (fx_param->fx_function != NULL) {
+            for (int i = 0; i < gene_pool->individuals; i++) {
+                gene_pool->pop_result_set[i] = fx_param->fx_optim_mode * fx_param->fx_function(gene_pool->pop_param_double[i], gene_pool->genes);
+            }
+        }
+        else {
+            printf("Error: Function pointer is NULL\n");
+        }
+    }
 	else {
 		printf("Error: Unknown fitness function\n");
 	}

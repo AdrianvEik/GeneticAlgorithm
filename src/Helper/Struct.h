@@ -49,9 +49,11 @@ struct mutation_param_s {
 	int mutation_rate; // DEFAULT = 6
 };
 
+typedef double (*fx_ptr)(double*, int);
 struct fx_param_s {
 	int fx_method; // DEFAULT = 0
 	int fx_optim_mode; // DEFAULT = 0
+    fx_ptr fx_function; // DEFAULT = NULL
 };
 
 struct config_ga_s {
@@ -72,6 +74,7 @@ struct runtime_param_s {
 	int individuals; // DEFAULT = 32
 	int elitism; // DEFAULT = 2
 	int task_count; // DEFAULT = 32
+	int thread_count; // DEFAULT = 4
 };	
 
 typedef struct gene_pool_s gene_pool_t;
