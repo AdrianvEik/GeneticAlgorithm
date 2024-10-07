@@ -69,10 +69,18 @@ void process_task(thread_param_t* thread_param, gene_pool_t* gene_pool) {
 	strcat_s(log_file, 255, "Thread%d\0");
 	sprintf_s(log_file, 255, log_file, thread_param->task_id);
 
+
 	open_file(*gene_pool, thread_param, log_file);
-	write_config(*gene_pool, *thread_param);
-	
+	//write_config(*gene_pool, *thread_param);
+
+	// Print lower and upper bound
+    for (int i = 0; i < thread_param->runtime_param.genes; i++) {
+        printf("Lower bound %d: %f\n", i, thread_param->task_list[thread_param->task_id].lower[i]);
+        printf("Upper bound %d: %f\n", i, thread_param->task_list[thread_param->task_id].upper[i]);
+    }
+
 	for (int i = 0; i < thread_param->runtime_param.max_iterations; i++) {
+		
 		// Process Population
 		process_pop(gene_pool, &thread_param->config_ga, &(thread_param->task_list[thread_param->task_id]));
 
@@ -149,7 +157,7 @@ void* process_thread(thread_param_t* thread_param) {
 }
 
 void start_threads(task_param_t* task_list, runtime_param_t runtime_param, config_ga_t config_ga) {
-	const parallel = 1;
+	const parallel = 0;
 
 
 	if (parallel == 0) {
@@ -286,7 +294,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
     return config_ga;
 }
 
-void Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
+double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 
 	double previous_best_res = 0.0f;
 	double best_res = 0.0f;
@@ -302,25 +310,25 @@ void Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 	free_task_list(task_list, runtime_param);
 }
 
-//int main() {
-//	int repeats = 1;
-//	for (int i = 0; i < repeats; i++) {
-//		printf("\n Run number: %d\n", i);
-//        runtime_param_t runtime_param = default_runtime_param();
-//        config_ga_t config_ga = default_config(runtime_param);
-//
-//
-//		//strcpy_s(runtime_param.fully_qualified_basename, 255, "C:/temp/GA\0");
-//		//printf("%s\n", runtime_param.fully_qualified_basename);
-//		//printf("%d\n", strlen(runtime_param.fully_qualified_basename));
-//		//Genetic_Algorithm(config_ga, runtime_param);
-//
-//
-//		task_param_t* task_list = make_task_list(&runtime_param, config_ga);
-//
-//		start_threads(task_list, runtime_param, config_ga);
-//
-//		free_task_list(task_list, runtime_param);
-//	}
-//	return 0;
-//}
+int main() {
+	int repeats = 1;
+	for (int i = 0; i < repeats; i++) {
+		printf("\n Run number: %d\n", i);
+        runtime_param_t runtime_param = default_runtime_param();
+        config_ga_t config_ga = default_config(runtime_param);
+
+
+		//strcpy_s(runtime_param.fully_qualified_basename, 255, "C:/temp/GA\0");
+		//printf("%s\n", runtime_param.fully_qualified_basename);
+		//printf("%d\n", strlen(runtime_param.fully_qualified_basename));
+		//Genetic_Algorithm(config_ga, runtime_param);
+
+
+		task_param_t* task_list = make_task_list(&runtime_param, config_ga);
+
+		start_threads(task_list, runtime_param, config_ga);
+
+		free_task_list(task_list, runtime_param);
+	}
+	return 0;
+}

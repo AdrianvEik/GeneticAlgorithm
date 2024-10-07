@@ -15,7 +15,7 @@ class GeneticAlgorithm:
                                         task_count=16
                                         )
         
-        dll = ctypes.CDLL(r"C:\Users\vanei\source\repos\Genetic Algorithm - C Branch\src\x64\DLL Build\Genetic Algrotihm.dll")
+        dll = ctypes.CDLL(r"D:\School\Libraries\GeneticAlgorithm\src\x64\DLL Build\Genetic Algrotihm.dll")
         self.geneticalgorithm = dll.Genetic_Algorithm
         self.geneticalgorithm.argtypes = [zz_config_ga_s__, zz_runtime_param_s__] 
         
@@ -30,7 +30,7 @@ class GeneticAlgorithm:
                                         fx_optim_mode=0)
 
         self.cfg.pop_param = pop_param_s(sampling_type = 0,
-                                         sigma = 1
+                                         sigma = 1,
                                          lower=[0, 0],
                                          upper=[0, 0])
         

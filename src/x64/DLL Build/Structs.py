@@ -72,7 +72,8 @@ class zz_runtime_param_s__(ctypes.Structure):
         ("genes", ctypes.c_int),
         ("individuals", ctypes.c_int),
         ("elitism", ctypes.c_int),
-        ("task_count", ctypes.c_int)
+        ("task_count", ctypes.c_int),
+        ("thread_count", ctypes.c_int)
     ]
 
 
@@ -252,6 +253,7 @@ class runtime_param_s:
     individuals = 0
     elitism = 0
     task_count = 0
+    thread_count = 0
     def __init__(
             self,
             fully_qualified_basename: str = "",
@@ -261,7 +263,8 @@ class runtime_param_s:
             genes: int = 0,
             individuals: int = 0,
             elitism: int = 0,
-            task_count: int = 0
+            task_count: int = 0,
+            thread_count: int = 0
         ):
         self.fully_qualified_basename = fully_qualified_basename
         self.max_iterations = max_iterations
@@ -271,6 +274,7 @@ class runtime_param_s:
         self.individuals = individuals
         self.elitism = elitism
         self.task_count = task_count
+        self.thread_count = thread_count
     def cType(self):
         return zz_runtime_param_s__(
             ctypes.c_char_p(self.fully_qualified_basename),
@@ -280,6 +284,7 @@ class runtime_param_s:
             ctypes.c_int(self.genes),
             ctypes.c_int(self.individuals),
             ctypes.c_int(self.elitism),
-            ctypes.c_int(self.task_count)
+            ctypes.c_int(self.task_count),
+            ctypes.c_int(self.thread_count)
         )
 

@@ -41,6 +41,7 @@ void single_point_crossover32(int* parent1, int* parent2, int* child1, int* chil
 
 }
 
+// Actually PMX crossover
 void two_point_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes, mt_rand_t* mt_rand) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// point1 and point2 are the points to cross over at
