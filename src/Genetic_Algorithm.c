@@ -26,31 +26,10 @@
 
 #include "Logger/logging.h"
 
-pthread_mutex_t current_task_id_lock = PTHREAD_MUTEX_INITIALIZER;
-int current_task_id = 0;
 
-int get_task_id() {
-	pthread_mutex_lock(&current_task_id_lock);
-    int task_id = current_task_id;
-    current_task_id++;
-    pthread_mutex_unlock(&current_task_id_lock);
-    return task_id;
-}
 
-pthread_mutex_t current_thread_id_lock = PTHREAD_MUTEX_INITIALIZER;
-int current_thread_id = 0;
-
-int get_thread_id() {
-	pthread_mutex_lock(&current_thread_id_lock);
-	int thread_id = current_thread_id;
-	current_thread_id++;
-	pthread_mutex_unlock(&current_thread_id_lock);
-	return thread_id;
-}
-
-void process_task(thread_param_t* thread_param, gene_pool_t* gene_pool) {
-	printf("Thread %d, Task %d\n", thread_param->thread_id, thread_param->task_id);
-	thread_param->status = 1; // In progress
+void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t* gene_pool) {
+	//printf("Thread %d, Task %d\n", thread_param->thread_id, thread_param->task_id);
 
 	fill_pop(gene_pool, thread_param->config_ga.population_param);
 
@@ -58,33 +37,26 @@ void process_task(thread_param_t* thread_param, gene_pool_t* gene_pool) {
 	double best_res = 0.0f;
 	int convergence_counter = 0;
 
-	char* log_file;
-	log_file = (char*)malloc(sizeof(char) * 255);
+	// todo: move to login thread
+	//char* log_file;
+	//log_file = (char*)malloc(sizeof(char) * 255);
 
-	if (thread_param->runtime_param.fully_qualified_basename == NULL) {
-		thread_param->runtime_param.fully_qualified_basename = "C:/temp/GA\0";
-	}
+	//if (thread_param->runtime_param.fully_qualified_basename == NULL) {
+	//	thread_param->runtime_param.fully_qualified_basename = "C:/temp/GA\0";
+	//}
 
-	strcpy_s(log_file, 255, thread_param->runtime_param.fully_qualified_basename);
-	strcat_s(log_file, 255, "Thread%d\0");
-	sprintf_s(log_file, 255, log_file, thread_param->task_id);
+	//strcpy_s(log_file, 255, thread_param->runtime_param.fully_qualified_basename);
+	//strcat_s(log_file, 255, "Thread%d\0");
+	//sprintf_s(log_file, 255, log_file, thread_param->task_id);
 
 
-	open_file(*gene_pool, thread_param, log_file);
+	//open_file(*gene_pool, thread_param, log_file);
 	//write_config(*gene_pool, *thread_param);
-
-	// Print lower and upper bound
-    for (int i = 0; i < thread_param->runtime_param.genes; i++) {
-        printf("Lower bound %d: %f\n", i, thread_param->task_list[thread_param->task_id].lower[i]);
-        printf("Upper bound %d: %f\n", i, thread_param->task_list[thread_param->task_id].upper[i]);
-    }
 
 	for (int i = 0; i < thread_param->runtime_param.max_iterations; i++) {
 		
 		// Process Population
-		process_pop(gene_pool, &thread_param->config_ga, &(thread_param->task_list[thread_param->task_id]));
-
-		write_param(*gene_pool, *thread_param, i);
+		process_pop(gene_pool, &thread_param->config_ga, task);
 
 		best_res = gene_pool->pop_result_set[gene_pool->sorted_indexes[gene_pool->individuals - 1]];
 
@@ -112,27 +84,78 @@ void process_task(thread_param_t* thread_param, gene_pool_t* gene_pool) {
 		previous_best_res = best_res;
 	}
 
-	thread_param->task_list[thread_param->task_id].result = best_res;
-	printf("Thread %d, Task %d Param: ", thread_param->thread_id, thread_param->task_id);
+	//thread_param->task_list[thread_param->task_id].result = best_res;
+	//printf("Thread %d, Task %d Param: ", thread_param->thread_id, thread_param->task_id);
 
-	for (int i = 0; i < thread_param->runtime_param.genes; i++) {
-		thread_param->task_list[thread_param->task_id].paramset[i] = gene_pool->pop_param_double[gene_pool->sorted_indexes[gene_pool->individuals - 1]][i];
-		printf("%f ", thread_param->task_list[thread_param->task_id].paramset[i]);
+	//for (int i = 0; i < thread_param->runtime_param.genes; i++) {
+	//	thread_param->task_list[thread_param->task_id].paramset[i] = gene_pool->pop_param_double[gene_pool->sorted_indexes[gene_pool->individuals - 1]][i];
+	//	printf("%f ", thread_param->task_list[thread_param->task_id].paramset[i]);
 
-	}
-	printf("Result %f\n", thread_param->task_list[thread_param->task_id].result);
+	//}
+	//printf("Result %f\n", );
 
 	//TODO: sort results, return best result
 
-	close_file(*thread_param);
+	//close_file(*thread_param);
+
+	task_result_t task_result;
+
+    task_result.task_id = task->task_id;
+    task_result.result = best_res;
+    task_result.paramset = malloc(sizeof(double) * thread_param->runtime_param.genes);
+	task_result.lower = malloc(sizeof(double) * thread_param->runtime_param.genes);
+	task_result.upper = malloc(sizeof(double) * thread_param->runtime_param.genes);
+	if (task_result.lower == NULL || task_result.upper == NULL || task_result.paramset == NULL) {
+		printf("Memory allocation failed");
+		exit(255);
+	}
+
+    for (int i = 0; i < thread_param->runtime_param.genes; i++) {
+        task_result.paramset[i] = gene_pool->pop_param_double[gene_pool->sorted_indexes[gene_pool->individuals - 1]][i];
+		task_result.lower[i] = task->lower[i];
+		task_result.upper[i] = task->upper[i];
+	}
+    task_queue_t* task_queue = thread_param->task_queue;
+    task_result_queue_t* task_result_queue = task_queue->task_result_queue;
+	add_result(task_result_queue, &task_result);
 
 	thread_param->status = 2; // Completed
 }
 
-void* process_thread(thread_param_t* thread_param) {
-	int task_id = get_task_id();
 
-	seedRandThread(thread_param->thread_id, NULL);
+void* process_log_thread(task_result_queue_t* task_result_queue) {
+	task_result_t task_result;
+
+	char* log_file;
+	log_file = (char*)malloc(sizeof(char) * 255);
+
+	if (task_result_queue->runtime_param.fully_qualified_basename == NULL) {
+		strcpy_s(log_file, 255, "C:/temp/GA\0");
+
+	}
+	else {
+		strcpy_s(log_file, 255, task_result_queue->runtime_param.fully_qualified_basename);
+	}
+
+	//strcat_s(log_file, 255, "Thread%d\0");
+	//sprintf_s(log_file, 255, log_file, thread_param->task_id);
+
+
+	open_file(task_result_queue);
+
+    while (1) {
+        get_result(task_result_queue, &task_result);
+        if (task_result.task_type == 1) {
+            break;
+        }
+        write_param(*task_result_queue, task_result);
+        free_task_result(&task_result);
+    }
+
+}
+
+void* process_task_thread(thread_param_t* thread_param) {
+	seedRandThread(NULL); // todo fix thread local storage
 
 	gene_pool_t gene_pool;
 	//printf("cfgbin2int, %f", thread_param->config_ga.fx_param.lower[0]);
@@ -145,10 +168,13 @@ void* process_thread(thread_param_t* thread_param) {
 	init_gene_pool(&gene_pool);
     init_pre_compute(&gene_pool, &thread_param->config_ga.selection_param);
 
-	while (task_id < thread_param->runtime_param.task_count) {
-		thread_param->task_id = task_id;
-		process_task(thread_param, &gene_pool);
-		task_id = get_task_id();
+	task_param_t task;
+	while (1) {
+		get_task(thread_param->task_queue, &task);
+        if (task.task_type == 1) {
+            break;
+        }
+		process_task(thread_param, &task, &gene_pool);
 	}
 
 	free_pre_compute();
@@ -156,55 +182,58 @@ void* process_thread(thread_param_t* thread_param) {
 	return NULL;
 }
 
-void start_threads(task_param_t* task_list, runtime_param_t runtime_param, config_ga_t config_ga) {
-	const parallel = 0;
+void start_threads(task_queue_t* task_queue, runtime_param_t runtime_param, config_ga_t config_ga, thread_param_t* thread_param) {
+	const parallel = 1;
 
 
 	if (parallel == 0) {
-		init_thread_rng(1);
+		//init_thread_rng(1);
 
-		thread_param_t thread_param;
-		thread_param.task_list = task_list;
-		thread_param.runtime_param = runtime_param;
-		thread_param.config_ga = config_ga;
+		//thread_param_t thread_param;
+		//thread_param.task_queue = task_queue;
+		//thread_param.runtime_param = runtime_param;
+		//thread_param.config_ga = config_ga;
 
-		seedRandThread(0, NULL);
+		//seedRandThread(0, NULL);
 
-		double best_result = 0.0f;
-		thread_param.thread_id = 0;
-		thread_param.task_id = 0;
-		process_thread(&thread_param);
+		//double best_result = 0.0f;
+		//process_thread(&thread_param);
 
 	}
 	else {
 		int NTHREADS = runtime_param.thread_count;
-		init_thread_rng(NTHREADS+1);
-		seedRandThread(NTHREADS, NULL); // Seed main thread
-
-		pthread_t *thread_id;
-
-		thread_id = (pthread_t *) malloc(sizeof(pthread_t) * NTHREADS);
 
 		int i, j;
-		thread_param_t *thread_param;
 
 		thread_param = (thread_param_t *) malloc(sizeof(thread_param_t) * NTHREADS);
 
 		if (thread_param == NULL) {
-            printf("Memory allocation failed");
+            printf("Memory allocation failed: start_threads");
             exit(255);
+        }
+
+		int retid = 0;
+		retid = pthread_create(&(task_queue->task_result_queue->thread_id), NULL, (void*)process_log_thread, (void*)task_queue->task_result_queue);
+
+        if (retid) {
+            printf("Error creating thread\n");
+            exit(1);
         }
 
 		for (i = 0; i < NTHREADS; i++)
 		{
-			int retid = 0;
-			thread_param[i].task_list = task_list;
+            thread_param[i].task_queue = malloc(sizeof(task_queue_t));
+            if (thread_param[i].task_queue == NULL) {
+                printf("Memory allocation failed: start_threads");
+                exit(255);
+            }
+
+			thread_param[i].task_queue = task_queue;
 			thread_param[i].runtime_param = runtime_param;
 			thread_param[i].config_ga = config_ga;
-
-			thread_param[i].thread_id = get_thread_id();
+			
 			//thread_param[i].task_id = i;
-			retid = pthread_create(&thread_id[i], NULL, (void *) process_thread, (void *) & thread_param[i]);
+			retid = pthread_create(&(task_queue->thread_id[i]), NULL, (void *) process_task_thread, (void *) & thread_param[i]);
 
 			if(retid)
             {
@@ -212,17 +241,6 @@ void start_threads(task_param_t* task_list, runtime_param_t runtime_param, confi
                 exit(1);
             }
 		}
-
-		for (j = 0; j < NTHREADS; j++)
-		{
-			pthread_join(thread_id[j], NULL);
-		}
-
-		pthread_mutex_destroy(&current_task_id_lock);
-		free(thread_param);
-		free(thread_id);
-		free_thread_rng();
-
 	}
 }
 
@@ -238,7 +256,7 @@ runtime_param_t default_runtime_param() {
     runtime_param.elitism = 2;
     runtime_param.fully_qualified_basename = "C:/temp/GA\0";
     runtime_param.task_count = 12;
-	runtime_param.thread_count = 12;
+	runtime_param.thread_count = 16;
 
     return runtime_param;
 }
@@ -299,36 +317,47 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 	double previous_best_res = 0.0f;
 	double best_res = 0.0f;
 	int convergence_counter = 0;
+	task_result_queue_t task_result_queue;
+	init_task_result_queue(&task_result_queue, runtime_param, runtime_param.thread_count * 4);
+	task_queue_t task_queue;
+	init_task_queue(&task_queue, runtime_param.thread_count * 4, &task_result_queue, runtime_param.thread_count);
+	thread_param_t* thread_param;
+
+	start_threads(&task_queue, runtime_param, config_ga, &thread_param);
 
 	// print max iter
 	printf("Max Iterations: %d\n", runtime_param.max_iterations);
 
-	task_param_t* task_list = make_task_list(&runtime_param, config_ga);
+	make_task_list(&runtime_param, config_ga, &task_queue);
+	
+	stop_threads(&task_queue, runtime_param.thread_count);
+    stop_result_logger(&task_result_queue, runtime_param.thread_count); // todo add thread_join
+	close_file(&task_result_queue);
+	//free(thread_param); // todo: why?
+	free_task_queue(&task_queue);
+}
 
-	start_threads(task_list, runtime_param, config_ga);
-
-	free_task_list(task_list, runtime_param);
+void free_config_ga(config_ga_t* config_ga) {
+    free(config_ga->population_param.lower);
+    free(config_ga->population_param.upper);
 }
 
 int main() {
 	int repeats = 1;
+	runtime_param_t runtime_param = default_runtime_param();
+	config_ga_t config_ga = default_config(runtime_param);
+
 	for (int i = 0; i < repeats; i++) {
 		printf("\n Run number: %d\n", i);
-        runtime_param_t runtime_param = default_runtime_param();
-        config_ga_t config_ga = default_config(runtime_param);
-
 
 		//strcpy_s(runtime_param.fully_qualified_basename, 255, "C:/temp/GA\0");
 		//printf("%s\n", runtime_param.fully_qualified_basename);
 		//printf("%d\n", strlen(runtime_param.fully_qualified_basename));
 		//Genetic_Algorithm(config_ga, runtime_param);
 
-
-		task_param_t* task_list = make_task_list(&runtime_param, config_ga);
-
-		start_threads(task_list, runtime_param, config_ga);
-
-		free_task_list(task_list, runtime_param);
+        Genetic_Algorithm(config_ga, runtime_param);
 	}
+    free_config_ga(&config_ga);
+
 	return 0;
 }

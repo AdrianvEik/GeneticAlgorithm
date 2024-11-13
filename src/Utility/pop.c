@@ -9,7 +9,7 @@
 #include "../Helper/Struct.h"
 #include "../Helper/rng.h"
 
-void bitpop32(int genes, int* result, mt_rand_t* mt_rand) {
+void bitpop32(int genes, int* result) {
 
 	/*
 	Fill a vector with uniformly distributed random bits.
@@ -25,7 +25,7 @@ void bitpop32(int genes, int* result, mt_rand_t* mt_rand) {
 	*/
 
 	for (int j = 0; j < genes; j++) {
-		result[j] = gen_mt_rand(mt_rand);
+		result[j] = gen_mt_rand();
 	}
 
 }
@@ -43,7 +43,7 @@ inline uint32_t double2bin(double val, double lower, double upper) {
 	return ((val - lower) / (upper - lower)) * UINT32_MAX;
 }
 
-void normal_bit_pop_boxmuller(int** result, int individuals, int genes, mt_rand_t* mt_rand) {
+void normal_bit_pop_boxmuller(int** result, int individuals, int genes) {
 	/*
 	Fill a matrix with bits according to a normal distribution.
 	using the following probability density function:
@@ -77,8 +77,8 @@ void normal_bit_pop_boxmuller(int** result, int individuals, int genes, mt_rand_
 	// Error currently seems to be located in the latter half of the genes
 	for (int i = 0; i < individuals; i++) {
 		for (int j = 0; j < genes; j += 2) { 
-            U1 = ((double) gen_mt_rand(mt_rand) / UINT32_MAX);
-            U2 = ((double) gen_mt_rand(mt_rand) / UINT32_MAX);
+            U1 = ((double) gen_mt_rand() / UINT32_MAX);
+            U2 = ((double) gen_mt_rand() / UINT32_MAX);
 
 			// ln 0 = inf
             if (U1 == 0) {
@@ -98,7 +98,7 @@ void normal_bit_pop_boxmuller(int** result, int individuals, int genes, mt_rand_
 	}
 }
 
-void cauchy_bit_pop(int** result, int individuals, int genes, population_param_t pop_param, mt_rand_t* mt_rand) {
+void cauchy_bit_pop(int** result, int individuals, int genes, population_param_t pop_param) {
 	/*
 
 	Produce a normal distributed set of values using the Cauchy distribution:
@@ -135,14 +135,13 @@ void cauchy_bit_pop(int** result, int individuals, int genes, population_param_t
 			scale = 1 / pop_param.sigma * (pop_param.upper[i] - pop_param.lower[i]) / 2;
 			loc = (pop_param.upper[i] + pop_param.lower[i]) / 2;
 			
-			cauchydouble = cauchy((gen_mt_rand(mt_rand) << 32) | gen_mt_rand(mt_rand), 0, 1);
+			cauchydouble = cauchy((gen_mt_rand() << 32) | gen_mt_rand(), 0, 1);
             scaledcauchy = (cauchydouble * scale) + loc;
 			
 			result[i][j] = double2bin(scaledcauchy, pop_param.lower[i], pop_param.upper[i]);
 		}
 	}
 }
-
 
 void init_gene_pool(gene_pool_t* gene_pool) {
 	//gene_pool_t {
@@ -154,21 +153,26 @@ void init_gene_pool(gene_pool_t* gene_pool) {
 	// int individuals;
 	// int elitism;
 
+	if ((gene_pool->flatten_result_set = malloc(gene_pool->individuals * sizeof(double))) == NULL ||
+		(gene_pool->pop_param_bin = (int**)malloc(gene_pool->individuals * sizeof(int*))) == NULL ||
+		(gene_pool->pop_param_bin_cross_buffer = (int**)malloc(gene_pool->individuals * sizeof(int*))) == NULL ||
+		(gene_pool->pop_param_double = malloc(gene_pool->individuals * sizeof(double*))) == NULL ||
+		(gene_pool->pop_result_set = malloc(gene_pool->individuals * sizeof(double))) == NULL ||
+		(gene_pool->selected_indexes = malloc(gene_pool->individuals * sizeof(int))) == NULL ||
+		(gene_pool->sorted_indexes = malloc(gene_pool->individuals * sizeof(int))) == NULL) {
+		fprintf(stderr, "Memory allocation failed: init_gene_pool\n");
+		exit(EXIT_FAILURE);
+	}
 
-	gene_pool->flatten_result_set = malloc(gene_pool->individuals * sizeof(double));
-	gene_pool->pop_param_bin = (int**)malloc(gene_pool->individuals * sizeof(int*));
-	gene_pool->pop_param_bin_cross_buffer = (int**)malloc(gene_pool->individuals * sizeof(int*));
-	gene_pool->pop_param_double = malloc(gene_pool->individuals * sizeof(double*));
-	gene_pool->pop_result_set = malloc(gene_pool->individuals * sizeof(double));
-	gene_pool->selected_indexes = malloc(gene_pool->individuals * sizeof(int));
-	gene_pool->sorted_indexes = malloc(gene_pool->individuals * sizeof(int));
 	for (int i = 0; i < gene_pool->individuals; i++) {
-		gene_pool->pop_param_bin[i] = (int*)malloc(gene_pool->genes * sizeof(int));
-		gene_pool->pop_param_bin_cross_buffer[i] = (int*)malloc(gene_pool->genes * sizeof(int));
-		gene_pool->pop_param_double[i] = (double*)malloc(gene_pool->genes * sizeof(double));
+		if ((gene_pool->pop_param_bin[i] = (int*)malloc(gene_pool->genes * sizeof(int))) == NULL ||
+			(gene_pool->pop_param_bin_cross_buffer[i] = (int*)malloc(gene_pool->genes * sizeof(int))) == NULL ||
+			(gene_pool->pop_param_double[i] = (double*)malloc(gene_pool->genes * sizeof(double))) == NULL) {
+			fprintf(stderr, "Memory allocation failed: init_gene_pool individual %d\n", i);
+			exit(EXIT_FAILURE);
+		}
 	}
 }
-
 void free_gene_pool(gene_pool_t* gene_pool) {
 	for (int i = 0; i < gene_pool->individuals; i++) {
 		free(gene_pool->pop_param_bin[i]);
@@ -184,21 +188,19 @@ void free_gene_pool(gene_pool_t* gene_pool) {
 	free(gene_pool->sorted_indexes);
 }
 
-void fill_individual(gene_pool_t* gene_pool, int individual, mt_rand_t* mt_rand) {
-	bitpop32(gene_pool->genes, gene_pool->pop_param_bin[individual], mt_rand);
+void fill_individual(gene_pool_t* gene_pool, int individual) {
+	bitpop32(gene_pool->genes, gene_pool->pop_param_bin[individual]);
 }
 
 void fill_pop(gene_pool_t* gene_pool, population_param_t pop_param) {
-	mt_rand_t *mt_rand = getThreadRand();
-
 	if (pop_param.sampling_type == pop_uniform)
 		for (int i = 0; i < gene_pool->individuals; i++) {
-			fill_individual(gene_pool, i, mt_rand);
+			fill_individual(gene_pool, i);
 		}
 	else if (pop_param.sampling_type == pop_normal) {
-		normal_bit_pop_boxmuller(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes, mt_rand);
+		normal_bit_pop_boxmuller(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes);
 	}
 	else if (pop_param.sampling_type == pop_cauchy) {
-		cauchy_bit_pop(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes, pop_param, mt_rand);
+		cauchy_bit_pop(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes, pop_param);
 	}
 }

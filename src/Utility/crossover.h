@@ -10,6 +10,6 @@ static const int crossover_method_two_point32 = 1;
 static const int crossover_method_uniform32 = 2;
 static const int crossover_method_complete32 = 3;
 
-void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_param, mt_rand_t* mt_rand);
+void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_param);
 
 #endif

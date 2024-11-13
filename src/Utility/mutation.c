@@ -8,7 +8,7 @@
 
 #include "mutation.h"
 
-void mutate32(gene_pool_t* gene_pool, mutation_param_t* mutation_param, mt_rand_t* mt_rand) {
+void mutate32(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {
 
 	/*
 
@@ -42,8 +42,8 @@ void mutate32(gene_pool_t* gene_pool, mutation_param_t* mutation_param, mt_rand_
 	for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
 		for (int j = 0; j < mutation_param->mutation_rate; j++) { // check if works
 			// ensure that the selected gene is positive
-			mutation_gene = gen_mt_rand(mt_rand) % gene_pool->genes;
-			mutation_bit = (int)1 << (gen_mt_rand(mt_rand) % sizeof(int) * 8);
+			mutation_gene = gen_mt_rand() % gene_pool->genes;
+			mutation_bit = (int)1 << (gen_mt_rand() % sizeof(int) * 8);
 			gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]][mutation_gene] ^= mutation_bit;
 		}
 

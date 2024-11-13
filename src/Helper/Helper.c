@@ -117,7 +117,7 @@ double cauchy(double x, double mu, double sigma) {
 	return (1 / PI) * (sigma / (pow(x - mu, 2) + pow(sigma, 2)));
 }
 
-void roulette_wheel(double* probabilities, int size, int ressize, int* result, mt_rand_t* mt_rand) {
+void roulette_wheel(double* probabilities, int size, int ressize, int* result) {
 
 	/*
 	Roulette wheel selection of an index based on probabilities
@@ -152,7 +152,7 @@ void roulette_wheel(double* probabilities, int size, int ressize, int* result, m
 
 	// generate random numbers and select the indices
 	for (int i = 0; i < ressize; i++) {
-		double randnum = ((double) gen_mt_rand(mt_rand)) * normaliser;
+		double randnum = ((double) gen_mt_rand()) * normaliser;
 
 		for (int j = 0; j < size; j++) {
 			if (randnum < cumsum[j]) {

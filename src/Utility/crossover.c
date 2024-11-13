@@ -10,12 +10,12 @@
 
 // Path: Utility/crossover.c
 
-void single_point_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes, mt_rand_t* mt_rand) {
+void single_point_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// The function should fill child1 and child2 with the crossed over values
 
 	// find a random point to cross over
-	int point = gen_mt_rand(mt_rand) % (genes * sizeof(int) * 8 - 1);
+	int point = gen_mt_rand() % (genes * sizeof(int) * 8 - 1);
 
 	// int mask = pow(2, point) - 1;
 
@@ -42,15 +42,15 @@ void single_point_crossover32(int* parent1, int* parent2, int* child1, int* chil
 }
 
 // Actually PMX crossover
-void two_point_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes, mt_rand_t* mt_rand) {
+void two_point_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// point1 and point2 are the points to cross over at
 	// The function should fill child1 and child2 with the crossed over values
 
 	// find two random points to cross over
 
-	int point1 = gen_mt_rand(mt_rand) % genes * sizeof(int) * 8 - 3;
-	int point2 = gen_mt_rand(mt_rand) % (genes * sizeof(int) * 8 - 2 - point1) + point1 + 1;
+	int point1 = gen_mt_rand() % genes * sizeof(int) * 8 - 3;
+	int point2 = gen_mt_rand() % (genes * sizeof(int) * 8 - 2 - point1) + point1 + 1;
 
 	// make sure point1 is less than point2 and less than size
 
@@ -82,7 +82,7 @@ void two_point_crossover32(int* parent1, int* parent2, int* child1, int* child2,
 	}
 }
 
-void uniform_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes, mt_rand_t* mt_rand) {
+void uniform_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// prob is the probability of a value being copied from the first parent
 	// The function should fill child1 and child2 with the crossed over values
@@ -93,21 +93,21 @@ void uniform_crossover32(int* parent1, int* parent2, int* child1, int* child2, i
 
 	for (int i = 0; i < genes; i++) {
 
-		mask = gen_mt_rand(mt_rand);
+		mask = gen_mt_rand();
 
 		child1[i] = (parent1[i] & ~mask) | (parent2[i] & mask);
 		child2[i] = (parent1[i] & mask) | (parent2[i] & ~mask);
 	}
 }
 
-void complete_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes, mt_rand_t* mt_rand) {
+void complete_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// The function should fill child1 and child2 with the crossed over values
 
 	// int mask = pow(2, point) - 1;
 
 	for (int i = 0; i < genes; i++) {
-		if (gen_mt_rand(mt_rand) % 2 == 0) {
+		if (gen_mt_rand() % 2 == 0) {
 			child1[i] = parent1[i];
 			child2[i] = parent2[i];
 		}
@@ -118,19 +118,19 @@ void complete_crossover32(int* parent1, int* parent2, int* child1, int* child2, 
 	}
 }
 
-void crossover(int* parent1, int* parent2, int* child1, int* child2, int genes, crossover_param_t* crossover_param, mt_rand_t *mt_rand) {
+void crossover(int* parent1, int* parent2, int* child1, int* child2, int genes, crossover_param_t* crossover_param) {
 
 	if (crossover_param->crossover_method == crossover_method_single_point32) {
-		single_point_crossover32(parent1, parent2, child1, child2, genes, mt_rand);
+		single_point_crossover32(parent1, parent2, child1, child2, genes);
 	}
 	else if (crossover_param->crossover_method == crossover_method_two_point32) {
-		two_point_crossover32(parent1, parent2, child1, child2, genes, mt_rand);
+		two_point_crossover32(parent1, parent2, child1, child2, genes);
 	}
 	else if (crossover_param->crossover_method == crossover_method_uniform32) {
-		uniform_crossover32(parent1, parent2, child1, child2, genes, mt_rand);
+		uniform_crossover32(parent1, parent2, child1, child2, genes);
 	}
 	else if (crossover_param->crossover_method == crossover_method_complete32) {
-		complete_crossover32(parent1, parent2, child1, child2, genes, mt_rand);
+		complete_crossover32(parent1, parent2, child1, child2, genes);
 	}
 	else {
 		printf("Invalid crossover method\n");
@@ -138,7 +138,7 @@ void crossover(int* parent1, int* parent2, int* child1, int* child2, int genes, 
 
 }
 
-void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_param, mt_rand_t* mt_rand) {
+void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_param) {
 	//double** pop_parameter_bin, int individuals, int genes, int* selected, int skipped_pairs){
 	int nearest_even = (gene_pool->individuals - gene_pool->elitism) - ((gene_pool->individuals - gene_pool->elitism) % 2);
 
@@ -148,8 +148,8 @@ void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_para
 			gene_pool->pop_param_bin_cross_buffer[i],
 			gene_pool->pop_param_bin_cross_buffer[i + 1],
 			gene_pool->genes,
-			crossover_param,
-			mt_rand);
+			crossover_param
+		);
 	}
 
 	int skip_index = 0;

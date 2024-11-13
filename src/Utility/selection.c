@@ -70,7 +70,7 @@ void compute_boltzmann_distr(gene_pool_t* gene_pool, selection_param_t* selectio
 }
 
 // Selection functions
-void roulette_selection(gene_pool_t* gene_pool, selection_param_t* selection_param, mt_rand_t* mt_rand) {
+void roulette_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
 	/*
 
 	:param pop: matrix of normalised fitness values for the population (individuals x 1)
@@ -81,10 +81,10 @@ void roulette_selection(gene_pool_t* gene_pool, selection_param_t* selection_par
 	*/
 
 	// select individuals
-	roulette_wheel(gene_pool->flatten_result_set, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes, mt_rand);
+	roulette_wheel(gene_pool->flatten_result_set, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes);
 }
 
-void tournament_selection(gene_pool_t* gene_pool, selection_param_t* selection_param, mt_rand_t* mt_rand) {
+void tournament_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
 	/*
 	*/
     // We hold n tournaments and select the best individual from each tournament
@@ -92,7 +92,7 @@ void tournament_selection(gene_pool_t* gene_pool, selection_param_t* selection_p
         int best = -1;
         double best_fitness = -1;
         for (int j = 0; j < selection_param->selection_tournament_size; j++) {
-            int index = gen_mt_rand(mt_rand) % (gene_pool->individuals);
+            int index = gen_mt_rand() % (gene_pool->individuals);
             if (best == -1 || gene_pool->flatten_result_set[index] > best_fitness) {
                 best = index;
                 best_fitness = gene_pool->flatten_result_set[index];
@@ -103,15 +103,15 @@ void tournament_selection(gene_pool_t* gene_pool, selection_param_t* selection_p
 }
 
 
-void rank_selection(gene_pool_t* gene_pool, selection_param_t* selection_param, mt_rand_t* mt_rand) {
+void rank_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
 	/*
 
 	*/
     // The individuals are already sorted in ascending order so we can just use the indexes
-	roulette_wheel(prob_distr, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes, mt_rand);
+	roulette_wheel(prob_distr, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes);
 }
 
-void rank_space_selection(gene_pool_t* gene_pool, selection_param_t* selection_param, mt_rand_t* mt_rand) {
+void rank_space_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
 	/*
 
 	*/
@@ -158,14 +158,14 @@ void rank_space_selection(gene_pool_t* gene_pool, selection_param_t* selection_p
     }
 
     // Now we can use the roulette wheel selection
-    roulette_wheel(selection_prob, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes, mt_rand);
+    roulette_wheel(selection_prob, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes);
 
     free(central_point);
     free(distances);
     free(selection_prob);
 }
 
-void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selection_param, mt_rand_t* mt_rand) {
+void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
 	/*
 
 	*/
@@ -173,26 +173,26 @@ void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selection_pa
     // We hold n selection rounds
     for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
         // Select a main competitor at random
-        int main_competitor = gen_mt_rand(mt_rand) % (gene_pool->individuals);
+        int main_competitor = gen_mt_rand() % (gene_pool->individuals);
 
         // Pick a distance from the main competitor at least two spaces away
-        int distance = 2 + gen_mt_rand(mt_rand) % (gene_pool->individuals - 2);
+        int distance = 2 + gen_mt_rand() % (gene_pool->individuals - 2);
 
         // Pick the second competitor < distance away
-        int second_competitor = (main_competitor + (gen_mt_rand(mt_rand) % distance)) % (gene_pool->individuals);
+        int second_competitor = (main_competitor + (gen_mt_rand() % distance)) % (gene_pool->individuals);
 
         // Strict selection uses the same policy as the second competitor but is not the second competitor
         // Relaxed selection can pick any competitor that is not the second or the first
 
         int third_competitor;
         // Use a coinflip to decide if we have strict or relaxed selection
-        if (gen_mt_rand(mt_rand) < 1 / 2 * 0xffffffff) { // strict
-            third_competitor = (main_competitor + (gen_mt_rand(mt_rand) % distance)) % (gene_pool->individuals);
+        if (gen_mt_rand() < 1 / 2 * 0xffffffff) { // strict
+            third_competitor = (main_competitor + (gen_mt_rand() % distance)) % (gene_pool->individuals);
         }
         else { // relaxed
-            third_competitor = gen_mt_rand(mt_rand) % (gene_pool->individuals);
+            third_competitor = gen_mt_rand() % (gene_pool->individuals);
             while (third_competitor == main_competitor || third_competitor == second_competitor) {
-                third_competitor = gen_mt_rand(mt_rand) % (gene_pool->individuals);
+                third_competitor = gen_mt_rand() % (gene_pool->individuals);
             }
         }
 
@@ -201,13 +201,13 @@ void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selection_pa
         acceptance[0] = exp((gene_pool->flatten_result_set[second_competitor] - gene_pool->flatten_result_set[third_competitor]) / selection_param->selection_temp_param);
         acceptance[1] = 1 - acceptance[0];
         int winner_anti_acceptance;
-        roulette_wheel(acceptance, 2, 1, &winner_anti_acceptance, mt_rand);
+        roulette_wheel(acceptance, 2, 1, &winner_anti_acceptance);
 
         // The winner of the anti acceptance competition competes against the main competitor
         acceptance[0] = exp((gene_pool->flatten_result_set[main_competitor] - gene_pool->flatten_result_set[winner_anti_acceptance == 0 ? second_competitor : third_competitor]) / selection_param->selection_temp_param);
         acceptance[1] = 1 - acceptance[0];
         int winner_main_competitor;
-        roulette_wheel(acceptance, 2, 1, &winner_main_competitor, mt_rand);
+        roulette_wheel(acceptance, 2, 1, &winner_main_competitor);
 
         // If the main competitor wins he goes through, if not it depends on the outcome of the first competition
         if (winner_main_competitor == 0) {
@@ -222,7 +222,7 @@ void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selection_pa
 
 
 
-void process_selection(gene_pool_t* gene_pool, selection_param_t* selection_param, mt_rand_t* mt_rand) {
+void process_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
     
     // Check if the distributions are up to date
     if (current_prob_param != selection_param->selection_prob_param || prob_distr[0] == -1) { // Change or not initialized
@@ -234,19 +234,19 @@ void process_selection(gene_pool_t* gene_pool, selection_param_t* selection_para
 
     // Select individuals
 	if (selection_param->selection_method == selection_method_roulette) {
-		roulette_selection(gene_pool, selection_param, mt_rand);
+		roulette_selection(gene_pool, selection_param);
 	}
 	else if (selection_param->selection_method == selection_method_rank_tournament) {
-		tournament_selection(gene_pool, selection_param, mt_rand);
+		tournament_selection(gene_pool, selection_param);
 	}
 	else if (selection_param->selection_method == selection_method_rank) {
-		rank_selection(gene_pool, selection_param, mt_rand);
+		rank_selection(gene_pool, selection_param);
 	}
 	else if (selection_param->selection_method == selection_method_rank_space) {
-		rank_space_selection(gene_pool, selection_param, mt_rand);
+		rank_space_selection(gene_pool, selection_param);
 	}
 	else if (selection_param->selection_method == selection_method_boltzmann) {
-		boltzmann_selection(gene_pool, selection_param, mt_rand);
+		boltzmann_selection(gene_pool, selection_param);
 	}
 	else {
 		printf("Error: selection_method is not 0, 1, 2, 3 or 4\n");
