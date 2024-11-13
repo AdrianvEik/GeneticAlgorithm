@@ -53,6 +53,8 @@ void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t*
 	//open_file(*gene_pool, thread_param, log_file);
 	//write_config(*gene_pool, *thread_param);
 
+    int iterations_required = 0;
+
 	for (int i = 0; i < thread_param->runtime_param.max_iterations; i++) {
 		
 		// Process Population
@@ -66,6 +68,7 @@ void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t*
 			convergence_counter++;
 			if (convergence_counter > thread_param->runtime_param.convergence_window) {
 				printf("Converged at iteration: %d\n", i);
+                iterations_required = i;
 				break;
 			}
 		}
@@ -84,6 +87,10 @@ void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t*
 		previous_best_res = best_res;
 	}
 
+    if (iterations_required == 0) { // if not converged then it requires max iterations
+        iterations_required = thread_param->runtime_param.max_iterations;
+    }
+
 	//thread_param->task_list[thread_param->task_id].result = best_res;
 	//printf("Thread %d, Task %d Param: ", thread_param->thread_id, thread_param->task_id);
 
@@ -101,6 +108,7 @@ void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t*
 	task_result_t task_result;
 
     task_result.task_id = task->task_id;
+    task_result.iterations = iterations_required;
     task_result.result = best_res;
     task_result.paramset = malloc(sizeof(double) * thread_param->runtime_param.genes);
 	task_result.lower = malloc(sizeof(double) * thread_param->runtime_param.genes);

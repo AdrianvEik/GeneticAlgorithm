@@ -69,7 +69,7 @@ void write_param(task_result_queue_t task_result_queue, task_result_t task_resul
 	int paramsetsize = sizeof(task_result.paramset[0]);
 	fwrite(&task_result.paramset, paramsetsize, 1, task_result_queue.fileptr);
 
-	fprintf(task_result_queue.fileptrcsv, "%d;%d;", &task_result.iterations, &task_result.result);
+	fprintf(task_result_queue.fileptrcsv, "%d;%f;", task_result.iterations, task_result.result);
     for (int i = 0; i < task_result_queue.runtime_param.genes; i++)
     {
         fprintf(task_result_queue.fileptrcsv, "%f;", task_result.paramset[i]);
