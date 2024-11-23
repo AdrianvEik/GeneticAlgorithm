@@ -5,9 +5,7 @@
 #define PI   3.14159265358979323846264338327950288419716939937510f
 
 #include "pop.h"
-#include "../Helper/Helper.h"
-#include "../Helper/Struct.h"
-#include "../Helper/rng.h"
+
 
 void bitpop32(int genes, int* result) {
 

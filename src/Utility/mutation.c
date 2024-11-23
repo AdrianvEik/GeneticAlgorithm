@@ -2,10 +2,6 @@
 #include "stdlib.h"
 #include "math.h"
 
-#include "../Helper/Helper.h"
-#include "../Helper/rng.h"
-#include "../Helper/Struct.h"
-
 #include "mutation.h"
 
 void mutate32(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {

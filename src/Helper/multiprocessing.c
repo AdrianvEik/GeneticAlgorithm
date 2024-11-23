@@ -5,7 +5,6 @@
 #include <windows.h>
 
 #include "pthread.h"
-#include "Struct.h"
 
 #include "multiprocessing.h"
 
@@ -52,6 +51,12 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
 	pthread_mutex_init(task_result_queue->lock, NULL);
 
 	return task_result_queue;
+}
+
+void free_task(task_param_t* task) {
+    free(task->lower);
+    free(task->upper);
+    free(task->paramset);
 }
 
 void free_task_result(task_result_t* task_result) {
@@ -132,9 +137,7 @@ void free_task_queue(task_queue_t* task_queue) {
 	pthread_mutex_destroy(task_queue->task_result_queue->lock);
 	free(task_queue->task_result_queue->result_list);
 
-	//free(task_queue->task_result_queue);
 	free(task_queue->thread_id);
-    //free(task_queue);
 }
 
 void add_task(task_queue_t* task_queue, task_param_t* task) {
@@ -168,6 +171,20 @@ void get_task(task_queue_t* task_queue, task_param_t* task) {
         break;
 	}
 }
+
+void new_task(runtime_param_t runtime_param, config_ga_t config_ga, task_param_t* task) {
+	task->task_type = 0;
+	task->lower = (double*)malloc(sizeof(double) * runtime_param.genes);
+	task->upper = (double*)malloc(sizeof(double) * runtime_param.genes);
+	task->paramset = (double*)malloc(sizeof(double) * runtime_param.genes);
+	if (task->lower == NULL || task->upper == NULL || task->paramset == NULL) {
+		printf("Memory allocation failed: new_task");
+		exit(255);
+	}
+    task->config_ga = config_ga;
+    return task;
+}
+
 //void generate_task(task_param_t* task_list, int* task_id, runtime_param_t runtime_param, config_ga_t config_ga, int current_gene, int* tasks_per_gene, int* position) {
 void generate_task(task_queue_t* task_queue, runtime_param_t runtime_param, config_ga_t config_ga, int current_gene, int* tasks_per_gene, int* position) {
 
@@ -178,27 +195,13 @@ void generate_task(task_queue_t* task_queue, runtime_param_t runtime_param, conf
 			generate_task(task_queue, runtime_param, config_ga, current_gene + 1, tasks_per_gene, position);
 		}
 		else {
-            task_param_t task;
-            task.task_type = 0;
-            task.lower = (double*)malloc(sizeof(double) * runtime_param.genes);
-            task.upper = (double*)malloc(sizeof(double) * runtime_param.genes);
-			task.paramset = (double*)malloc(sizeof(double) * runtime_param.genes);
-			//task_list[*task_id].task_id = *task_id;
-			//task_list[*task_id].task_type = 0;
-			//task_list[*task_id].lower = (double*)malloc(sizeof(double) * runtime_param.genes);
-			//task_list[*task_id].upper = (double*)malloc(sizeof(double) * runtime_param.genes);
-			//task_list[*task_id].paramset = (double*)malloc(sizeof(double) * runtime_param.genes);
-
-			if (task.lower == NULL || task.upper == NULL || task.paramset == NULL) {
-				printf("Memory allocation failed: generate_task");
-				exit(255);
-			}
+			task_param_t task;
+			new_task(runtime_param, config_ga, &task);
 
 			for (int j = 0; j < runtime_param.genes; j++) {
 				task.lower[j] = config_ga.population_param.lower[j] + (config_ga.population_param.upper[j] - config_ga.population_param.lower[j]) / tasks_per_gene[j] * (position[j]);
 				task.upper[j] = config_ga.population_param.upper[j] - (config_ga.population_param.upper[j] - config_ga.population_param.lower[j]) / tasks_per_gene[j] * (tasks_per_gene[j] - position[j] - 1);
 			}
-
             add_task(task_queue, &task);
 		}
 	}

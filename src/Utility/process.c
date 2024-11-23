@@ -2,19 +2,8 @@
 #include "stdlib.h"
 #include "math.h"
 
-#include "../Helper/Helper.h"
-#include "../Helper/Struct.h"
-#include "../Helper/multiprocessing.h"
-#include "../Helper/rng.h"
-#include "flatten.h"
-#include "../Function/Function.h"
-#include "selection.h"
-#include "crossover.h"
-
-#include "pop.h"
-
 #include "process.h"
-#include "mutation.h"
+
 
 void eliminate_duplicates(gene_pool_t* gene_pool) {
 	int unique = 1;
@@ -36,13 +25,13 @@ void eliminate_duplicates(gene_pool_t* gene_pool) {
 	}
 }
 
-void process_pop(gene_pool_t* gene_pool, config_ga_t* config_ga, task_param_t* task) {
+void process_pop(gene_pool_t* gene_pool, task_param_t* task) {
 	// TODO: check individual even nr 
 	// TODO: refractor individuals and genes to _count
 
-	process_fx(gene_pool, &(config_ga->fx_param), task->lower, task->upper); // pop, individuals, genes -> ?
+	process_fx(gene_pool, &(task->config_ga.fx_param), task->lower, task->upper); // pop, individuals, genes -> ?
 
-	process_flatten(gene_pool, &(config_ga->flatten_param));
+	process_flatten(gene_pool, &(task->config_ga.flatten_param));
 
 	for (int i = 0; i < gene_pool->individuals; i++) {
 		gene_pool->sorted_indexes[i] = i;
@@ -55,13 +44,13 @@ void process_pop(gene_pool_t* gene_pool, config_ga_t* config_ga, task_param_t* t
 		gene_pool->selected_indexes[i] = gene_pool->sorted_indexes[i];
 	}
 
-	process_selection(gene_pool, &(config_ga->selection_param));
+	process_selection(gene_pool, &(task->config_ga.selection_param));
 
 	// // crossover
-	process_crossover(gene_pool, &(config_ga->crossover_param));
+	process_crossover(gene_pool, &(task->config_ga.crossover_param));
 
 	// mutation
-	mutate32(gene_pool, &(config_ga->mutation_param));
+	mutate32(gene_pool, &(task->config_ga.mutation_param));
 
 	eliminate_duplicates(gene_pool);
 }

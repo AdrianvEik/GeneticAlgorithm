@@ -2,8 +2,7 @@
 #include "stdlib.h"
 #include "math.h"
 
-#include "../Helper/Helper.h"
-#include "../Helper/Struct.h"
+
 
 #include "flatten.h"
 

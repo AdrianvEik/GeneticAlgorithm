@@ -4,9 +4,6 @@
 #include <windows.h>
 #include <pthread.h>
 
-#include "../Helper/Helper.h"
-#include "../Helper/Struct.h"
-#include "../Helper/rng.h"
 
 #include "selection.h"
 
@@ -16,7 +13,7 @@ __declspec(thread) double* boltzmann_distr; // It should be an option to use thi
 __declspec(thread) double current_prob_param;
 __declspec(thread) double current_temp_param;
 
-void init_pre_compute(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+void init_pre_compute(gene_pool_t* gene_pool) {
 	/*
 	*/
 	prob_distr = (double*)malloc(gene_pool->individuals * sizeof(double));

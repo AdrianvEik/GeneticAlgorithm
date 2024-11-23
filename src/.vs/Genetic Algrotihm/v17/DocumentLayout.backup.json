@@ -1,94 +1,110 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\",
+  "WorkspaceRootPath": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Genetic_Algorithm.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Genetic_Algorithm.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\logging.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Logger\\logging.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\multiprocessing.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\multiprocessing.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\multiprocessing.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\multiprocessing.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\selection.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\selection.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\logging.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Logger\\logging.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\pop.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\pop.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Genetic_Algorithm.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Struct.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\Struct.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\process.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\process.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\pop.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\pop.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\mutation.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\mutation.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\mutation.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\mutation.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\flatten.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\flatten.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\flatten.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\flatten.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\crossover.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\crossover.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\crossover.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\crossover.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\selection.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\selection.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\selection.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Helper.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\selection.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\selection.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\process.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\process.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\process.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\process.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\pop.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\pop.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\pop.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\pop.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\mutation.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\mutation.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\mutation.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\mutation.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\flatten.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\flatten.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\flatten.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\flatten.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\crossover.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\crossover.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\crossover.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Utility\\crossover.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Genetic_Algorithm.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Genetic_Algorithm.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\Helper.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\Helper.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Helper.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\Helper.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\Helper.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\rng.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\multiprocessing.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\multiprocessing.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\multiprocessing.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\multiprocessing.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\rng.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\rng.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\rng.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Optimisation\\Optimizer.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Optimisation\\Optimizer.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Optimisation\\Optimizer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Optimisation\\Optimizer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\Struct.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\Struct.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\rng.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Helper\\rng.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Logger\\logging.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Logger\\logging.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Function\\Function.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Function\\Function.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Logger\\logging.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{479A36C1-0B5E-4FDF-B221-CE6C531EB2FE}|Genetic Algrotihm.vcxproj|solutionrelative:Logger\\logging.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\um\\Windows.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
@@ -101,40 +117,111 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 8,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 22,
               "Title": "rng.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\rng.h",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\rng.h",
               "RelativeDocumentMoniker": "Helper\\rng.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\rng.h",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\rng.h",
               "RelativeToolTip": "Helper\\rng.h",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAwA8AAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-10-24T19:36:49.228Z",
-              "IsPinned": true
+              "IsPinned": true,
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 20,
+              "Title": "Optimizer.h",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Optimisation\\Optimizer.h",
+              "RelativeDocumentMoniker": "Optimisation\\Optimizer.h",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Optimisation\\Optimizer.h",
+              "RelativeToolTip": "Optimisation\\Optimizer.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-21T22:07:00.283Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Optimizer.c",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Optimisation\\Optimizer.c",
+              "RelativeDocumentMoniker": "Optimisation\\Optimizer.c",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Optimisation\\Optimizer.c",
+              "RelativeToolTip": "Optimisation\\Optimizer.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2024-11-21T22:06:48.595Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "process.h",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\process.h",
+              "RelativeDocumentMoniker": "Utility\\process.h",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\process.h",
+              "RelativeToolTip": "Utility\\process.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-21T22:05:22.048Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "Function.c",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Function\\Function.c",
+              "RelativeDocumentMoniker": "Function\\Function.c",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Function\\Function.c",
+              "RelativeToolTip": "Function\\Function.c",
+              "ViewState": "AgIAADkAAAAAAAAAAAAAAEkAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2024-11-14T21:54:04.814Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
               "Title": "Windows.h",
               "DocumentMoniker": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\um\\Windows.h",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\..\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\um\\Windows.h",
               "ToolTip": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\um\\Windows.h",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\..\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.19041.0\\um\\Windows.h",
               "ViewState": "AgIAAPwAAAAAAAAAAAAAAAIAAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-10-17T19:15:35.264Z"
             },
             {
               "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Struct.h",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\Struct.h",
+              "RelativeDocumentMoniker": "Helper\\Struct.h",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\Struct.h",
+              "RelativeToolTip": "Helper\\Struct.h",
+              "ViewState": "AgIAAE8AAAAAAAAAAAAIwFcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-10-24T19:22:52.089Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Genetic_Algorithm.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.c",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Genetic_Algorithm.c",
               "RelativeDocumentMoniker": "Genetic_Algorithm.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.c",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Genetic_Algorithm.c",
               "RelativeToolTip": "Genetic_Algorithm.c",
-              "ViewState": "AgIAAF4AAAAAAAAAAIAwwG0AAAAoAAAAAAAAAA==",
+              "ViewState": "AgIAACABAAAAAAAAAAAAAAwBAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2024-10-24T19:45:34.772Z",
               "EditorCaption": ""
@@ -143,21 +230,22 @@
               "$type": "Document",
               "DocumentIndex": 6,
               "Title": "pop.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\pop.c",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\pop.c",
               "RelativeDocumentMoniker": "Utility\\pop.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\pop.c",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\pop.c",
               "RelativeToolTip": "Utility\\pop.c",
-              "ViewState": "AgIAAIwAAAAAAAAAAAAAAJQAAAAPAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-10-24T19:56:41.823Z"
+              "WhenOpened": "2024-10-24T19:56:41.823Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 25,
               "Title": "logging.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\logging.h",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Logger\\logging.h",
               "RelativeDocumentMoniker": "Logger\\logging.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\logging.h",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Logger\\logging.h",
               "RelativeToolTip": "Logger\\logging.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
@@ -165,219 +253,220 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 23,
               "Title": "logging.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\logging.c",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Logger\\logging.c",
               "RelativeDocumentMoniker": "Logger\\logging.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Logger\\logging.c",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Logger\\logging.c",
               "RelativeToolTip": "Logger\\logging.c",
-              "ViewState": "AgIAAD8AAAAAAAAAAAAAAEgAAAA+AAAAAAAAAA==",
+              "ViewState": "AgIAADYAAAAAAAAAAAAAAD4AAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-10-24T20:17:42.455Z",
+              "WhenOpened": "2024-10-24T20:17:42.455Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "flatten.h",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\flatten.h",
+              "RelativeDocumentMoniker": "Utility\\flatten.h",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\flatten.h",
+              "RelativeToolTip": "Utility\\flatten.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-10-24T20:00:48.446Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "flatten.c",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\flatten.c",
+              "RelativeDocumentMoniker": "Utility\\flatten.c",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\flatten.c",
+              "RelativeToolTip": "Utility\\flatten.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2024-10-24T20:00:47.573Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "crossover.h",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\crossover.h",
+              "RelativeDocumentMoniker": "Utility\\crossover.h",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\crossover.h",
+              "RelativeToolTip": "Utility\\crossover.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-10-24T20:00:41.828Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "mutation.c",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\mutation.c",
+              "RelativeDocumentMoniker": "Utility\\mutation.c",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\mutation.c",
+              "RelativeToolTip": "Utility\\mutation.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2024-10-24T20:00:24.272Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "mutation.h",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\mutation.h",
+              "RelativeDocumentMoniker": "Utility\\mutation.h",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\mutation.h",
+              "RelativeToolTip": "Utility\\mutation.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-10-24T20:00:18.457Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "pop.h",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\pop.h",
+              "RelativeDocumentMoniker": "Utility\\pop.h",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\pop.h",
+              "RelativeToolTip": "Utility\\pop.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-10-24T20:00:10.214Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "crossover.c",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\crossover.c",
+              "RelativeDocumentMoniker": "Utility\\crossover.c",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\crossover.c",
+              "RelativeToolTip": "Utility\\crossover.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2024-10-24T19:58:27.241Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "selection.h",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\selection.h",
+              "RelativeDocumentMoniker": "Utility\\selection.h",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\selection.h",
+              "RelativeToolTip": "Utility\\selection.h",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-10-24T19:58:04.208Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "process.c",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\process.c",
+              "RelativeDocumentMoniker": "Utility\\process.c",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\process.c",
+              "RelativeToolTip": "Utility\\process.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2024-10-24T19:57:36.377Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Helper.h",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\Helper.h",
+              "RelativeDocumentMoniker": "Helper\\Helper.h",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\Helper.h",
+              "RelativeToolTip": "Helper\\Helper.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-10-24T19:56:05.284Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Helper.c",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\Helper.c",
+              "RelativeDocumentMoniker": "Helper\\Helper.c",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\Helper.c",
+              "RelativeToolTip": "Helper\\Helper.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2024-10-24T19:55:53.72Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "rng.c",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\rng.c",
+              "RelativeDocumentMoniker": "Helper\\rng.c",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\rng.c",
+              "RelativeToolTip": "Helper\\rng.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHsAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2024-10-17T20:44:01.242Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "selection.c",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\selection.c",
+              "RelativeDocumentMoniker": "Utility\\selection.c",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Utility\\selection.c",
+              "RelativeToolTip": "Utility\\selection.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2024-10-17T20:44:19.371Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 13,
-              "Title": "flatten.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\flatten.h",
-              "RelativeDocumentMoniker": "Utility\\flatten.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\flatten.h",
-              "RelativeToolTip": "Utility\\flatten.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "Genetic_Algorithm.h",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Genetic_Algorithm.h",
+              "RelativeDocumentMoniker": "Genetic_Algorithm.h",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Genetic_Algorithm.h",
+              "RelativeToolTip": "Genetic_Algorithm.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T20:00:48.446Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "flatten.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\flatten.c",
-              "RelativeDocumentMoniker": "Utility\\flatten.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\flatten.c",
-              "RelativeToolTip": "Utility\\flatten.c",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-10-24T20:00:47.573Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "crossover.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\crossover.h",
-              "RelativeDocumentMoniker": "Utility\\crossover.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\crossover.h",
-              "RelativeToolTip": "Utility\\crossover.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAABRAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T20:00:41.828Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "mutation.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\mutation.c",
-              "RelativeDocumentMoniker": "Utility\\mutation.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\mutation.c",
-              "RelativeToolTip": "Utility\\mutation.c",
-              "ViewState": "AgIAAB4AAAAAAAAAAAAAAC0AAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-10-24T20:00:24.272Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "mutation.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\mutation.h",
-              "RelativeDocumentMoniker": "Utility\\mutation.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\mutation.h",
-              "RelativeToolTip": "Utility\\mutation.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAABGAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T20:00:18.457Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "pop.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\pop.h",
-              "RelativeDocumentMoniker": "Utility\\pop.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\pop.h",
-              "RelativeToolTip": "Utility\\pop.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAA7AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T20:00:10.214Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "crossover.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\crossover.c",
-              "RelativeDocumentMoniker": "Utility\\crossover.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\crossover.c",
-              "RelativeToolTip": "Utility\\crossover.c",
-              "ViewState": "AgIAABUAAAAAAAAAAAAAABEAAAAZAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-10-24T19:58:27.241Z"
+              "WhenOpened": "2024-10-17T20:30:48.988Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 17,
-              "Title": "selection.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\selection.h",
-              "RelativeDocumentMoniker": "Utility\\selection.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\selection.h",
-              "RelativeToolTip": "Utility\\selection.h",
-              "ViewState": "AgIAAAUAAAAAAAAAAIAwwBIAAABRAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T19:58:04.208Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "process.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\process.c",
-              "RelativeDocumentMoniker": "Utility\\process.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\process.c",
-              "RelativeToolTip": "Utility\\process.c",
-              "ViewState": "AgIAACQAAAAAAAAAAAAAADwAAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-10-24T19:57:36.377Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "Helper.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Helper.h",
-              "RelativeDocumentMoniker": "Helper\\Helper.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Helper.h",
-              "RelativeToolTip": "Helper\\Helper.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T19:56:05.284Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "Helper.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Helper.c",
-              "RelativeDocumentMoniker": "Helper\\Helper.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Helper.c",
-              "RelativeToolTip": "Helper\\Helper.c",
-              "ViewState": "AgIAAHkAAAAAAAAAAAAwwJoAAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-10-24T19:55:53.72Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Struct.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Struct.h",
-              "RelativeDocumentMoniker": "Helper\\Struct.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\Struct.h",
-              "RelativeToolTip": "Helper\\Struct.h",
-              "ViewState": "AgIAAEMAAAAAAAAAAAASwFYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T19:22:52.089Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "rng.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\rng.c",
-              "RelativeDocumentMoniker": "Helper\\rng.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\rng.c",
-              "RelativeToolTip": "Helper\\rng.c",
-              "ViewState": "AgIAAG0AAAAAAAAAAAAAwHsAAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-10-17T20:44:01.242Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "selection.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\selection.c",
-              "RelativeDocumentMoniker": "Utility\\selection.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Utility\\selection.c",
-              "RelativeToolTip": "Utility\\selection.c",
-              "ViewState": "AgIAAG0AAAAAAAAAAAAYwIMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-10-17T20:44:19.371Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Genetic_Algorithm.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.h",
-              "RelativeDocumentMoniker": "Genetic_Algorithm.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Genetic_Algorithm.h",
-              "RelativeToolTip": "Genetic_Algorithm.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAACAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-17T20:30:48.988Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
               "Title": "multiprocessing.h",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\multiprocessing.h",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\multiprocessing.h",
               "RelativeDocumentMoniker": "Helper\\multiprocessing.h",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\multiprocessing.h",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\multiprocessing.h",
               "RelativeToolTip": "Helper\\multiprocessing.h",
-              "ViewState": "AgIAAAwAAAAAAAAAAIAwwBUAAAATAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-10-17T18:56:30.536Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 16,
               "Title": "multiprocessing.c",
-              "DocumentMoniker": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\multiprocessing.c",
+              "DocumentMoniker": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\multiprocessing.c",
               "RelativeDocumentMoniker": "Helper\\multiprocessing.c",
-              "ToolTip": "D:\\School\\Libraries\\GeneticAlgorithm\\src\\Helper\\multiprocessing.c",
+              "ToolTip": "C:\\Users\\vanei\\source\\repos\\GeneticAlgorithm\\src\\Helper\\multiprocessing.c",
               "RelativeToolTip": "Helper\\multiprocessing.c",
-              "ViewState": "AgIAADwAAAAAAAAAAIAwwEkAAAAmAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2024-10-17T18:56:29.347Z",
               "EditorCaption": ""

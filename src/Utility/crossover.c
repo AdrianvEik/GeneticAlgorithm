@@ -3,9 +3,7 @@
 #include "math.h"
 
 #include "crossover.h"
-#include "../Helper/Helper.h"
-#include "../Helper/Struct.h"
-#include "../Helper/rng.h"
+
 
 
 // Path: Utility/crossover.c

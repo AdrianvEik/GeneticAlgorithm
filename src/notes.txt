@@ -1,0 +1,15 @@
+14/11/24
+- Overlap in zoekgebieden
+	- Upper/lower hard boundaries
+	- Binnen upper/lower overlap met X %
+- Slimmer in-zoomen / n-diep zoek algoritme
+	- zoek "regels"
+	- regionale top n; filter intressante gebieden (korte-termijn geheugen)
+	- Gradient descend? (voor "fine" answer)
+- Logger verbosity
+- Optim mode -> logged results (invert of niet)
+
+- get random optim? :)
+
+211124
+- lower upper out of bounds bij duplicate generator

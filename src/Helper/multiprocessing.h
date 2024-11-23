@@ -1,4 +1,5 @@
 #include <pthread.h>
+#include <stdio.h>
 
 #include "../Helper/Struct.h"
 #include "../Helper/rng.h"
@@ -12,7 +13,7 @@ struct task_param_s {
 	double* lower;
 	double* upper;
 	double* paramset;
-	double result;
+    struct config_ga_s config_ga;
 };
 
 typedef struct task_param_s task_param_t;
@@ -60,7 +61,6 @@ typedef struct task_queue_s task_queue_t;
 struct thread_param_s {
 	int status;
 	task_queue_t* task_queue;
-	struct config_ga_s config_ga;
 	struct runtime_param_s runtime_param;
 };
 
@@ -69,6 +69,7 @@ typedef struct thread_param_s thread_param_t;
 
 void make_task_list(runtime_param_t* runtime_param, config_ga_t config_ga, task_queue_t* task_queue);
 
+void free_task(task_param_t* task);
 void free_task_result(task_result_t* task_result);
 
 
@@ -82,4 +83,5 @@ void free_task_queue(task_queue_t* task_queue);
 void add_task(task_queue_t* task_queue, task_param_t* task);
 void get_task(task_queue_t* task_queue, task_param_t* task);
 void stop_threads(task_queue_t* task_queue, int thread_count);
+
 #endif // MULTIPROCESSING_H

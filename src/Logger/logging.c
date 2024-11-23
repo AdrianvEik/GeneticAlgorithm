@@ -44,7 +44,10 @@ void open_file(task_result_queue_t* task_result_queue)
 	for (int i = 0; i < task_result_queue->runtime_param.genes; i++)
 	{
 		fprintf(task_result_queue->fileptrcsv, "gene%d;", i);
+		fprintf(task_result_queue->fileptrcsv, "lower%d;", i);
+        fprintf(task_result_queue->fileptrcsv, "upper%d;", i);
 	}
+	
 	fprintf(task_result_queue->fileptrcsv, "\n");
 
 
@@ -65,14 +68,15 @@ void write_param(task_result_queue_t task_result_queue, task_result_t task_resul
 		exit(1);
 	}
 	fwrite(&task_result.iterations, sizeof(int), 1, task_result_queue.fileptr);
-
-	int paramsetsize = sizeof(task_result.paramset[0]);
-	fwrite(&task_result.paramset, paramsetsize, 1, task_result_queue.fileptr);
+    fwrite(&task_result.result, sizeof(double), 1, task_result_queue.fileptr);
+    fwrite(task_result.paramset, sizeof(double), task_result_queue.runtime_param.genes, task_result_queue.fileptr);
 
 	fprintf(task_result_queue.fileptrcsv, "%d;%f;", task_result.iterations, task_result.result);
     for (int i = 0; i < task_result_queue.runtime_param.genes; i++)
     {
         fprintf(task_result_queue.fileptrcsv, "%f;", task_result.paramset[i]);
+        fprintf(task_result_queue.fileptrcsv, "%f;", task_result.lower[i]);
+        fprintf(task_result_queue.fileptrcsv, "%f;", task_result.upper[i]);
     }
 
 	fprintf(task_result_queue.fileptrcsv, "\n");

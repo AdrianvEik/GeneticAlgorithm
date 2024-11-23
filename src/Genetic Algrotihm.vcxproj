@@ -33,6 +33,7 @@
     <ClCompile Include="Helper\multiprocessing.c" />
     <ClCompile Include="Helper\rng.c" />
     <ClCompile Include="Logger\logging.c" />
+    <ClCompile Include="Optimisation\Optimizer.c" />
     <ClCompile Include="Utility\crossover.c" />
     <ClCompile Include="Utility\flatten.c" />
     <ClCompile Include="Utility\mutation.c" />
@@ -49,6 +50,7 @@
     <ClInclude Include="Helper\Struct.h" />
     <ClInclude Include="Genetic_Algorithm.h" />
     <ClInclude Include="Logger\logging.h" />
+    <ClInclude Include="Optimisation\Optimizer.h" />
     <ClInclude Include="Utility\crossover.h" />
     <ClInclude Include="Utility\flatten.h" />
     <ClInclude Include="Utility\mutation.h" />

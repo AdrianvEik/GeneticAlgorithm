@@ -56,6 +56,16 @@ struct fx_param_s {
     fx_ptr fx_function; // DEFAULT = NULL
 };
 
+struct optimizer_param_s {
+	int convergence_moving_window_size; // DEFAULT = 10
+	int min_mutations; // DEFAULT = 1
+	int max_mutations; // DEFAULT = 10
+	double mutation_factor; // DEFAULT = 0.1
+	int max_iterations; // DEFAULT = 1000
+	double convergence_threshold; // DEFAULT = 1e-8
+	int convergence_window; // DEFAULT = 100
+};
+
 struct config_ga_s {
 	struct population_param_s population_param;
 	struct selection_param_s selection_param;
@@ -63,13 +73,11 @@ struct config_ga_s {
 	struct crossover_param_s crossover_param;
 	struct mutation_param_s mutation_param;
 	struct fx_param_s fx_param;
+    struct optimizer_param_s optimizer_param;
 };
 
 struct runtime_param_s {
 	char* fully_qualified_basename;
-	int max_iterations; // DEFAULT = 1000
-	double convergence_threshold; // DEFAULT = 1e-8
-	int convergence_window; // DEFAULT = 100
 	int genes; // DEFAULT = 2
 	int individuals; // DEFAULT = 32
 	int elitism; // DEFAULT = 2
@@ -86,6 +94,6 @@ typedef struct fx_param_s fx_param_t;
 typedef struct population_param_s population_param_t;
 typedef struct config_ga_s config_ga_t;
 typedef struct runtime_param_s runtime_param_t;
-
+typedef struct optimizer_param_s optimizer_param_t;
 
 #endif // STRUCT_H

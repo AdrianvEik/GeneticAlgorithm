@@ -10,106 +10,32 @@
 
 #include "Genetic_Algorithm.h"
 
-#include "Utility/process.h"
-#include "Utility/pop.h"
-#include "Utility/crossover.h"
-#include "Utility/mutation.h"
-#include "Utility/selection.h"
-#include "Utility/flatten.h"
-
-#include "Function/Function.h"
-
-#include "Helper/Helper.h"
-#include "Helper/Struct.h"
-#include "Helper/multiprocessing.h"
-#include "Helper/rng.h"
-
-#include "Logger/logging.h"
-
-
 
 void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t* gene_pool) {
 	//printf("Thread %d, Task %d\n", thread_param->thread_id, thread_param->task_id);
 
-	fill_pop(gene_pool, thread_param->config_ga.population_param);
+	fill_pop(gene_pool, task->config_ga.population_param);
 
-	double previous_best_res = 0.0f;
-	double best_res = 0.0f;
-	int convergence_counter = 0;
+    adaptive_memory_t adaptive_memory;
+    new_adaptive_memory(&adaptive_memory);
 
-	// todo: move to login thread
-	//char* log_file;
-	//log_file = (char*)malloc(sizeof(char) * 255);
-
-	//if (thread_param->runtime_param.fully_qualified_basename == NULL) {
-	//	thread_param->runtime_param.fully_qualified_basename = "C:/temp/GA\0";
-	//}
-
-	//strcpy_s(log_file, 255, thread_param->runtime_param.fully_qualified_basename);
-	//strcat_s(log_file, 255, "Thread%d\0");
-	//sprintf_s(log_file, 255, log_file, thread_param->task_id);
-
-
-	//open_file(*gene_pool, thread_param, log_file);
-	//write_config(*gene_pool, *thread_param);
-
-    int iterations_required = 0;
-
-	for (int i = 0; i < thread_param->runtime_param.max_iterations; i++) {
+	while(1) {
 		
 		// Process Population
-		process_pop(gene_pool, &thread_param->config_ga, task);
+		process_pop(gene_pool, task);
 
-		best_res = gene_pool->pop_result_set[gene_pool->sorted_indexes[gene_pool->individuals - 1]];
-
-		// Check for convergence & runtime params
-
-		if (fabs(best_res - previous_best_res) < thread_param->runtime_param.convergence_threshold) {
-			convergence_counter++;
-			if (convergence_counter > thread_param->runtime_param.convergence_window) {
-				printf("Converged at iteration: %d\n", i);
-                iterations_required = i;
-				break;
-			}
-		}
-		else {
-			convergence_counter = 0;
-		}
-
-		if (best_res - previous_best_res > 0.0f) {
-//			printf("Iteration: %d Gain: %0.3f best res: %0.3f (idx = %d), 2nd best res: %0.3f (idx = %d) 3rd best res %0.3f (idx = %d)\n", i,
-//				(best_res - previous_best_res),
-//				gene_pool.pop_result_set[gene_pool.sorted_indexes[gene_pool.individuals - 1]], gene_pool.sorted_indexes[gene_pool.individuals - 1],
-//				gene_pool.pop_result_set[gene_pool.sorted_indexes[gene_pool.individuals - 2]], gene_pool.sorted_indexes[gene_pool.individuals - 2],
-//				gene_pool.pop_result_set[gene_pool.sorted_indexes[gene_pool.individuals - 3]], gene_pool.sorted_indexes[gene_pool.individuals - 3]);
-		}
-
-		previous_best_res = best_res;
+        adapt_param(task, gene_pool, &adaptive_memory);
+        if (adaptive_memory.convergence_reached == 1) {
+            break;
+        }
 	}
-
-    if (iterations_required == 0) { // if not converged then it requires max iterations
-        iterations_required = thread_param->runtime_param.max_iterations;
-    }
-
-	//thread_param->task_list[thread_param->task_id].result = best_res;
-	//printf("Thread %d, Task %d Param: ", thread_param->thread_id, thread_param->task_id);
-
-	//for (int i = 0; i < thread_param->runtime_param.genes; i++) {
-	//	thread_param->task_list[thread_param->task_id].paramset[i] = gene_pool->pop_param_double[gene_pool->sorted_indexes[gene_pool->individuals - 1]][i];
-	//	printf("%f ", thread_param->task_list[thread_param->task_id].paramset[i]);
-
-	//}
-	//printf("Result %f\n", );
-
-	//TODO: sort results, return best result
-
-	//close_file(*thread_param);
+    
 
 	task_result_t task_result;
 
     task_result.task_id = task->task_id;
-    task_result.iterations = iterations_required;
-    task_result.result = best_res;
+    task_result.iterations = adaptive_memory.iteration_counter;
+    task_result.result = adaptive_memory.previous_best_result;
     task_result.paramset = malloc(sizeof(double) * thread_param->runtime_param.genes);
 	task_result.lower = malloc(sizeof(double) * thread_param->runtime_param.genes);
 	task_result.upper = malloc(sizeof(double) * thread_param->runtime_param.genes);
@@ -127,6 +53,8 @@ void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t*
     task_result_queue_t* task_result_queue = task_queue->task_result_queue;
 	add_result(task_result_queue, &task_result);
 
+    free_task(task);
+
 	thread_param->status = 2; // Completed
 }
 
@@ -137,6 +65,11 @@ void* process_log_thread(task_result_queue_t* task_result_queue) {
 	char* log_file;
 	log_file = (char*)malloc(sizeof(char) * 255);
 
+    if (log_file == NULL) {
+        printf("Memory allocation failed: process_log_thread");
+        exit(255);
+    }
+
 	if (task_result_queue->runtime_param.fully_qualified_basename == NULL) {
 		strcpy_s(log_file, 255, "C:/temp/GA\0");
 
@@ -145,17 +78,46 @@ void* process_log_thread(task_result_queue_t* task_result_queue) {
 		strcpy_s(log_file, 255, task_result_queue->runtime_param.fully_qualified_basename);
 	}
 
-	//strcat_s(log_file, 255, "Thread%d\0");
-	//sprintf_s(log_file, 255, log_file, thread_param->task_id);
-
 
 	open_file(task_result_queue);
+
+    double current_best_res = 0.0f;
+
+	// Save the best gene_pool
+	task_result_t best_result;
+
+	//task_result.task_id = task->task_id;
+	//task_result.iterations = iterations_required;
+	//task_result.result = best_res;
+	best_result.paramset = malloc(sizeof(double) * task_result_queue->runtime_param.genes);
+	best_result.lower = malloc(sizeof(double) * task_result_queue->runtime_param.genes);
+	best_result.upper = malloc(sizeof(double) * task_result_queue->runtime_param.genes);
+
+	if (best_result.lower == NULL || best_result.upper == NULL || best_result.paramset == NULL) {
+		printf("Memory allocation failed");
+		exit(255);
+	}
 
     while (1) {
         get_result(task_result_queue, &task_result);
         if (task_result.task_type == 1) {
+			write_param(*task_result_queue, best_result);
+            free_task_result(&best_result);
             break;
         }
+
+		if (task_result.result > current_best_res) {
+			current_best_res = task_result.result;
+			best_result.task_id = task_result.task_id;
+			best_result.iterations = task_result.iterations;
+			best_result.result = task_result.result;
+			for (int i = 0; i < task_result_queue->runtime_param.genes; i++) {
+				best_result.paramset[i] = task_result.paramset[i];
+				best_result.lower[i] = task_result.lower[i];
+				best_result.upper[i] = task_result.upper[i];
+			}
+		}
+
         write_param(*task_result_queue, task_result);
         free_task_result(&task_result);
     }
@@ -174,7 +136,7 @@ void* process_task_thread(thread_param_t* thread_param) {
 	gene_pool.elitism = thread_param->runtime_param.elitism;
 
 	init_gene_pool(&gene_pool);
-    init_pre_compute(&gene_pool, &thread_param->config_ga.selection_param);
+    init_pre_compute(&gene_pool);
 
 	task_param_t task;
 	while (1) {
@@ -238,7 +200,6 @@ void start_threads(task_queue_t* task_queue, runtime_param_t runtime_param, conf
 
 			thread_param[i].task_queue = task_queue;
 			thread_param[i].runtime_param = runtime_param;
-			thread_param[i].config_ga = config_ga;
 			
 			//thread_param[i].task_id = i;
 			retid = pthread_create(&(task_queue->thread_id[i]), NULL, (void *) process_task_thread, (void *) & thread_param[i]);
@@ -256,19 +217,15 @@ runtime_param_t default_runtime_param() {
     // Setups default runtime parameters
     runtime_param_t runtime_param;
 
-    runtime_param.max_iterations = 10000;
-    runtime_param.convergence_threshold = 1e-8;
-    runtime_param.convergence_window = 1000;
-    runtime_param.individuals = 32;
-    runtime_param.genes = 8;
-    runtime_param.elitism = 2;
+    runtime_param.individuals = 100;
+    runtime_param.genes = 4;
+    runtime_param.elitism = 8;
     runtime_param.fully_qualified_basename = "C:/temp/GA\0";
-    runtime_param.task_count = 12;
+    runtime_param.task_count = 81;
 	runtime_param.thread_count = 16;
 
     return runtime_param;
 }
-
 
 config_ga_t default_config(runtime_param_t runtime_param) {
     // Setups default configuration
@@ -303,11 +260,20 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 	}
 
 	selection_param_t selection_param;
-	selection_param.selection_method = selection_method_rank_space;
+	selection_param.selection_method = selection_method_roulette;
 	selection_param.selection_div_param = 0.5f;
-	selection_param.selection_prob_param = 0.5f;
+	selection_param.selection_prob_param = 0.2f;
 	selection_param.selection_temp_param = 10.0f;
 	selection_param.selection_tournament_size = 4;
+
+    optimizer_param_t optimizer_param;
+    optimizer_param.convergence_moving_window_size = 10;
+    optimizer_param.min_mutations = 1;
+    optimizer_param.max_mutations = 100;
+    optimizer_param.mutation_factor = 0.1;
+    optimizer_param.max_iterations = 1000;
+    optimizer_param.convergence_threshold = 1e-8;
+    optimizer_param.convergence_window = 100;
 
 	config_ga_t config_ga;
 	config_ga.selection_param = selection_param;
@@ -316,6 +282,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 	config_ga.mutation_param = mutation_param;
 	config_ga.fx_param = fx_param;
 	config_ga.population_param = pop_param;
+    config_ga.optimizer_param = optimizer_param;
 
     return config_ga;
 }
@@ -332,9 +299,6 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 	thread_param_t* thread_param;
 
 	start_threads(&task_queue, runtime_param, config_ga, &thread_param);
-
-	// print max iter
-	printf("Max Iterations: %d\n", runtime_param.max_iterations);
 
 	make_task_list(&runtime_param, config_ga, &task_queue);
 	
