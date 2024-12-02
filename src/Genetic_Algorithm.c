@@ -11,6 +11,55 @@
 #include "Genetic_Algorithm.h"
 
 
+void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t* adaptive_memory, thread_param_t* thread_param, gene_pool_t* gene_pool) {
+
+	for (int individual = 0; individual < thread_param->runtime_param.logging_param.top_n_export; individual++) {
+		task_result_t task_result;
+		task_result.task_type = 0;
+		task_result.iteration = adaptive_memory->iteration_counter;
+		task_result.task_id = task->task_id;
+		task_result.individual_id = gene_pool->sorted_indexes[gene_pool->individuals - individual - 1];
+		task_result.position = individual;
+        task_result.converged = adaptive_memory->convergence_reached;
+		task_result.result = gene_pool->pop_result_set[task_result.individual_id];
+		task_result.lower = malloc(sizeof(double) * thread_param->runtime_param.genes);
+		task_result.upper = malloc(sizeof(double) * thread_param->runtime_param.genes);
+		task_result.paramset = malloc(sizeof(double) * thread_param->runtime_param.genes);
+		if (task_result.lower == NULL || task_result.upper == NULL || task_result.paramset == NULL) {
+			printf("Memory allocation failed");
+			exit(255);
+		}
+
+		for (int i = 0; i < thread_param->runtime_param.genes; i++) {
+			task_result.lower[i] = task->lower[i];
+			task_result.upper[i] = task->upper[i];
+			task_result.paramset[i] = gene_pool->pop_param_double[task_result.individual_id][i];
+		}
+
+		if (thread_param->runtime_param.logging_param.include_config) {
+			// config reports:
+			// (int) mutation_rate
+			// (double) computed_mutation
+			// (double) convergence_moving_window
+
+			task_result.config_int = malloc(sizeof(int) * 1);
+			task_result.config_double = malloc(sizeof(double) * 3);
+			if (task_result.config_int == NULL || task_result.config_double == NULL) {
+				printf("Memory allocation failed");
+				exit(255);
+			}
+
+			task_result.config_int[0] = task->config_ga.mutation_param.mutation_rate;
+			task_result.config_double[0] = adaptive_memory->computed_mutation;
+			task_result.config_double[1] = adaptive_memory->convergence_moving_window;
+		}
+
+		task_queue_t* task_queue = thread_param->task_queue;
+		task_result_queue_t* task_result_queue = task_queue->task_result_queue;
+		add_result(task_result_queue, &task_result);
+	}
+}
+
 void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t* gene_pool) {
 	//printf("Thread %d, Task %d\n", thread_param->thread_id, thread_param->task_id);
 
@@ -19,40 +68,25 @@ void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t*
     adaptive_memory_t adaptive_memory;
     new_adaptive_memory(&adaptive_memory);
 
-	while(1) {
-		
+	while (1) {
+
 		// Process Population
 		process_pop(gene_pool, task);
 
-        adapt_param(task, gene_pool, &adaptive_memory);
+		adapt_param(task, gene_pool, &adaptive_memory);
+
+		if (adaptive_memory.convergence_reached == 1 ||
+			(thread_param->runtime_param.logging_param.export_interval != 0 &&
+				adaptive_memory.iteration_counter % thread_param->runtime_param.logging_param.export_interval == 0)
+			) {
+			report_task(thread_param->task_queue, task, &adaptive_memory, thread_param, gene_pool);
+		}
+
         if (adaptive_memory.convergence_reached == 1) {
             break;
         }
+
 	}
-    
-
-	task_result_t task_result;
-
-    task_result.task_id = task->task_id;
-    task_result.iterations = adaptive_memory.iteration_counter;
-    task_result.result = adaptive_memory.previous_best_result;
-    task_result.paramset = malloc(sizeof(double) * thread_param->runtime_param.genes);
-	task_result.lower = malloc(sizeof(double) * thread_param->runtime_param.genes);
-	task_result.upper = malloc(sizeof(double) * thread_param->runtime_param.genes);
-	if (task_result.lower == NULL || task_result.upper == NULL || task_result.paramset == NULL) {
-		printf("Memory allocation failed");
-		exit(255);
-	}
-
-    for (int i = 0; i < thread_param->runtime_param.genes; i++) {
-        task_result.paramset[i] = gene_pool->pop_param_double[gene_pool->sorted_indexes[gene_pool->individuals - 1]][i];
-		task_result.lower[i] = task->lower[i];
-		task_result.upper[i] = task->upper[i];
-	}
-    task_queue_t* task_queue = thread_param->task_queue;
-    task_result_queue_t* task_result_queue = task_queue->task_result_queue;
-	add_result(task_result_queue, &task_result);
-
     free_task(task);
 
 	thread_param->status = 2; // Completed
@@ -70,12 +104,12 @@ void* process_log_thread(task_result_queue_t* task_result_queue) {
         exit(255);
     }
 
-	if (task_result_queue->runtime_param.fully_qualified_basename == NULL) {
+	if (task_result_queue->runtime_param.logging_param.fully_qualified_basename == NULL) {
 		strcpy_s(log_file, 255, "C:/temp/GA\0");
 
 	}
 	else {
-		strcpy_s(log_file, 255, task_result_queue->runtime_param.fully_qualified_basename);
+		strcpy_s(log_file, 255, task_result_queue->runtime_param.logging_param.fully_qualified_basename);
 	}
 
 
@@ -94,8 +128,17 @@ void* process_log_thread(task_result_queue_t* task_result_queue) {
 	best_result.upper = malloc(sizeof(double) * task_result_queue->runtime_param.genes);
 
 	if (best_result.lower == NULL || best_result.upper == NULL || best_result.paramset == NULL) {
-		printf("Memory allocation failed");
+		printf("Memory allocation failed: process_log_thread");
 		exit(255);
+	}
+
+	if (task_result_queue->runtime_param.logging_param.include_config == 1) {
+		best_result.config_int = malloc(sizeof(int) * task_result_queue->runtime_param.logging_param.config_int_count);
+		best_result.config_double = malloc(sizeof(double) * task_result_queue->runtime_param.logging_param.config_double_count);
+		if (best_result.config_int == NULL || best_result.config_double == NULL) {
+			printf("Memory allocation failed: process_log_thread");
+			exit(255);
+		}
 	}
 
     while (1) {
@@ -106,19 +149,34 @@ void* process_log_thread(task_result_queue_t* task_result_queue) {
             break;
         }
 
-		if (task_result.result > current_best_res) {
+		if (task_result.converged == 1 && task_result.result > current_best_res) {
 			current_best_res = task_result.result;
+			best_result.iteration = task_result.iteration;
 			best_result.task_id = task_result.task_id;
-			best_result.iterations = task_result.iterations;
+            best_result.individual_id = task_result.individual_id;
+            best_result.position = task_result.position;
 			best_result.result = task_result.result;
 			for (int i = 0; i < task_result_queue->runtime_param.genes; i++) {
-				best_result.paramset[i] = task_result.paramset[i];
 				best_result.lower[i] = task_result.lower[i];
 				best_result.upper[i] = task_result.upper[i];
+				best_result.paramset[i] = task_result.paramset[i];
 			}
+            if (task_result_queue->runtime_param.logging_param.include_config) {
+                for (int i = 0; i < task_result_queue->runtime_param.logging_param.config_int_count; i++) {
+                    best_result.config_int[i] = task_result.config_int[i];
+                }
+                for (int i = 0; i < task_result_queue->runtime_param.logging_param.config_double_count; i++) {
+                    best_result.config_double[i] = task_result.config_double[i];
+                }
+            }  
 		}
 
         write_param(*task_result_queue, task_result);
+
+        if (task_result_queue->runtime_param.logging_param.include_config) {
+            free(task_result.config_int);
+            free(task_result.config_double);
+        }
         free_task_result(&task_result);
     }
 
@@ -213,16 +271,30 @@ void start_threads(task_queue_t* task_queue, runtime_param_t runtime_param, conf
 	}
 }
 
+logging_param_t default_logging_param() {
+    // Setups default logging parameters
+    logging_param_t logging_param;
+
+    logging_param.fully_qualified_basename = "C:/temp/GA\0";
+    logging_param.top_n_export = 1;
+    logging_param.export_interval = 100;
+    logging_param.include_config = 1;
+    logging_param.write_csv = 1;
+    logging_param.config_int_count = 1;
+    logging_param.config_double_count = 2;
+    return logging_param;
+}
+
 runtime_param_t default_runtime_param() {
     // Setups default runtime parameters
     runtime_param_t runtime_param;
 
-    runtime_param.individuals = 100;
+    runtime_param.individuals = 16;
     runtime_param.genes = 4;
-    runtime_param.elitism = 8;
-    runtime_param.fully_qualified_basename = "C:/temp/GA\0";
+    runtime_param.elitism = 2;
     runtime_param.task_count = 81;
 	runtime_param.thread_count = 16;
+    runtime_param.logging_param = default_logging_param();
 
     return runtime_param;
 }
@@ -270,7 +342,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
     optimizer_param.convergence_moving_window_size = 10;
     optimizer_param.min_mutations = 1;
     optimizer_param.max_mutations = 100;
-    optimizer_param.mutation_factor = 0.1;
+    optimizer_param.mutation_factor = 1e3;
     optimizer_param.max_iterations = 1000;
     optimizer_param.convergence_threshold = 1e-8;
     optimizer_param.convergence_window = 100;

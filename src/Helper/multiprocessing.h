@@ -20,12 +20,17 @@ typedef struct task_param_s task_param_t;
 
 struct task_result_s {
     int task_type; // 0: GA, 1: kill
-    int iterations;
+    int iteration;
     int task_id;
+    int individual_id;
+    int position;
+	int converged;
+	double result;
 	double* lower;
     double* upper;
     double* paramset;
-	double result;
+	int* config_int;
+    double* config_double;
 };
 
 typedef struct task_result_s task_result_t;
@@ -36,7 +41,6 @@ struct task_result_queue_s {
 	pthread_t thread_id;
 	FILE* fileptr;
 	FILE* fileptrcsv;
-	FILE* fileptrconfig;
 	runtime_param_t runtime_param;
 	int first_task_id;
     int next_task_id;

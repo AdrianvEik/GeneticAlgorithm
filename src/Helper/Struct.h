@@ -76,13 +76,23 @@ struct config_ga_s {
     struct optimizer_param_s optimizer_param;
 };
 
-struct runtime_param_s {
+struct logging_param_s {
 	char* fully_qualified_basename;
+    int top_n_export; // DEFAULT = 1
+    int export_interval; // DEFAULT = 0 (last only)
+    int include_config; // DEFAULT = 0
+    int write_csv; // DEFAULT = 1
+    int config_int_count; // DEFAULT = 1
+    int config_double_count; // DEFAULT = 2
+};
+
+struct runtime_param_s {
 	int genes; // DEFAULT = 2
 	int individuals; // DEFAULT = 32
 	int elitism; // DEFAULT = 2
 	int task_count; // DEFAULT = 32
 	int thread_count; // DEFAULT = 4
+    struct logging_param_s logging_param;
 };	
 
 typedef struct gene_pool_s gene_pool_t;
@@ -95,5 +105,5 @@ typedef struct population_param_s population_param_t;
 typedef struct config_ga_s config_ga_t;
 typedef struct runtime_param_s runtime_param_t;
 typedef struct optimizer_param_s optimizer_param_t;
-
+typedef struct logging_param_s logging_param_t;
 #endif // STRUCT_H

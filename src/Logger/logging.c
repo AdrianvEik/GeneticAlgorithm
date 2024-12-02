@@ -8,44 +8,62 @@
 
 void open_file(task_result_queue_t* task_result_queue)
 {
-	int fully_qualified_basename_size = strlen(task_result_queue->runtime_param.fully_qualified_basename)+1;
+	int fully_qualified_basename_size = strlen(task_result_queue->runtime_param.logging_param.fully_qualified_basename)+1;
 	char* filename_csv = malloc(fully_qualified_basename_size + 4);
 	char* filename_bin = malloc(fully_qualified_basename_size + 4);
-	char* filename_json = malloc(fully_qualified_basename_size + 5);
 
 	if (fully_qualified_basename_size == 0) {
 		printf("File name is empty");
 		exit(1);
 	}
 
-	if (filename_csv == NULL || filename_bin == NULL || filename_json == NULL) {
+	if (filename_csv == NULL || filename_bin == NULL) {
 		printf("Memory allocation failed");
 		exit(255);
 	}
 
-	strcpy_s(filename_csv, fully_qualified_basename_size, task_result_queue->runtime_param.fully_qualified_basename);
+	strcpy_s(filename_csv, fully_qualified_basename_size, task_result_queue->runtime_param.logging_param.fully_qualified_basename);
 	strcat_s(filename_csv, fully_qualified_basename_size+4, ".csv");
 
-	strcpy_s(filename_bin, fully_qualified_basename_size, task_result_queue->runtime_param.fully_qualified_basename);
+	strcpy_s(filename_bin, fully_qualified_basename_size, task_result_queue->runtime_param.logging_param.fully_qualified_basename);
 	strcat_s(filename_bin, fully_qualified_basename_size+4, ".bin");
-
-	strcpy_s(filename_json, fully_qualified_basename_size, task_result_queue->runtime_param.fully_qualified_basename);
-	strcat_s(filename_json, fully_qualified_basename_size+5, ".json");
 
 
 	if(fopen_s (&(task_result_queue->fileptr), filename_bin, "wb") != 0 ||
-	   fopen_s (&(task_result_queue->fileptrcsv), filename_csv, "w") != 0 ||
-	   fopen_s (&(task_result_queue->fileptrconfig), filename_json, "w") != 0)
+	   fopen_s (&(task_result_queue->fileptrcsv), filename_csv, "w") != 0)
 	{
 		printf("Error opening file!\n");
 		exit(1);
 	}
-	fprintf(task_result_queue->fileptrcsv, "iteration;result;");
+	//struct task_result_s {
+//	int task_type; // 0: GA, 1: kill
+//	int iteration;
+//	int task_id;
+//	int individual_id;
+//	int position;
+// 	double result;
+//	double* lower;
+//	double* upper;
+//	double* paramset;
+//	int* config_int;
+//	double* config_double;
+//};
+	fprintf(task_result_queue->fileptrcsv, "iteration;task_id;individual_id;position;result;");
 	for (int i = 0; i < task_result_queue->runtime_param.genes; i++)
 	{
-		fprintf(task_result_queue->fileptrcsv, "gene%d;", i);
 		fprintf(task_result_queue->fileptrcsv, "lower%d;", i);
         fprintf(task_result_queue->fileptrcsv, "upper%d;", i);
+		fprintf(task_result_queue->fileptrcsv, "gene%d;", i);
+	}
+	if (task_result_queue->runtime_param.logging_param.include_config == 1) {
+		for (int i = 0; i < task_result_queue->runtime_param.logging_param.config_int_count; i++)
+		{
+			fprintf(task_result_queue->fileptrcsv, "config_int%d;", i);
+		}
+		for (int i = 0; i < task_result_queue->runtime_param.logging_param.config_double_count; i++)
+		{
+			fprintf(task_result_queue->fileptrcsv, "config_double%d;", i);
+		}
 	}
 	
 	fprintf(task_result_queue->fileptrcsv, "\n");
@@ -57,27 +75,46 @@ void close_file(task_result_queue_t* task_result_queue)
 {
 	fclose(task_result_queue->fileptr);
 	fclose(task_result_queue->fileptrcsv);
-	fclose(task_result_queue->fileptrconfig);
 }
 
 void write_param(task_result_queue_t task_result_queue, task_result_t task_result)
 {
+
 	if (task_result_queue.fileptr == NULL)
 	{
 		printf("Error opening file!\n");
 		exit(1);
 	}
-	fwrite(&task_result.iterations, sizeof(int), 1, task_result_queue.fileptr);
+	fwrite(&task_result.iteration, sizeof(int), 1, task_result_queue.fileptr);
+    fwrite(&task_result.task_id, sizeof(int), 1, task_result_queue.fileptr);
+    fwrite(&task_result.individual_id, sizeof(int), 1, task_result_queue.fileptr);
+    fwrite(&task_result.position, sizeof(int), 1, task_result_queue.fileptr);
     fwrite(&task_result.result, sizeof(double), 1, task_result_queue.fileptr);
+    fwrite(task_result.lower, sizeof(double), task_result_queue.runtime_param.genes, task_result_queue.fileptr);
+    fwrite(task_result.upper, sizeof(double), task_result_queue.runtime_param.genes, task_result_queue.fileptr);
     fwrite(task_result.paramset, sizeof(double), task_result_queue.runtime_param.genes, task_result_queue.fileptr);
-
-	fprintf(task_result_queue.fileptrcsv, "%d;%f;", task_result.iterations, task_result.result);
-    for (int i = 0; i < task_result_queue.runtime_param.genes; i++)
+    
+    fprintf(task_result_queue.fileptrcsv, "%d;%d;%d;%d;%f;", task_result.iteration, task_result.task_id, task_result.individual_id, task_result.position, task_result.result);
+	for (int i = 0; i < task_result_queue.runtime_param.genes; i++)
     {
-        fprintf(task_result_queue.fileptrcsv, "%f;", task_result.paramset[i]);
         fprintf(task_result_queue.fileptrcsv, "%f;", task_result.lower[i]);
         fprintf(task_result_queue.fileptrcsv, "%f;", task_result.upper[i]);
+		fprintf(task_result_queue.fileptrcsv, "%f;", task_result.paramset[i]);
     }
+
+	if (task_result_queue.runtime_param.logging_param.include_config == 1) {
+		fwrite(task_result.config_int, sizeof(int), task_result_queue.runtime_param.logging_param.config_int_count, task_result_queue.fileptr);
+		fwrite(task_result.config_double, sizeof(double), task_result_queue.runtime_param.logging_param.config_double_count, task_result_queue.fileptr);
+
+		for (int i = 0; i < task_result_queue.runtime_param.logging_param.config_int_count; i++)
+		{
+			fprintf(task_result_queue.fileptrcsv, "%d;", task_result.config_int[i]);
+		}
+		for (int i = 0; i < task_result_queue.runtime_param.logging_param.config_double_count; i++)
+		{
+			fprintf(task_result_queue.fileptrcsv, "%f;", task_result.config_double[i]);
+		}
+	}
 
 	fprintf(task_result_queue.fileptrcsv, "\n");
 }

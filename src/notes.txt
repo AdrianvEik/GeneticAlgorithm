@@ -13,3 +13,22 @@
 
 211124
 - lower upper out of bounds bij duplicate generator
+
+281124
+HDR:
+* signature ADABCODE
+* version (_int)
+* genes
+* config_count_int (_int)
+* config_count_double (_int)
+
+
+Data:
+* task_id
+* iteration
+* result
+* individual
+* genes
+* param
+* config_int (mutation_rate)
+* config_double (convergence_moving_window)

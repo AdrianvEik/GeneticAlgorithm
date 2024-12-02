@@ -4,9 +4,10 @@
 #include "../Optimisation/Optimizer.h"
 
 void new_adaptive_memory(adaptive_memory_t* adaptive_memory) {
-    adaptive_memory->iteration_counter = 0;
+    adaptive_memory->iteration_counter = -1;
     adaptive_memory->convergence_counter = 0;
     adaptive_memory->convergence_reached = 0;
+    adaptive_memory->computed_mutation = 0;
     adaptive_memory->convergence_moving_window = 0;
     adaptive_memory->previous_best_result = 0;
 }
@@ -14,7 +15,7 @@ void new_adaptive_memory(adaptive_memory_t* adaptive_memory) {
 void adapt_param(task_param_t* task, gene_pool_t* gene_pool, adaptive_memory_t* adaptive_memory) {
 	
 	double best_result = gene_pool->pop_result_set[gene_pool->sorted_indexes[gene_pool->individuals - 1]];
-    double computed_mutation;
+    int computed_mutation;
 
 	// Check for convergence & runtime params
     adaptive_memory->iteration_counter++;
@@ -37,8 +38,8 @@ void adapt_param(task_param_t* task, gene_pool_t* gene_pool, adaptive_memory_t* 
 
 
 	if (adaptive_memory->iteration_counter == 0) {
-        adaptive_memory->convergence_moving_window_alpha = (task->config_ga.optimizer_param.convergence_moving_window_size-1)/ task->config_ga.optimizer_param.convergence_moving_window_size;
-        adaptive_memory->convergence_moving_window_beta = 1 / task->config_ga.optimizer_param.convergence_moving_window_size;
+        adaptive_memory->convergence_moving_window_alpha = ((double) task->config_ga.optimizer_param.convergence_moving_window_size-1)/ (double) task->config_ga.optimizer_param.convergence_moving_window_size;
+        adaptive_memory->convergence_moving_window_beta = 1 / (double) task->config_ga.optimizer_param.convergence_moving_window_size;
 	}
 
     adaptive_memory->convergence_moving_window = adaptive_memory->convergence_moving_window_alpha * adaptive_memory->convergence_moving_window + adaptive_memory->convergence_moving_window_beta * best_result;
@@ -50,7 +51,14 @@ void adapt_param(task_param_t* task, gene_pool_t* gene_pool, adaptive_memory_t* 
     }
     else {
         // TODO: check if log is correct
-        computed_mutation = log(task->config_ga.optimizer_param.convergence_threshold / adaptive_memory->convergence_moving_window) * task->config_ga.optimizer_param.mutation_factor;
+        adaptive_memory->computed_mutation = sqrt(task->config_ga.optimizer_param.convergence_threshold / (best_result-adaptive_memory->convergence_moving_window)) * task->config_ga.optimizer_param.mutation_factor;
+        if (adaptive_memory->computed_mutation < INT32_MAX) {
+            computed_mutation = (int)adaptive_memory->computed_mutation;
+        }
+        else {
+            computed_mutation = INT32_MAX;
+        }
+
         if (computed_mutation < task->config_ga.optimizer_param.min_mutations) {
             task->config_ga.mutation_param.mutation_rate = task->config_ga.optimizer_param.min_mutations;
         }

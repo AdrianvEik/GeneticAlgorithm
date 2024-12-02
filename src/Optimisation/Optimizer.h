@@ -11,6 +11,7 @@ struct adaptive_memory_s {
 	double convergence_moving_window_alpha;
 	double convergence_moving_window_beta;
 	double previous_best_result;
+    double computed_mutation;
 	int iteration_counter;
 	int convergence_counter;
 	int convergence_reached;
