@@ -11,6 +11,12 @@ src/x64
 .vcxproj.filters
 .vcxproj.user
 
+# python
+.pyc
+
+#logs
+.log
+
 # docs
 docs/source/_images/
 dfmcontrol/.idea/
