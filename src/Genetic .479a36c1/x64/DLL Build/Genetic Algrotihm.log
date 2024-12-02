@@ -1,0 +1,17 @@
+﻿  Genetic_Algorithm.c
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(135,42): warning C4047: 'function': 'uint32_t' differs in levels of indirection from 'void *'
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(135,42): warning C4024: 'seedRandThread': different types for formal and actual parameter 2
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(171,21): warning C4047: 'function': 'uint32_t' differs in levels of indirection from 'void *'
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(171,21): warning C4024: 'seedRandThread': different types for formal and actual parameter 2
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(182,28): warning C4047: 'function': 'uint32_t' differs in levels of indirection from 'void *'
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(182,28): warning C4024: 'seedRandThread': different types for formal and actual parameter 2
+  crossover.c
+  process.c
+  Generating Code...
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(311,1): warning C4716: 'Genetic_Algorithm': must return a value
+  LINK : D:\School\Libraries\GeneticAlgorithm\src\x64\DLL Build\Genetic Algrotihm.dll not found or not built by the last incremental link; performing full link
+     Creating library D:\School\Libraries\GeneticAlgorithm\src\x64\DLL Build\Genetic Algrotihm.lib and object D:\School\Libraries\GeneticAlgorithm\src\x64\DLL Build\Genetic Algrotihm.exp
+  Genetic Algrotihm.vcxproj -> D:\School\Libraries\GeneticAlgorithm\src\x64\DLL Build\Genetic Algrotihm.dll
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.
+  Python ctypes structures generated and saved to D:\School\Libraries\GeneticAlgorithm\src\x64\DLL Build\Structs.py
