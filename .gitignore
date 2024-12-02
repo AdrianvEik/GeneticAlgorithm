@@ -10,6 +10,7 @@ src/x64
 .vcxproj
 .vcxproj.filters
 .vcxproj.user
+.idea
 
 # python
 .pyc
