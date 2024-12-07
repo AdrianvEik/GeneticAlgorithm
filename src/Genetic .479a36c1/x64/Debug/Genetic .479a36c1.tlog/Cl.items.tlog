@@ -1,0 +1,13 @@
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Function\Function.c;C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\Function.obj
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Helper\Helper.c;C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\Helper.obj
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c;C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\Genetic_Algorithm.obj
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Helper\multiprocessing.c;C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\multiprocessing.obj
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Helper\rng.c;C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\rng.obj
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Logger\logging.c;C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\logging.obj
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Optimisation\Optimizer.c;C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\Optimizer.obj
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Utility\crossover.c;C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\crossover.obj
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Utility\flatten.c;C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\flatten.obj
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Utility\mutation.c;C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\mutation.obj
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Utility\pop.c;C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\pop.obj
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Utility\process.c;C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\process.obj
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Utility\selection.c;C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\selection.obj

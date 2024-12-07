@@ -1,0 +1,14 @@
+﻿  Genetic_Algorithm.c
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(186,17): warning C4047: 'function': 'uint32_t' differs in levels of indirection from 'void *'
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(186,17): warning C4024: 'seedRandThread': different types for formal and actual parameter 1
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(234,10): warning C4101: 'j': unreferenced local variable
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(377,55): warning C4047: 'function': 'thread_param_t *' differs in levels of indirection from 'thread_param_t **'
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(377,55): warning C4024: 'start_threads': different types for formal and actual parameter 4
+  logging.c
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Logger\logging.c(12,117): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  Generating Code...
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(183,1): warning C4715: 'process_log_thread': not all control paths return a value
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(386,1): warning C4716: 'Genetic_Algorithm': must return a value
+  Genetic Algrotihm.vcxproj -> C:\Users\vanei\source\repos\GeneticAlgorithm\src\x64\Debug\Genetic Algrotihm.exe
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.

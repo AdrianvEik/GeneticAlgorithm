@@ -1,4 +1,5 @@
 #include "rng.h"
+#include "../Helper/multiprocessing.h"
 
 #ifndef _HELPER_H
 #define _HELPER_H
@@ -24,6 +25,10 @@ void roulette_wheel(double* probabilities, int size, int ressize, int* result);
 void indexed_bubble_sort(double* arr, int* indices, int size);
 void indexed_merge_sort(double* arr, int* indices, int size);
 void indexed_inv_merge_sort(double* arr, int* indices, int size);
+
+// memcpy
+void copy_to_buffer(task_result_queue_t* task_result_queue, void* data, int size);
+
 
 // random 32 bit integer in binary
 //unsigned int random_int32();

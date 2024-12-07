@@ -30,8 +30,8 @@
 //	return thread_id;
 //}
 
-void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_param_t runtime_param, int queue_size) {
-	task_result_queue->result_list = (task_result_t*)malloc(sizeof(task_result_t) * queue_size);
+void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_param_t runtime_param) {
+	task_result_queue->result_list = (task_result_t*)malloc(sizeof(task_result_t) * runtime_param.logging_param.queue_size);
 	if (task_result_queue->result_list == NULL) {
 		printf("Memory allocation failed: init_task_result_queue");
 		exit(255);
@@ -43,11 +43,37 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
 		exit(255);
 	}
 
-	task_result_queue->queue_size = queue_size;
 	task_result_queue->first_task_id = 0;
 	task_result_queue->next_task_id = 0;
     task_result_queue->runtime_param = runtime_param;
 
+    task_result_queue->bin_write_buffer = (char*)malloc(sizeof(char) * runtime_param.logging_param.bin_buffer_size);
+    if (task_result_queue->bin_write_buffer == NULL) {
+        printf("Memory allocation failed: init_task_result_queue");
+        exit(255);
+    }
+	task_result_queue->bin_single_entry_length = sizeof(int) * 4 + sizeof(double) + sizeof(double) * runtime_param.genes * 3;
+	if (runtime_param.logging_param.include_config == 1) {
+        task_result_queue->bin_single_entry_length += sizeof(int) * runtime_param.logging_param.config_int_count + sizeof(double) * runtime_param.logging_param.config_double_count;
+    }
+    task_result_queue->bin_write_buffer_position = 0;
+
+
+	if (runtime_param.logging_param.write_csv == 1) {
+		task_result_queue->csv_write_buffer = (char*)malloc(sizeof(char) * runtime_param.logging_param.csv_buffer_size);
+		if (task_result_queue->csv_write_buffer == NULL) {
+			printf("Memory allocation failed: init_task_result_queue");
+			exit(255);
+		}
+		const len_of_engineering_double = 15; // -1.123456e+123;
+		const len_of_formatted_int = 12; // -12345678901;
+		task_result_queue->csv_single_entry_length = 4 * len_of_formatted_int + 1 * len_of_engineering_double + runtime_param.genes * len_of_engineering_double * 3;
+		if (runtime_param.logging_param.include_config == 1) {
+			task_result_queue->csv_single_entry_length += runtime_param.logging_param.config_int_count * len_of_formatted_int + runtime_param.logging_param.config_double_count * len_of_engineering_double;
+		}
+
+		task_result_queue->csv_write_buffer_position = 0;
+	}
 	pthread_mutex_init(task_result_queue->lock, NULL);
 
 	return task_result_queue;
@@ -71,13 +97,13 @@ void add_result(task_result_queue_t* task_result_queue, task_result_t* result) {
     int result_added = 0;
     while (!result_added) {
         pthread_mutex_lock(task_result_queue->lock);
-        if (task_result_queue->first_task_id == (task_result_queue->next_task_id + 1) % task_result_queue->queue_size) {
+        if (task_result_queue->first_task_id == (task_result_queue->next_task_id + 1) % task_result_queue->runtime_param.logging_param.queue_size) {
             pthread_mutex_unlock(task_result_queue->lock);
             Sleep(1000);
             continue;
         }
         task_result_queue->result_list[task_result_queue->next_task_id] = *result;
-        task_result_queue->next_task_id = (task_result_queue->next_task_id + 1) % task_result_queue->queue_size;
+        task_result_queue->next_task_id = (task_result_queue->next_task_id + 1) % task_result_queue->runtime_param.logging_param.queue_size;
         result_added = 1;
         pthread_mutex_unlock(task_result_queue->lock);
     }
@@ -93,7 +119,7 @@ void get_result(task_result_queue_t* task_result_queue, task_result_t* result) {
             continue;
         }
         *result = task_result_queue->result_list[task_result_queue->first_task_id];
-        task_result_queue->first_task_id = (task_result_queue->first_task_id + 1) % task_result_queue->queue_size;
+        task_result_queue->first_task_id = (task_result_queue->first_task_id + 1) % task_result_queue->runtime_param.logging_param.queue_size;
         pthread_mutex_unlock(task_result_queue->lock);
         result_retrieved = 1;
     }
@@ -135,6 +161,8 @@ void free_task_queue(task_queue_t* task_queue) {
     free(task_queue->task_list);
 
 	pthread_mutex_destroy(task_queue->task_result_queue->lock);
+	free(task_queue->task_result_queue->bin_write_buffer);
+    free(task_queue->task_result_queue->csv_write_buffer);
 	free(task_queue->task_result_queue->result_list);
 
 	free(task_queue->thread_id);
@@ -197,11 +225,18 @@ void generate_task(task_queue_t* task_queue, runtime_param_t runtime_param, conf
 		else {
 			task_param_t task;
 			new_task(runtime_param, config_ga, &task);
-
-			for (int j = 0; j < runtime_param.genes; j++) {
-				task.lower[j] = config_ga.population_param.lower[j] + (config_ga.population_param.upper[j] - config_ga.population_param.lower[j]) / tasks_per_gene[j] * (position[j]);
-				task.upper[j] = config_ga.population_param.upper[j] - (config_ga.population_param.upper[j] - config_ga.population_param.lower[j]) / tasks_per_gene[j] * (tasks_per_gene[j] - position[j] - 1);
+			if (runtime_param.zone_enable == 1) {
+				for (int j = 0; j < runtime_param.genes; j++) {
+					task.lower[j] = config_ga.population_param.lower[j] + (config_ga.population_param.upper[j] - config_ga.population_param.lower[j]) / tasks_per_gene[j] * (position[j]);
+					task.upper[j] = config_ga.population_param.upper[j] - (config_ga.population_param.upper[j] - config_ga.population_param.lower[j]) / tasks_per_gene[j] * (tasks_per_gene[j] - position[j] - 1);
+				}
 			}
+            else {
+                for (int j = 0; j < runtime_param.genes; j++) {
+                    task.lower[j] = config_ga.population_param.lower[j];
+                    task.upper[j] = config_ga.population_param.upper[j];
+                }
+            }
             add_task(task_queue, &task);
 		}
 	}

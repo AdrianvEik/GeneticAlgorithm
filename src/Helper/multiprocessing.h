@@ -36,7 +36,6 @@ struct task_result_s {
 typedef struct task_result_s task_result_t;
 
 struct task_result_queue_s {
-    int queue_size;
     task_result_t* result_list;
 	pthread_t thread_id;
 	FILE* fileptr;
@@ -44,6 +43,12 @@ struct task_result_queue_s {
 	runtime_param_t runtime_param;
 	int first_task_id;
     int next_task_id;
+	char* bin_write_buffer;
+    int bin_single_entry_length;
+    int bin_write_buffer_position;
+    char* csv_write_buffer;
+    int csv_single_entry_length;
+	int csv_write_buffer_position;
     pthread_mutex_t* lock;
 };
 
@@ -77,7 +82,7 @@ void free_task(task_param_t* task);
 void free_task_result(task_result_t* task_result);
 
 
-void init_task_result_queue(task_result_queue_t* task_result_queue,runtime_param_t runtime_param,int queue_size);
+void init_task_result_queue(task_result_queue_t* task_result_queue,runtime_param_t runtime_param);
 void add_result(task_result_queue_t* task_result_queue, task_result_t* result);
 void get_result(task_result_queue_t* task_result_queue, task_result_t* result);
 void stop_result_logger(task_result_queue_t* task_result_queue, int thread_count);

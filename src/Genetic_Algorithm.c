@@ -144,7 +144,8 @@ void* process_log_thread(task_result_queue_t* task_result_queue) {
     while (1) {
         get_result(task_result_queue, &task_result);
         if (task_result.task_type == 1) {
-			write_param(*task_result_queue, best_result);
+			write_param(task_result_queue, best_result);
+			write_file_buffer(task_result_queue, 1);
             free_task_result(&best_result);
             break;
         }
@@ -170,8 +171,8 @@ void* process_log_thread(task_result_queue_t* task_result_queue) {
                 }
             }  
 		}
-
-        write_param(*task_result_queue, task_result);
+		write_param(task_result_queue, task_result);
+		write_file_buffer(task_result_queue, 0);
 
         if (task_result_queue->runtime_param.logging_param.include_config) {
             free(task_result.config_int);
@@ -179,7 +180,6 @@ void* process_log_thread(task_result_queue_t* task_result_queue) {
         }
         free_task_result(&task_result);
     }
-
 }
 
 void* process_task_thread(thread_param_t* thread_param) {
@@ -276,12 +276,15 @@ logging_param_t default_logging_param() {
     logging_param_t logging_param;
 
     logging_param.fully_qualified_basename = "C:/temp/GA\0";
-    logging_param.top_n_export = 1;
-    logging_param.export_interval = 100;
+    logging_param.top_n_export = 64;
+    logging_param.export_interval = 1;
     logging_param.include_config = 1;
     logging_param.write_csv = 1;
     logging_param.config_int_count = 1;
     logging_param.config_double_count = 2;
+    logging_param.queue_size = 128;
+    logging_param.csv_buffer_size = 10 * 1024 * 1024;
+	logging_param.bin_buffer_size = 10 * 1024 * 1024;
     return logging_param;
 }
 
@@ -289,11 +292,12 @@ runtime_param_t default_runtime_param() {
     // Setups default runtime parameters
     runtime_param_t runtime_param;
 
-    runtime_param.individuals = 16;
+    runtime_param.individuals = 64;
     runtime_param.genes = 4;
     runtime_param.elitism = 2;
     runtime_param.task_count = 81;
 	runtime_param.thread_count = 16;
+    runtime_param.zone_enable = 1;
     runtime_param.logging_param = default_logging_param();
 
     return runtime_param;
@@ -343,9 +347,9 @@ config_ga_t default_config(runtime_param_t runtime_param) {
     optimizer_param.min_mutations = 1;
     optimizer_param.max_mutations = 100;
     optimizer_param.mutation_factor = 1e3;
-    optimizer_param.max_iterations = 1000;
+    optimizer_param.max_iterations = 10000;
     optimizer_param.convergence_threshold = 1e-8;
-    optimizer_param.convergence_window = 100;
+    optimizer_param.convergence_window = 1000;
 
 	config_ga_t config_ga;
 	config_ga.selection_param = selection_param;
@@ -365,7 +369,7 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 	double best_res = 0.0f;
 	int convergence_counter = 0;
 	task_result_queue_t task_result_queue;
-	init_task_result_queue(&task_result_queue, runtime_param, runtime_param.thread_count * 4);
+	init_task_result_queue(&task_result_queue, runtime_param);
 	task_queue_t task_queue;
 	init_task_queue(&task_queue, runtime_param.thread_count * 4, &task_result_queue, runtime_param.thread_count);
 	thread_param_t* thread_param;
@@ -389,6 +393,8 @@ void free_config_ga(config_ga_t* config_ga) {
 int main() {
 	int repeats = 1;
 	runtime_param_t runtime_param = default_runtime_param();
+	runtime_param.zone_enable = 0;
+	runtime_param.task_count = 10;
 	config_ga_t config_ga = default_config(runtime_param);
 
 	for (int i = 0; i < repeats; i++) {

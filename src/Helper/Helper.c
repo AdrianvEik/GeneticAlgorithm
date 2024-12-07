@@ -1,11 +1,13 @@
 
-#include "stdio.h"
-#include "stdlib.h"
-#include "math.h"
-#include "stdint.h"
-#include "time.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <stdint.h>
+#include <time.h>
 
 #include "Helper.h"
+#include "../Helper/multiprocessing.h"
 #undef PI
 #define PI   3.14159265358979323846264338327950288419716939937510f
 
@@ -328,4 +330,9 @@ void indexed_inv_merge_sort(double* arr, int* indices, int size) {
 		free(L_indices);
 		free(R_indices);
 	}
+}
+
+void copy_to_buffer(task_result_queue_t* task_result_queue, void* data, int size) {
+    memcpy(task_result_queue->bin_write_buffer + task_result_queue->bin_write_buffer_position, data, size);
+    task_result_queue->bin_write_buffer_position += size;
 }

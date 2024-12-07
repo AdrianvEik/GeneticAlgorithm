@@ -84,6 +84,9 @@ struct logging_param_s {
     int write_csv; // DEFAULT = 1
     int config_int_count; // DEFAULT = 1
     int config_double_count; // DEFAULT = 2
+    int queue_size; // DEFAULT = 128
+    int csv_buffer_size; // DEFAULT = 1024*1024 (1 MB)
+    int bin_buffer_size; // DEFAULT = 1024*1024 (1 MB)
 };
 
 struct runtime_param_s {
@@ -92,6 +95,7 @@ struct runtime_param_s {
 	int elitism; // DEFAULT = 2
 	int task_count; // DEFAULT = 32
 	int thread_count; // DEFAULT = 4
+    int zone_enable; // DEFAULT = 1
     struct logging_param_s logging_param;
 };	
 
