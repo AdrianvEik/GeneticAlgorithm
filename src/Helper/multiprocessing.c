@@ -47,24 +47,13 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
 	task_result_queue->next_task_id = 0;
     task_result_queue->runtime_param = runtime_param;
 
-    task_result_queue->bin_write_buffer = (char*)malloc(sizeof(char) * runtime_param.logging_param.bin_buffer_size);
-    if (task_result_queue->bin_write_buffer == NULL) {
-        printf("Memory allocation failed: init_task_result_queue");
-        exit(255);
-    }
 	task_result_queue->bin_single_entry_length = sizeof(int) * 4 + sizeof(double) + sizeof(double) * runtime_param.genes * 3;
 	if (runtime_param.logging_param.include_config == 1) {
         task_result_queue->bin_single_entry_length += sizeof(int) * runtime_param.logging_param.config_int_count + sizeof(double) * runtime_param.logging_param.config_double_count;
     }
-    task_result_queue->bin_write_buffer_position = 0;
 
 
 	if (runtime_param.logging_param.write_csv == 1) {
-		task_result_queue->csv_write_buffer = (char*)malloc(sizeof(char) * runtime_param.logging_param.csv_buffer_size);
-		if (task_result_queue->csv_write_buffer == NULL) {
-			printf("Memory allocation failed: init_task_result_queue");
-			exit(255);
-		}
 		const len_of_engineering_double = 15; // -1.123456e+123;
 		const len_of_formatted_int = 12; // -12345678901;
 		task_result_queue->csv_single_entry_length = 4 * len_of_formatted_int + 1 * len_of_engineering_double + runtime_param.genes * len_of_engineering_double * 3;
@@ -72,7 +61,6 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
 			task_result_queue->csv_single_entry_length += runtime_param.logging_param.config_int_count * len_of_formatted_int + runtime_param.logging_param.config_double_count * len_of_engineering_double;
 		}
 
-		task_result_queue->csv_write_buffer_position = 0;
 	}
 	pthread_mutex_init(task_result_queue->lock, NULL);
 
@@ -85,10 +73,38 @@ void free_task(task_param_t* task) {
     free(task->paramset);
 }
 
+void init_task_result(task_result_queue_t* task_result_queue, task_result_t* task_result, int entry_count) {
+	if (entry_count == 0) {
+		return;
+	}
+	
+	task_result->bin_buffer = (char*)malloc(sizeof(char) * task_result_queue->bin_single_entry_length * entry_count);
+    if (task_result->bin_buffer == NULL) {
+        printf("Memory allocation failed: init_task_result");
+        exit(255);
+    }
+
+    if (task_result_queue->runtime_param.logging_param.write_csv == 1) {
+        task_result->csv_buffer = (char*)malloc(sizeof(char) * task_result_queue->csv_single_entry_length * entry_count);
+        if (task_result->csv_buffer == NULL) {
+            printf("Memory allocation failed: init_task_result");
+            exit(255);
+        }
+		task_result->csv_buffer[0] = '\0';
+    }
+    else {
+        task_result->csv_buffer = NULL;
+    }
+
+    task_result->bin_position = 0;
+    task_result->csv_position = 0;
+}
+
 void free_task_result(task_result_t* task_result) {
-    free(task_result->lower);
-    free(task_result->upper);
-    free(task_result->paramset);
+	if (task_result->csv_buffer != NULL) {
+		free(task_result->csv_buffer);
+	}
+    free(task_result->bin_buffer);
 }
 
 
@@ -161,10 +177,7 @@ void free_task_queue(task_queue_t* task_queue) {
     free(task_queue->task_list);
 
 	pthread_mutex_destroy(task_queue->task_result_queue->lock);
-	free(task_queue->task_result_queue->bin_write_buffer);
-    free(task_queue->task_result_queue->csv_write_buffer);
 	free(task_queue->task_result_queue->result_list);
-
 	free(task_queue->thread_id);
 }
 
@@ -201,7 +214,7 @@ void get_task(task_queue_t* task_queue, task_param_t* task) {
 }
 
 void new_task(runtime_param_t runtime_param, config_ga_t config_ga, task_param_t* task) {
-	task->task_type = 0;
+	task->task_type = GA_TASK;
 	task->lower = (double*)malloc(sizeof(double) * runtime_param.genes);
 	task->upper = (double*)malloc(sizeof(double) * runtime_param.genes);
 	task->paramset = (double*)malloc(sizeof(double) * runtime_param.genes);
@@ -295,7 +308,7 @@ void make_task_list(runtime_param_t* runtime_param, config_ga_t config_ga, task_
 void stop_threads(task_queue_t* task_queue, int thread_count) {
     for (int i = 0; i < thread_count; i++) {
         task_param_t task;
-        task.task_type = 1;
+        task.task_type = TERMINATE_THREAD;
         add_task(task_queue, &task);
     }
 	for (int j = 0; j < thread_count; j++) {
@@ -306,7 +319,7 @@ void stop_threads(task_queue_t* task_queue, int thread_count) {
 void stop_result_logger(task_result_queue_t* task_result_queue, int thread_count) {
     for (int i = 0; i < thread_count; i++) {
         task_result_t result;
-        result.task_type = 1;
+        result.task_type = TERMINATE_THREAD;
         add_result(task_result_queue, &result);
     }
 

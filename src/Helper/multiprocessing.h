@@ -7,6 +7,13 @@
 #ifndef MULTIPROCESSING_H
 #define MULTIPROCESSING_H
 
+static const int TERMINATE_THREAD = 255;
+
+static const int LOG_TASK = 0;
+static const int BEST_RESULT_TASK = 1;
+
+static const int GA_TASK = 0;
+
 struct task_param_s {
 	int task_type; // 0: GA, 1: kill
     int task_id;
@@ -19,18 +26,23 @@ struct task_param_s {
 typedef struct task_param_s task_param_t;
 
 struct task_result_s {
-    int task_type; // 0: GA, 1: kill
-    int iteration;
-    int task_id;
-    int individual_id;
-    int position;
-	int converged;
+    int task_type; // 0: log, 1: best result, 255: kill
+    char* csv_buffer;
+    int csv_position;
+    char* bin_buffer;
+    int bin_position;
 	double result;
-	double* lower;
-    double* upper;
-    double* paramset;
-	int* config_int;
-    double* config_double;
+ //   
+ //   int task_id;
+ //   int individual_id;
+ //   int position;
+	//int converged;
+	//
+	//double* lower;
+ //   double* upper;
+ //   
+	//int* config_int;
+ //   double* config_double;
 };
 
 typedef struct task_result_s task_result_t;
@@ -43,12 +55,8 @@ struct task_result_queue_s {
 	runtime_param_t runtime_param;
 	int first_task_id;
     int next_task_id;
-	char* bin_write_buffer;
     int bin_single_entry_length;
-    int bin_write_buffer_position;
-    char* csv_write_buffer;
     int csv_single_entry_length;
-	int csv_write_buffer_position;
     pthread_mutex_t* lock;
 };
 
@@ -59,7 +67,7 @@ struct task_queue_s {
     int current_task_id;
 	pthread_t* thread_id;
     task_result_queue_t* task_result_queue;
-	task_param_t* task_list;
+    task_param_t* task_list;
 	int first_task_id;
 	int next_task_id;
 	pthread_mutex_t* lock;
@@ -79,6 +87,8 @@ typedef struct thread_param_s thread_param_t;
 void make_task_list(runtime_param_t* runtime_param, config_ga_t config_ga, task_queue_t* task_queue);
 
 void free_task(task_param_t* task);
+
+void init_task_result(task_result_queue_t* task_result_queue, task_result_t* task_result, int entry_count);
 void free_task_result(task_result_t* task_result);
 
 

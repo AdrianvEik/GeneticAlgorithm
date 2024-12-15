@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 #include "../Helper/multiprocessing.h"
+#include "../Optimisation/Optimizer.h"
 
 void open_file(task_result_queue_t* task_result_queue)
 {
@@ -77,70 +78,102 @@ void close_file(task_result_queue_t* task_result_queue)
 	fclose(task_result_queue->fileptrcsv);
 }
 
-void write_param(task_result_queue_t* task_result_queue, task_result_t task_result)
-{
+void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t* adaptive_memory, thread_param_t* thread_param, gene_pool_t* gene_pool, int best_result) {
+	task_result_t task_result;
+	int log_top_n;
 
-	if (task_result_queue->fileptr == NULL)
-	{
-		printf("Error opening file!\n");
-		exit(1);
-	}
-	copy_to_buffer(task_result_queue, &task_result.iteration, sizeof(int));
-    copy_to_buffer(task_result_queue, &task_result.task_id, sizeof(int));
-    copy_to_buffer(task_result_queue, &task_result.individual_id, sizeof(int));
-    copy_to_buffer(task_result_queue, &task_result.position, sizeof(int));
-    copy_to_buffer(task_result_queue, &task_result.result, sizeof(double));
-    copy_to_buffer(task_result_queue, task_result.lower, sizeof(double) * task_result_queue->runtime_param.genes);
-    copy_to_buffer(task_result_queue, task_result.upper, sizeof(double) * task_result_queue->runtime_param.genes);
-    copy_to_buffer(task_result_queue, task_result.paramset, sizeof(double) * task_result_queue->runtime_param.genes);
-    
-	if (task_result_queue->runtime_param.logging_param.write_csv == 1) {
-		task_result_queue->csv_write_buffer_position += snprintf(task_result_queue->csv_write_buffer + task_result_queue->csv_write_buffer_position, task_result_queue->csv_single_entry_length, "%d;%d;%d;%d;%e;", task_result.iteration, task_result.task_id, task_result.individual_id, task_result.position, task_result.result);
-		for (int i = 0; i < task_result_queue->runtime_param.genes; i++)
-		{
-			task_result_queue->csv_write_buffer_position += snprintf(task_result_queue->csv_write_buffer + task_result_queue->csv_write_buffer_position, task_result_queue->csv_single_entry_length, "%e;", task_result.lower[i]);
-			task_result_queue->csv_write_buffer_position += snprintf(task_result_queue->csv_write_buffer + task_result_queue->csv_write_buffer_position, task_result_queue->csv_single_entry_length, "%e;", task_result.upper[i]);
-			task_result_queue->csv_write_buffer_position += snprintf(task_result_queue->csv_write_buffer + task_result_queue->csv_write_buffer_position, task_result_queue->csv_single_entry_length, "%e;", task_result.paramset[i]);
-		}
-	}
-
-	if (task_result_queue->runtime_param.logging_param.include_config == 1) {
-        copy_to_buffer(task_result_queue, task_result.config_int, sizeof(int) * task_result_queue->runtime_param.logging_param.config_int_count);
-        copy_to_buffer(task_result_queue, task_result.config_double, sizeof(double) * task_result_queue->runtime_param.logging_param.config_double_count);
-
-		if (task_result_queue->runtime_param.logging_param.write_csv == 1) {
-			for (int i = 0; i < task_result_queue->runtime_param.logging_param.config_int_count; i++)
-			{
-				task_result_queue->csv_write_buffer_position += snprintf(task_result_queue->csv_write_buffer + task_result_queue->csv_write_buffer_position, task_result_queue->csv_single_entry_length, "%d;", task_result.config_int[i]);
-			}
-			for (int i = 0; i < task_result_queue->runtime_param.logging_param.config_double_count; i++)
-			{
-				task_result_queue->csv_write_buffer_position += snprintf(task_result_queue->csv_write_buffer + task_result_queue->csv_write_buffer_position, task_result_queue->csv_single_entry_length, "%e;", task_result.config_double[i]);
-			}
-		}
-	}
-
-    if (task_result_queue->runtime_param.logging_param.write_csv == 1) {
-        task_result_queue->csv_write_buffer_position += snprintf(task_result_queue->csv_write_buffer+task_result_queue->csv_write_buffer_position, task_result_queue->csv_single_entry_length, "\n");
+	if (best_result == 1) {
+		task_result.task_type = BEST_RESULT_TASK;
+        log_top_n = 1;
+		task_result.result = gene_pool->pop_result_set[gene_pool->sorted_indexes[gene_pool->individuals - 1]];
     }
+    else {
+        task_result.task_type = LOG_TASK;
+		log_top_n = thread_param->runtime_param.logging_param.top_n_export;
+    }
+
+	init_task_result(task_queue->task_result_queue, &task_result, log_top_n);
+
+
+	for (int individual = 0; individual < log_top_n; individual++) {
+
+		int individual_id = gene_pool->sorted_indexes[gene_pool->individuals - individual - 1];
+
+		copy_to_buffer(&task_result, &adaptive_memory->iteration_counter, sizeof(int));
+		copy_to_buffer(&task_result, &task->task_id, sizeof(int));
+		copy_to_buffer(&task_result, &individual_id, sizeof(int));
+		copy_to_buffer(&task_result, &individual, sizeof(int)); // position
+		copy_to_buffer(&task_result, &gene_pool->pop_result_set[individual_id], sizeof(double));
+		copy_to_buffer(&task_result, task->lower, sizeof(double) * thread_param->runtime_param.genes);
+		copy_to_buffer(&task_result, task->upper, sizeof(double) * thread_param->runtime_param.genes);
+		copy_to_buffer(&task_result, task->paramset, sizeof(double) * thread_param->runtime_param.genes);
+
+		if (thread_param->runtime_param.logging_param.write_csv == 1) {
+			task_result.csv_position += snprintf(
+				task_result.csv_buffer + task_result.csv_position,
+				task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
+				"%d;%d;%d;%d;%e;",
+				adaptive_memory->iteration_counter,
+				task->task_id,
+				individual_id,
+                individual, // position
+				gene_pool->pop_result_set[individual_id] // result
+			);
+			for (int i = 0; i < thread_param->runtime_param.genes; i++)
+			{
+				task_result.csv_position += snprintf(
+					task_result.csv_buffer + task_result.csv_position,
+					task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
+					"%e;%e;%e;",
+					task->lower[i],
+					task->upper[i],
+                    task->paramset[i]
+				);
+			}
+		}
+		if (thread_param->runtime_param.logging_param.include_config == 1) {
+			//task_result.config_int[0] = task->config_ga.mutation_param.mutation_rate;
+			//task_result.config_double[0] = adaptive_memory->computed_mutation;
+			//task_result.config_double[1] = adaptive_memory->convergence_moving_window;
+			copy_to_buffer(&task_result, &task->config_ga.mutation_param.mutation_rate, sizeof(int));
+			copy_to_buffer(&task_result, &adaptive_memory->computed_mutation, sizeof(double));
+			copy_to_buffer(&task_result, &adaptive_memory->convergence_moving_window, sizeof(double));
+
+			if (thread_param->runtime_param.logging_param.write_csv == 1) {
+				task_result.csv_position += snprintf(
+					task_result.csv_buffer + task_result.csv_position,
+					task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
+					"%d;%e;%e;",
+                    task->config_ga.mutation_param.mutation_rate,
+					adaptive_memory->computed_mutation,
+                    adaptive_memory->convergence_moving_window
+				);
+			}
+		}
+		if (thread_param->runtime_param.logging_param.write_csv == 1) {
+			task_result.csv_position += snprintf(
+				task_result.csv_buffer + task_result.csv_position,
+				task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
+				"\r\n"
+			);
+		}
+	}
+
+	add_result(thread_param->task_queue->task_result_queue, &task_result);
 }
 
-void write_file_buffer(task_result_queue_t* task_result_queue, int force) {
-	if (task_result_queue->bin_write_buffer_position + task_result_queue->bin_single_entry_length > task_result_queue->runtime_param.logging_param.bin_buffer_size ||
-		(force == 1 && task_result_queue->bin_write_buffer_position != 0)) {
-		printf("forced %d buffer pos %d\n", force, task_result_queue->bin_write_buffer_position);
+void write_file_buffer(task_result_queue_t* task_result_queue, task_result_t* task_result) {
 
-		fwrite(task_result_queue->bin_write_buffer, task_result_queue->bin_write_buffer_position, 1, task_result_queue->fileptr);
-        task_result_queue->bin_write_buffer_position = 0;
-        task_result_queue->bin_write_buffer[0] = '\0';
-	}
+	fwrite(task_result->bin_buffer, task_result->bin_position, 1, task_result_queue->fileptr);
+	//task_result->bin_position = 0;
+	//task_result->bin_buffer[0] = '\0';
+	
 
-    if (task_result_queue->runtime_param.logging_param.write_csv == 1 &&
-		(task_result_queue->csv_write_buffer_position + task_result_queue->csv_single_entry_length > task_result_queue->runtime_param.logging_param.csv_buffer_size ||
-			(force == 1 && task_result_queue->csv_write_buffer_position != 0))) {
-        fprintf(task_result_queue->fileptrcsv, "%s", task_result_queue->csv_write_buffer);
-        task_result_queue->csv_write_buffer_position = 0;
-        task_result_queue->csv_write_buffer[0] = '\0';
+    if (task_result_queue->runtime_param.logging_param.write_csv == 1) {
+        //fprintf(task_result_queue->fileptrcsv, "%s", task_result->csv_buffer);
+        fwrite(task_result->csv_buffer, task_result->csv_position, 1, task_result_queue->fileptrcsv);
+        //task_result->csv_position = 0;
+        //task_result->csv_buffer[0] = '\0';
     }
 }
 

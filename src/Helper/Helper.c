@@ -332,7 +332,7 @@ void indexed_inv_merge_sort(double* arr, int* indices, int size) {
 	}
 }
 
-void copy_to_buffer(task_result_queue_t* task_result_queue, void* data, int size) {
-    memcpy(task_result_queue->bin_write_buffer + task_result_queue->bin_write_buffer_position, data, size);
-    task_result_queue->bin_write_buffer_position += size;
+void copy_to_buffer(task_result_t* task_result, void* data, int size) {
+    memcpy(task_result->bin_buffer + task_result->bin_position, data, size);
+	task_result->bin_position += size;
 }

@@ -85,8 +85,6 @@ struct logging_param_s {
     int config_int_count; // DEFAULT = 1
     int config_double_count; // DEFAULT = 2
     int queue_size; // DEFAULT = 128
-    int csv_buffer_size; // DEFAULT = 1024*1024 (1 MB)
-    int bin_buffer_size; // DEFAULT = 1024*1024 (1 MB)
 };
 
 struct runtime_param_s {
