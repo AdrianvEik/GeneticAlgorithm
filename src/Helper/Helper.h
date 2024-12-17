@@ -26,9 +26,6 @@ void indexed_bubble_sort(double* arr, int* indices, int size);
 void indexed_merge_sort(double* arr, int* indices, int size);
 void indexed_inv_merge_sort(double* arr, int* indices, int size);
 
-// memcpy
-void copy_to_buffer(task_result_t* task_result, void* data, int size);
-
 
 // random 32 bit integer in binary
 //unsigned int random_int32();

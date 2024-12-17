@@ -70,7 +70,6 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
 void free_task(task_param_t* task) {
     free(task->lower);
     free(task->upper);
-    free(task->paramset);
 }
 
 void init_task_result(task_result_queue_t* task_result_queue, task_result_t* task_result, int entry_count) {
@@ -78,14 +77,14 @@ void init_task_result(task_result_queue_t* task_result_queue, task_result_t* tas
 		return;
 	}
 	
-	task_result->bin_buffer = (char*)malloc(sizeof(char) * task_result_queue->bin_single_entry_length * entry_count);
+	task_result->bin_buffer = malloc(sizeof(unsigned char) * task_result_queue->bin_single_entry_length * entry_count);
     if (task_result->bin_buffer == NULL) {
         printf("Memory allocation failed: init_task_result");
         exit(255);
     }
 
     if (task_result_queue->runtime_param.logging_param.write_csv == 1) {
-        task_result->csv_buffer = (char*)malloc(sizeof(char) * task_result_queue->csv_single_entry_length * entry_count);
+        task_result->csv_buffer = malloc(sizeof(char) * task_result_queue->csv_single_entry_length * entry_count);
         if (task_result->csv_buffer == NULL) {
             printf("Memory allocation failed: init_task_result");
             exit(255);
@@ -98,6 +97,9 @@ void init_task_result(task_result_queue_t* task_result_queue, task_result_t* tas
 
     task_result->bin_position = 0;
     task_result->csv_position = 0;
+	//DEBUG
+    task_result->bin_single_entry_length = task_result_queue->bin_single_entry_length * entry_count;
+    task_result->csv_single_entry_length = task_result_queue->csv_single_entry_length * entry_count;
 }
 
 void free_task_result(task_result_t* task_result) {
@@ -217,8 +219,7 @@ void new_task(runtime_param_t runtime_param, config_ga_t config_ga, task_param_t
 	task->task_type = GA_TASK;
 	task->lower = (double*)malloc(sizeof(double) * runtime_param.genes);
 	task->upper = (double*)malloc(sizeof(double) * runtime_param.genes);
-	task->paramset = (double*)malloc(sizeof(double) * runtime_param.genes);
-	if (task->lower == NULL || task->upper == NULL || task->paramset == NULL) {
+	if (task->lower == NULL || task->upper == NULL) {
 		printf("Memory allocation failed: new_task");
 		exit(255);
 	}

@@ -54,6 +54,9 @@
     <ClCompile Include="Optimisation\Optimizer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Helper\Struct.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Function\Function.h">

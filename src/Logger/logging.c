@@ -8,6 +8,32 @@
 #include "../Helper/multiprocessing.h"
 #include "../Optimisation/Optimizer.h"
 
+static inline void copy_to_bin_buffer(task_result_t* task_result, void* data, int size) {
+	if (task_result->bin_single_entry_length < size + task_result->bin_position) {
+		printf("Buffer overflow\n");
+	}
+	memcpy(task_result->bin_buffer + task_result->bin_position, data, size);
+	task_result->bin_position += size;
+}
+
+static inline void copy_to_csv_buffer(task_result_t* task_result, void* data, int size) {
+	if (task_result->csv_single_entry_length < size + task_result->csv_position) {
+		printf("Buffer overflow\n");
+	}
+	memcpy(task_result->csv_buffer + task_result->csv_position, data, size);
+	task_result->bin_position += size;
+}
+
+void copy_task_result(task_result_t* task_result, task_result_t* source) {
+    memcpy(task_result->bin_buffer, source->bin_buffer, source->bin_position);
+	if (source->csv_position > 0) {
+		memcpy(task_result->csv_buffer, source->csv_buffer, source->csv_position);
+	}
+    task_result->bin_position = source->bin_position;
+    task_result->csv_position = source->csv_position;
+    task_result->result = source->result;
+}
+
 void open_file(task_result_queue_t* task_result_queue)
 {
 	int fully_qualified_basename_size = strlen(task_result_queue->runtime_param.logging_param.fully_qualified_basename)+1;
@@ -78,7 +104,7 @@ void close_file(task_result_queue_t* task_result_queue)
 	fclose(task_result_queue->fileptrcsv);
 }
 
-void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t* adaptive_memory, thread_param_t* thread_param, gene_pool_t* gene_pool, int best_result) {
+void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t* adaptive_memory, thread_param_t* thread_param, gene_pool_t* gene_pool, int best_result, int time_spent_us) {
 	task_result_t task_result;
 	int log_top_n;
 
@@ -99,14 +125,14 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 
 		int individual_id = gene_pool->sorted_indexes[gene_pool->individuals - individual - 1];
 
-		copy_to_buffer(&task_result, &adaptive_memory->iteration_counter, sizeof(int));
-		copy_to_buffer(&task_result, &task->task_id, sizeof(int));
-		copy_to_buffer(&task_result, &individual_id, sizeof(int));
-		copy_to_buffer(&task_result, &individual, sizeof(int)); // position
-		copy_to_buffer(&task_result, &gene_pool->pop_result_set[individual_id], sizeof(double));
-		copy_to_buffer(&task_result, task->lower, sizeof(double) * thread_param->runtime_param.genes);
-		copy_to_buffer(&task_result, task->upper, sizeof(double) * thread_param->runtime_param.genes);
-		copy_to_buffer(&task_result, task->paramset, sizeof(double) * thread_param->runtime_param.genes);
+		copy_to_bin_buffer(&task_result, &adaptive_memory->iteration_counter, sizeof(int));
+		copy_to_bin_buffer(&task_result, &task->task_id, sizeof(int));
+		copy_to_bin_buffer(&task_result, &individual_id, sizeof(int));
+		copy_to_bin_buffer(&task_result, &individual, sizeof(int)); // position
+		copy_to_bin_buffer(&task_result, &gene_pool->pop_result_set[individual_id], sizeof(double));
+		copy_to_bin_buffer(&task_result, task->lower, sizeof(double) * thread_param->runtime_param.genes);
+		copy_to_bin_buffer(&task_result, task->upper, sizeof(double) * thread_param->runtime_param.genes);
+		copy_to_bin_buffer(&task_result, gene_pool->pop_param_double[individual_id], sizeof(double) * thread_param->runtime_param.genes);
 
 		if (thread_param->runtime_param.logging_param.write_csv == 1) {
 			task_result.csv_position += snprintf(
@@ -127,17 +153,17 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 					"%e;%e;%e;",
 					task->lower[i],
 					task->upper[i],
-                    task->paramset[i]
-				);
+					gene_pool->pop_param_double[individual_id][i]
+					);
 			}
 		}
 		if (thread_param->runtime_param.logging_param.include_config == 1) {
 			//task_result.config_int[0] = task->config_ga.mutation_param.mutation_rate;
 			//task_result.config_double[0] = adaptive_memory->computed_mutation;
 			//task_result.config_double[1] = adaptive_memory->convergence_moving_window;
-			copy_to_buffer(&task_result, &task->config_ga.mutation_param.mutation_rate, sizeof(int));
-			copy_to_buffer(&task_result, &adaptive_memory->computed_mutation, sizeof(double));
-			copy_to_buffer(&task_result, &adaptive_memory->convergence_moving_window, sizeof(double));
+			copy_to_bin_buffer(&task_result, &task->config_ga.mutation_param.mutation_rate, sizeof(int));
+			copy_to_bin_buffer(&task_result, &adaptive_memory->computed_mutation, sizeof(double));
+			copy_to_bin_buffer(&task_result, &adaptive_memory->convergence_moving_window, sizeof(double));
 
 			if (thread_param->runtime_param.logging_param.write_csv == 1) {
 				task_result.csv_position += snprintf(
@@ -154,7 +180,7 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 			task_result.csv_position += snprintf(
 				task_result.csv_buffer + task_result.csv_position,
 				task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
-				"\r\n"
+				"\n"
 			);
 		}
 	}

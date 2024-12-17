@@ -1,7 +1,11 @@
-﻿  multiprocessing.c
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Helper\multiprocessing.c(67,2): warning C4098: 'init_task_result_queue': 'void' function returning a value
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Helper\multiprocessing.c(172,5): warning C4098: 'init_task_queue': 'void' function returning a value
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Helper\multiprocessing.c(226,5): warning C4098: 'new_task': 'void' function returning a value
+﻿  Genetic_Algorithm.c
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(103,17): warning C4047: 'function': 'uint32_t' differs in levels of indirection from 'void *'
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(103,17): warning C4024: 'seedRandThread': different types for formal and actual parameter 1
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(151,10): warning C4101: 'j': unreferenced local variable
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(202,55): warning C4047: 'function': 'thread_param_t *' differs in levels of indirection from 'thread_param_t **'
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(202,55): warning C4024: 'start_threads': different types for formal and actual parameter 4
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(100,1): warning C4715: 'process_log_thread': not all control paths return a value
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(211,1): warning C4716: 'Genetic_Algorithm': must return a value
   Genetic Algrotihm.vcxproj -> C:\Users\vanei\source\repos\GeneticAlgorithm\src\x64\Debug\Genetic Algrotihm.exe
   'pwsh.exe' is not recognized as an internal or external command,
   operable program or batch file.

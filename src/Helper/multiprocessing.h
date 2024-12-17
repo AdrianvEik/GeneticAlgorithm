@@ -19,7 +19,7 @@ struct task_param_s {
     int task_id;
 	double* lower;
 	double* upper;
-	double* paramset;
+	//double* paramset;
     struct config_ga_s config_ga;
 };
 
@@ -29,9 +29,11 @@ struct task_result_s {
     int task_type; // 0: log, 1: best result, 255: kill
     char* csv_buffer;
     int csv_position;
-    char* bin_buffer;
+    unsigned char* bin_buffer;
     int bin_position;
 	double result;
+	int bin_single_entry_length; // DEBUG
+	int csv_single_entry_length;
  //   
  //   int task_id;
  //   int individual_id;

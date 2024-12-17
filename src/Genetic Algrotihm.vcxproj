@@ -32,6 +32,7 @@
     <ClCompile Include="Genetic_Algorithm.c" />
     <ClCompile Include="Helper\multiprocessing.c" />
     <ClCompile Include="Helper\rng.c" />
+    <ClCompile Include="Helper\Struct.c" />
     <ClCompile Include="Logger\logging.c" />
     <ClCompile Include="Optimisation\Optimizer.c" />
     <ClCompile Include="Utility\crossover.c" />

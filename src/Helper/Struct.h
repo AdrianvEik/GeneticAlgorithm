@@ -108,4 +108,7 @@ typedef struct config_ga_s config_ga_t;
 typedef struct runtime_param_s runtime_param_t;
 typedef struct optimizer_param_s optimizer_param_t;
 typedef struct logging_param_s logging_param_t;
+
+runtime_param_t default_runtime_param();
+config_ga_t default_config(runtime_param_t runtime_param);
 #endif // STRUCT_H
