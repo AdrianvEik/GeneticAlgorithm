@@ -1,0 +1,14 @@
+D:\School\Libraries\GeneticAlgorithm\src\Function\Function.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\Function.obj
+D:\School\Libraries\GeneticAlgorithm\src\Helper\Helper.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\Helper.obj
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\Genetic_Algorithm.obj
+D:\School\Libraries\GeneticAlgorithm\src\Helper\multiprocessing.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\multiprocessing.obj
+D:\School\Libraries\GeneticAlgorithm\src\Helper\rng.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\rng.obj
+D:\School\Libraries\GeneticAlgorithm\src\Helper\Struct.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\Struct.obj
+D:\School\Libraries\GeneticAlgorithm\src\Logger\logging.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\logging.obj
+D:\School\Libraries\GeneticAlgorithm\src\Optimisation\Optimizer.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\Optimizer.obj
+D:\School\Libraries\GeneticAlgorithm\src\Utility\crossover.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\crossover.obj
+D:\School\Libraries\GeneticAlgorithm\src\Utility\flatten.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\flatten.obj
+D:\School\Libraries\GeneticAlgorithm\src\Utility\mutation.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\mutation.obj
+D:\School\Libraries\GeneticAlgorithm\src\Utility\pop.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\pop.obj
+D:\School\Libraries\GeneticAlgorithm\src\Utility\process.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\process.obj
+D:\School\Libraries\GeneticAlgorithm\src\Utility\selection.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\DLL Build\selection.obj
