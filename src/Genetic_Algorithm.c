@@ -207,9 +207,8 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 	make_task_list(&runtime_param, config_ga, &task_queue);
 	
 	stop_threads(&task_queue, runtime_param.thread_count);
-    stop_result_logger(&task_result_queue, runtime_param.thread_count); // todo add thread_join
+    stop_result_logger(&task_result_queue, runtime_param.thread_count);
 	close_file(&task_result_queue);
-	//free(thread_param); // todo: why?
 	free_task_queue(&task_queue);
 }
 

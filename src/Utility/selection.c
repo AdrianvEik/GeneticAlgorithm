@@ -155,10 +155,14 @@ void rank_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) 
 
 	*/
     // The individuals are already sorted in ascending order so we can just use the indexes
-	roulette_wheel(prob_distr, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes);
+	roulette_wheel(selection_param->selection_rank_distr == 0 ? prob_distr : boltzmann_distr,
+        gene_pool->individuals,
+        gene_pool->individuals - gene_pool->elitism,
+        gene_pool->selected_indexes
+    );
 }
 
-void rank_space_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+void space_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
 	/*
 
 	*/
@@ -189,7 +193,7 @@ void rank_space_selection(gene_pool_t* gene_pool, selection_param_t* selection_p
 
 void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
 	/*
-
+        TODO: Boltzmann selection currently uses flattened fitness values, should be able to use boltzmann distribution
 	*/
 
     // We hold n selection rounds
@@ -265,7 +269,7 @@ void process_selection(gene_pool_t* gene_pool, selection_param_t* selection_para
 		rank_selection(gene_pool, selection_param);
 	}
 	else if (selection_param->selection_method == selection_method_rank_space) {
-		rank_space_selection(gene_pool, selection_param);
+        space_selection(gene_pool, selection_param);
 	}
 	else if (selection_param->selection_method == selection_method_boltzmann) {
 		boltzmann_selection(gene_pool, selection_param);

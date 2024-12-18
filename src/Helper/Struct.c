@@ -45,10 +45,9 @@ runtime_param_t default_runtime_param() {
 config_ga_t default_config(runtime_param_t runtime_param) {
 	// Setups default configuration
 	flatten_param_t flatten_param;
-	flatten_param.flatten_method = 0;
+	flatten_param.flatten_method = flatten_method_none;
 	flatten_param.flatten_factor = 1.0f;
 	flatten_param.flatten_bias = 0.0f;
-	flatten_param.flatten_optim_mode = flatten_method_none;
 
 	crossover_param_t crossover_param;
 	crossover_param.crossover_method = crossover_method_uniform32;
@@ -80,6 +79,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 	selection_param.selection_prob_param = 0.2f;
 	selection_param.selection_temp_param = 10.0f;
 	selection_param.selection_tournament_size = 4;
+    selection_param.selection_rank_distr = 0; // 0: prob_distr, 1: boltzmann_distr
 
 	optimizer_param_t optimizer_param;
 	optimizer_param.convergence_moving_window_size = 10;

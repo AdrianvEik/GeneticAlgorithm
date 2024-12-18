@@ -29,13 +29,13 @@ struct selection_param_s {
 	double selection_prob_param; // DEFAULT = 0.5
 	double selection_temp_param; // DEFAULT = 10
 	int selection_tournament_size; // DEFAULT = 2
+    int selection_rank_distr; // DEFAULT = 0
 };
 
 struct flatten_param_s {
-	int flatten_method; // DEFAULT = 0
-	double flatten_factor; // DEFAULT = 1
+	int flatten_method; // DEFAULT = 5
+	double flatten_factor; // DEFAULT = 1 (> 0)
 	double flatten_bias; // DEFAULT = 0
-	int flatten_optim_mode; // DEFAULT = 0
 };
 
 struct crossover_param_s {
