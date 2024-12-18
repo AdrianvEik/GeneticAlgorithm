@@ -1,4 +1,4 @@
-#include "stdio.h"
+﻿#include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
 
@@ -27,7 +27,7 @@ void exp_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
     mathematical function:
         f(x) = ( exp((x / sum(x)) * a) / max(exp((x / sum(x)) ) + b   clamped to [0, 1]
 	where:
-        a = flatten_factor
+        a = flatten_factor *= optim_mode (-1 or 1)
         b = flatten_bias
         x = fitness value
 
@@ -67,27 +67,37 @@ void exp_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 void log_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 
 	/*
+		Mathematical Function:
+			f(x) = log(max(1 + ((x - b) / (range + ε)) * a, δ)) + β
+		where:
+			m = flatten_param->optim_mode (1 for optimization, -1 for minimization)
+			b = offset (min(x) for optimization, max(x) for minimization)
+			range = max(x) - min(x)
+			ε = small constant to avoid division by zero
+			a = flatten_factor
+			β = flatten_bias
+			δ = small constant to ensure valid logarithmic inputs (e.g., δ = 1e-6)
 
-	Compute:
-
-	->-> math::
-		f(x) = a^\log(\dfrac{x}{\mathrm{sum}(x)) + b
-
-	For all fitness values in pop (individuals)
-
-	:param pop: matrix of fitness values or
-
+		Notes:
+			- This function ensures numerical stability by clamping the logarithmic input to δ > 0.
+			- For large fitness dispersions [max(x) - min(x)], smaller values of δ retain the sharp logarithmic trend.
+			- Larger values of δ can smooth the transformation, flattening extreme outputs.
+			- Always ensure δ << 1 to minimize distortion of the logarithmic behavior.
 	*/
 
-	double sum = 0;
+    // pop result set is sorted
+    double min = gene_pool->pop_result_set[gene_pool->individuals - 1];
+    double max = gene_pool->pop_result_set[0];
+	double offset = flatten_param->flatten_optim_mode>0 ? max : min;
+    double range = max - min;
 
-	for (int i = 0; i < gene_pool->individuals; i++) {
-		sum += gene_pool->pop_result_set[i];
-	}
-	double lgda = log(flatten_param->flatten_factor);
-	for (int i = 0; i < gene_pool->individuals; i++) {
-		gene_pool->flatten_result_set[i] = log((gene_pool->pop_result_set[i] / sum)) / lgda + flatten_param->flatten_bias;
-	}
+    // hard coded eta and delta value
+    double eta = 1e-6;
+    double delta = 1e-6;
+
+    for (int i = 0; i < gene_pool->individuals; i++) {
+        gene_pool->flatten_result_set[i] = log(fmax(1 + ((gene_pool->pop_result_set[i] - offset) / (range + eta)) * flatten_param->flatten_factor, delta)) + flatten_param->flatten_bias;
+    }
 }
 
 void norm_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {

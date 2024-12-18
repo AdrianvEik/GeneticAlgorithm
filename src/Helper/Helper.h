@@ -4,7 +4,6 @@
 #ifndef _HELPER_H
 #define _HELPER_H
 
-
 // Convesrion functions
 void ndbit2int32(unsigned int** valarr, int genes, int individuals,
 	double* lower, double* upper, double** result);
