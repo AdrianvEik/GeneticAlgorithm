@@ -7,4 +7,7 @@
     <LocalDebuggerCommand>Python.exe "$(ProjectDir)x64\DLL Build\Genetic_Algorithm.py"</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerDebuggerType>Auto</LocalDebuggerDebuggerType>
+  </PropertyGroup>
 </Project>

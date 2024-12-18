@@ -1,2 +1,4 @@
 C:\Users\vanei\source\repos\GeneticAlgorithm\src\x64\Debug\pthreadVC3d.dll
 C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\Genetic .AB24365C.Up2Date
+D:\School\Libraries\GeneticAlgorithm\src\x64\Debug\pthreadVC3d.dll
+D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\Genetic .AB24365C.Up2Date

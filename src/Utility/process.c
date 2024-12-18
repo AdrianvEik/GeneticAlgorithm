@@ -31,6 +31,7 @@ void process_pop(gene_pool_t* gene_pool, task_param_t* task) {
 
 	process_fx(gene_pool, &(task->config_ga.fx_param), task->lower, task->upper); // pop, individuals, genes -> ?
 
+	// worst-best scaling according to fitness and fit function (lin, exp, log, sig, norm)
 	process_flatten(gene_pool, &(task->config_ga.flatten_param));
 
 	for (int i = 0; i < gene_pool->individuals; i++) {

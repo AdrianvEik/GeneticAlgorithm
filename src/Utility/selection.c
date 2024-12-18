@@ -13,6 +13,10 @@ __declspec(thread) double* boltzmann_distr; // It should be an option to use thi
 __declspec(thread) double current_prob_param;
 __declspec(thread) double current_temp_param;
 
+// In case of using the rank_space selection method
+__declspec(thread) double* distances;
+__declspec(thread) double* central_point;
+
 void init_pre_compute(gene_pool_t* gene_pool) {
 	/*
 	*/
@@ -36,6 +40,12 @@ void free_pre_compute() {
 	*/
     free(prob_distr);
     free(boltzmann_distr);
+
+    // They are malloc in pairs
+    if (distances != NULL && central_point != NULL) {
+        free(distances);
+        free(central_point);
+    }
 }
 
 void compute_distr(gene_pool_t* gene_pool, selection_param_t* selection_param) {
@@ -64,6 +74,46 @@ void compute_boltzmann_distr(gene_pool_t* gene_pool, selection_param_t* selectio
     for (int i = 0; i < gene_pool->individuals; i++) {
         boltzmann_distr[i] /= sum;
     }
+}
+
+inline void compute_distances(gene_pool_t* gene_pool) {
+    /*
+    */
+    // Compute the central point of the distribution as a vector
+    if (central_point == NULL) {
+        central_point = (double*)malloc(gene_pool->genes * sizeof(double));
+        if (central_point == NULL) {
+            printf("Memory allocation failed: compute_distances");
+            exit(255);
+        }
+    }
+
+    if (distances == NULL) {
+        distances = (double*)malloc(gene_pool->individuals * sizeof(double));
+        if (distances == NULL) {
+            printf("Memory allocation failed: compute_distances");
+            exit(255);
+        }
+    }
+
+
+    for (int i = 0; i < gene_pool->genes; i++) {
+        central_point[i] = 0;
+        for (int j = 0; j < gene_pool->individuals; j++) {
+            central_point[i] += gene_pool->pop_param_double[gene_pool->selected_indexes[j]][i];
+        }
+        central_point[i] /= gene_pool->individuals;
+    }
+
+    // Compute the distance of each individual to the central point
+    for (int i = 0; i < gene_pool->individuals; i++) {
+        distances[i] = 0;
+        for (int j = 0; j < gene_pool->genes; j++) {
+            distances[i] += pow(gene_pool->pop_param_double[gene_pool->selected_indexes[i]][j] - central_point[j], 2);
+        }
+        distances[i] = sqrt(distances[i]);
+    }
+
 }
 
 // Selection functions
@@ -113,34 +163,7 @@ void rank_space_selection(gene_pool_t* gene_pool, selection_param_t* selection_p
 
 	*/
     // Compute the central point of the distribution as a vector
-    double* central_point = (double*)malloc(gene_pool->genes * sizeof(double));
-    if (central_point == NULL) {
-        printf("Memory allocation failed");
-        exit(255);
-    }
-
-    for (int i = 0; i < gene_pool->genes; i++) {
-        central_point[i] = 0;
-        for (int j = 0; j < gene_pool->individuals; j++) {
-            central_point[i] += gene_pool->pop_param_double[gene_pool->selected_indexes[j]][i];
-        }
-        central_point[i] /= gene_pool->individuals;
-    }
-
-    // Compute the distance of each individual to the central point
-    double* distances = (double*)malloc(gene_pool->individuals * sizeof(double));
-    if (distances == NULL) {
-        printf("Memory allocation failed");
-        exit(255);
-    }
-
-    for (int i = 0; i < gene_pool->individuals; i++) {
-        distances[i] = 0;
-        for (int j = 0; j < gene_pool->genes; j++) {
-            distances[i] += pow(gene_pool->pop_param_double[gene_pool->selected_indexes[i]][j] - central_point[j], 2);
-        }
-        distances[i] = sqrt(distances[i]);
-    }
+    compute_distances(gene_pool);
 
     // Using the fitness values plus distance times the distance parameter as the selection probability
     double* selection_prob = (double*)malloc(gene_pool->individuals * sizeof(double));
@@ -157,8 +180,10 @@ void rank_space_selection(gene_pool_t* gene_pool, selection_param_t* selection_p
     // Now we can use the roulette wheel selection
     roulette_wheel(selection_prob, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes);
 
-    free(central_point);
-    free(distances);
+    // clear arrays to 0
+    memset(central_point, 0, gene_pool->genes * sizeof(double));
+    memset(distances, 0, gene_pool->individuals * sizeof(double));
+
     free(selection_prob);
 }
 

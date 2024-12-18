@@ -224,6 +224,7 @@ int main() {
 	runtime_param.zone_enable = 0;
 	runtime_param.task_count = 100;
 	config_ga_t config_ga = default_config(runtime_param);
+	config_ga.selection_param.selection_method = selection_method_rank_space;
 
 	for (int i = 0; i < repeats; i++) {
 		printf("\n Run number: %d\n", i);

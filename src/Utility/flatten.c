@@ -7,8 +7,6 @@
 #include "flatten.h"
 
 // Flattening functions
-
-// meegegeven
 void lin_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 
 	double sum = 0;
@@ -23,6 +21,7 @@ void lin_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 	}
 
 }
+
 void exp_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 
 	double sum = 0;
@@ -36,6 +35,7 @@ void exp_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 	}
 
 }
+
 void log_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 
 	/*
@@ -61,6 +61,7 @@ void log_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 		gene_pool->flatten_result_set[i] = log((gene_pool->pop_result_set[i] / sum)) / lgda + flatten_param->flatten_bias;
 	}
 }
+
 void norm_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 
 	double sum = 0;
@@ -74,9 +75,11 @@ void norm_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 	}
 
 }
+
 void sig_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 
 }
+
 void no_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 	for (int i = 0; i < gene_pool->individuals; i++) {
 		gene_pool->flatten_result_set[i] = gene_pool->pop_result_set[i];
