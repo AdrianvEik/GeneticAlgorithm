@@ -88,7 +88,6 @@ void log_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
     // pop result set is sorted
     double min = gene_pool->pop_result_set[gene_pool->individuals - 1];
     double max = gene_pool->pop_result_set[0];
-	double offset = flatten_param->flatten_optim_mode>0 ? max : min;
     double range = max - min;
 
     // hard coded eta and delta value
@@ -96,26 +95,39 @@ void log_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
     double delta = 1e-6;
 
     for (int i = 0; i < gene_pool->individuals; i++) {
-        gene_pool->flatten_result_set[i] = log(fmax(1 + ((gene_pool->pop_result_set[i] - offset) / (range + eta)) * flatten_param->flatten_factor, delta)) + flatten_param->flatten_bias;
+        gene_pool->flatten_result_set[i] = log(fmax(1 + ((gene_pool->pop_result_set[i] - min) / (range + eta)) * flatten_param->flatten_factor, delta)) + flatten_param->flatten_bias;
     }
 }
 
 void norm_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
-
-	double sum = 0;
-
-	for (int i = 0; i < gene_pool->individuals; i++) {
-		sum += gene_pool->pop_result_set[i];
-	}
+    // min max normalization scheme 
+	double min = gene_pool->pop_result_set[gene_pool->individuals - 1];
+	double max = gene_pool->pop_result_set[0];
+	double range = max - min;
 
 	for (int i = 0; i < gene_pool->individuals; i++) {
-		gene_pool->flatten_result_set[i] = gene_pool->pop_result_set[i] / sum;
+        gene_pool->flatten_result_set[i] = ((gene_pool->pop_result_set[i] - min) / (range)) * flatten_param->flatten_factor + flatten_param->flatten_bias;
 	}
 
 }
 
 void sig_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
-
+    /*
+        Mathematical Function:
+            f(x) = 1 / (1 + exp(-x))
+        where:
+            x = (a * (fitness - b)) + c
+            a = flatten_factor
+            b = flatten_bias
+            c = 0
+        Notes:
+            - This function is a sigmoid transformation of the fitness values.
+            - The sigmoid function is bounded between 0 and 1.
+            - The sigmoid function is useful for normalizing fitness values.
+    */
+    for (int i = 0; i < gene_pool->individuals; i++) {
+        gene_pool->flatten_result_set[i] = 1 / (1 + exp(-((flatten_param->flatten_factor * (gene_pool->pop_result_set[i] - flatten_param->flatten_bias)))));
+    }
 }
 
 void no_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {

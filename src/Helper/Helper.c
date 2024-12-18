@@ -52,20 +52,6 @@ void ndbit2int32(unsigned int** valarr, int genes, int individuals,
 	}
 }
 
-
-void sigmoid(double* x, double* result, int size) {
-	/*
-	Calculate the sigmoid of x
-
-	x is the input
-	result is the output
-	*/
-
-	for (int i = 0; i < size; i++) {
-		result[i] = 1 / (1 + exp(-x[i]));
-	}
-}
-
 void sigmoid_derivative(double* x, double* result, int size) {
 	/*
 	Calculate the derivative of the sigmoid of x
@@ -93,6 +79,15 @@ void sigmoid2(double* x, double a, double b, double c, double d, double Q, doubl
 	}
 }
 
+double sigmoid(double x) {
+	/*
+	Calculate the sigmoid of x
+
+	x is the input
+	result is the output
+	*/
+	return 1 / (1 + exp(-x));
+}
 
 double gaussian(double x, double mu, double sigma) {
 	/*

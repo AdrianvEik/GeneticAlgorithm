@@ -11,9 +11,9 @@ void ndbit2int32(unsigned int** valarr, int genes, int individuals,
 
 
 // Mathemathical functions
-void sigmoid(double* x, double* result, int size);
 void sigmoid_derivative(double* x, double* result, int size);
 void sigmoid2(double* x, double a, double b, double c, double d, double Q, double nu, double* result, int size);
+double sigmoid(double x);
 double gaussian(double x, double mu, double sigma);
 double cauchy(double x, double mu, double sigma);
 
