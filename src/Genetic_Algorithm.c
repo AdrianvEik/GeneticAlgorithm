@@ -73,7 +73,7 @@ void* process_log_thread(task_result_queue_t* task_result_queue) {
 
 	open_file(task_result_queue);
 
-    double current_best_res = 0.0f;
+    double current_best_res = -INFINITY;
 
 	// Save the best gene_pool
 	task_result_t best_result;
@@ -193,8 +193,8 @@ void start_threads(task_queue_t* task_queue, runtime_param_t runtime_param, conf
 
 double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 
-	double previous_best_res = 0.0f;
-	double best_res = 0.0f;
+	double previous_best_res = -INFINITY;
+	double best_res = -INFINITY;
 	int convergence_counter = 0;
 	task_result_queue_t task_result_queue;
 	init_task_result_queue(&task_result_queue, runtime_param);

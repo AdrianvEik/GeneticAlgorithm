@@ -1,6 +1,5 @@
-﻿  pop.c
-D:\School\Libraries\GeneticAlgorithm\src\Utility\pop.c(41,43): warning C4244: 'return': conversion from 'double' to 'uint32_t', possible loss of data
-D:\School\Libraries\GeneticAlgorithm\src\Utility\pop.c(136,41): warning C4293: '<<': shift count negative or too big, undefined behavior
+﻿  logging.c
+D:\School\Libraries\GeneticAlgorithm\src\Logger\logging.c(39,117): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   Genetic Algrotihm.vcxproj -> D:\School\Libraries\GeneticAlgorithm\src\x64\Debug\Genetic Algrotihm.exe
   'pwsh.exe' is not recognized as an internal or external command,
   operable program or batch file.

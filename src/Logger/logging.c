@@ -124,7 +124,8 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 	for (int individual = 0; individual < log_top_n; individual++) {
 
 		int individual_id = gene_pool->sorted_indexes[gene_pool->individuals - individual - 1];
-		double result = gene_pool->pop_result_set[individual_id] * task->config_ga.fx_param.fx_optim_mode; // result and invert if optim mode is minimisation
+		double result = gene_pool->pop_result_set[individual_id]; // result and invert if optim mode is minimisation
+		
 		copy_to_bin_buffer(&task_result, &adaptive_memory->iteration_counter, sizeof(int));
 		copy_to_bin_buffer(&task_result, &task->task_id, sizeof(int));
 		copy_to_bin_buffer(&task_result, &individual_id, sizeof(int));
