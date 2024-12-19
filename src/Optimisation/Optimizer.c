@@ -22,7 +22,7 @@ void new_adaptive_memory(adaptive_memory_t* adaptive_memory) {
     adaptive_memory->previous_best_result = 0;
 }
 
-void check_convergence(task_param_t* task, adaptive_memory_t* adaptive_memory, double best_result) {
+static void check_convergence(task_param_t* task, adaptive_memory_t* adaptive_memory, double best_result) {
     adaptive_memory->iteration_counter++;
     if (adaptive_memory->iteration_counter > task->config_ga.optimizer_param.max_iterations) {
         adaptive_memory->convergence_reached = 1;
@@ -42,7 +42,7 @@ void check_convergence(task_param_t* task, adaptive_memory_t* adaptive_memory, d
     adaptive_memory->previous_best_result = best_result;
 }
 
-void compute_mutation_rate(task_param_t* task, adaptive_memory_t* adaptive_memory, double best_result) {
+static void compute_mutation_rate(task_param_t* task, adaptive_memory_t* adaptive_memory, double best_result) {
     int computed_mutation;
 
     if (adaptive_memory->convergence_moving_window == 0) {
@@ -72,7 +72,7 @@ void compute_mutation_rate(task_param_t* task, adaptive_memory_t* adaptive_memor
     }
 }
 
-void compute_flatten_factors(task_param_t* task, adaptive_memory_t* adaptive_memory, double best_result) {
+static void compute_flatten_factors(task_param_t* task, adaptive_memory_t* adaptive_memory, double best_result) {
     // Based on dispersion of the group compared to the best result and the average result of the group
     // calculate the flatten factor and bias
 

@@ -7,7 +7,7 @@
 #include "flatten.h"
 
 // Flattening functions
-void lin_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
+static void lin_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 
 	double sum = 0;
 
@@ -22,7 +22,7 @@ void lin_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 
 }
 
-void exp_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
+static void exp_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 	/*
     mathematical function:
         f(x) = ( exp((x / sum(x)) * a) / max(exp((x / sum(x)) ) + b   clamped to [0, 1]
@@ -64,7 +64,7 @@ void exp_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
     }
 }
 
-void log_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
+static void log_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 
 	/*
 		Mathematical Function:
@@ -99,7 +99,7 @@ void log_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
     }
 }
 
-void norm_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
+static void norm_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
     // min max normalization scheme 
 	double min = gene_pool->pop_result_set[gene_pool->individuals - 1];
 	double max = gene_pool->pop_result_set[0];
@@ -111,7 +111,7 @@ void norm_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 
 }
 
-void sig_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
+static void sig_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
     /*
         Mathematical Function:
             f(x) = 1 / (1 + exp(-x))
@@ -130,7 +130,7 @@ void sig_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
     }
 }
 
-void no_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
+static void no_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 	for (int i = 0; i < gene_pool->individuals; i++) {
 		gene_pool->flatten_result_set[i] = gene_pool->pop_result_set[i];
 	}

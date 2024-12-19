@@ -41,7 +41,7 @@ inline uint32_t double2bin(double val, double lower, double upper) {
 	return ((val - lower) / (upper - lower)) * UINT32_MAX;
 }
 
-void normal_bit_pop_boxmuller(int** result, int individuals, int genes) {
+static void normal_bit_pop_boxmuller(int** result, int individuals, int genes) {
 	/*
 	Fill a matrix with bits according to a normal distribution.
 	using the following probability density function:
@@ -96,7 +96,7 @@ void normal_bit_pop_boxmuller(int** result, int individuals, int genes) {
 	}
 }
 
-void cauchy_bit_pop(int** result, int individuals, int genes, population_param_t pop_param) {
+static void cauchy_bit_pop(int** result, int individuals, int genes, population_param_t pop_param) {
 	/*
 
 	Produce a normal distributed set of values using the Cauchy distribution:

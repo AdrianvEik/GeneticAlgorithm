@@ -5,7 +5,7 @@
 #include "process.h"
 
 
-void eliminate_duplicates(gene_pool_t* gene_pool) {
+static void eliminate_duplicates(gene_pool_t* gene_pool) {
 	int unique = 1;
 	// eliminate duplicates
 	for (int i = 0; i < gene_pool->individuals - 1; i++) {

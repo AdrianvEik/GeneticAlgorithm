@@ -117,7 +117,7 @@ inline void compute_distances(gene_pool_t* gene_pool) {
 }
 
 // Selection functions
-void roulette_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+static void roulette_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
 	/*
 
 	:param pop: matrix of normalised fitness values for the population (individuals x 1)
@@ -131,7 +131,7 @@ void roulette_selection(gene_pool_t* gene_pool, selection_param_t* selection_par
 	roulette_wheel(gene_pool->flatten_result_set, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes);
 }
 
-void tournament_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+static void tournament_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
 	/*
 	*/
     // We hold n tournaments and select the best individual from each tournament
@@ -150,7 +150,7 @@ void tournament_selection(gene_pool_t* gene_pool, selection_param_t* selection_p
 }
 
 
-void rank_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+static void rank_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
 	/*
 
 	*/
@@ -162,7 +162,7 @@ void rank_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) 
     );
 }
 
-void space_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+static void space_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
 	/*
 
 	*/
@@ -191,7 +191,7 @@ void space_selection(gene_pool_t* gene_pool, selection_param_t* selection_param)
     free(selection_prob);
 }
 
-void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+static void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
 	/*
         TODO: Boltzmann selection currently uses flattened fitness values, should be able to use boltzmann distribution
 	*/

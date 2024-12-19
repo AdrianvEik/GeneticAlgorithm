@@ -8,7 +8,7 @@
 
 // Path: Utility/crossover.c
 
-void single_point_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes) {
+static void single_point_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// The function should fill child1 and child2 with the crossed over values
 
@@ -40,7 +40,7 @@ void single_point_crossover32(int* parent1, int* parent2, int* child1, int* chil
 }
 
 // Actually PMX crossover
-void two_point_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes) {
+static void two_point_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// point1 and point2 are the points to cross over at
 	// The function should fill child1 and child2 with the crossed over values
@@ -80,7 +80,7 @@ void two_point_crossover32(int* parent1, int* parent2, int* child1, int* child2,
 	}
 }
 
-void uniform_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes) {
+static void uniform_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// prob is the probability of a value being copied from the first parent
 	// The function should fill child1 and child2 with the crossed over values
@@ -98,7 +98,7 @@ void uniform_crossover32(int* parent1, int* parent2, int* child1, int* child2, i
 	}
 }
 
-void complete_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes) {
+static void complete_crossover32(int* parent1, int* parent2, int* child1, int* child2, int genes) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// The function should fill child1 and child2 with the crossed over values
 
@@ -116,7 +116,7 @@ void complete_crossover32(int* parent1, int* parent2, int* child1, int* child2, 
 	}
 }
 
-void crossover(int* parent1, int* parent2, int* child1, int* child2, int genes, crossover_param_t* crossover_param) {
+static void crossover(int* parent1, int* parent2, int* child1, int* child2, int genes, crossover_param_t* crossover_param) {
 
 	if (crossover_param->crossover_method == crossover_method_single_point32) {
 		single_point_crossover32(parent1, parent2, child1, child2, genes);
