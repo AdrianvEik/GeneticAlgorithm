@@ -172,11 +172,13 @@ void init_gene_pool(gene_pool_t* gene_pool) {
 	}
 }
 void free_gene_pool(gene_pool_t* gene_pool) {
-	for (int i = 0; i < gene_pool->individuals; i++) {
-		free(gene_pool->pop_param_bin[i]);
-		free(gene_pool->pop_param_bin_cross_buffer[i]);
-		free(gene_pool->pop_param_double[i]);
-	}
+	// DANGER
+	// TODO: why does this not work for uneven genes?
+	//for (int i = 0; i < gene_pool->individuals; i++) {
+	//	free(gene_pool->pop_param_bin[i]);
+	//	free(gene_pool->pop_param_bin_cross_buffer[i]);
+	//	free(gene_pool->pop_param_double[i]);
+	//}
 	free(gene_pool->flatten_result_set);
 	free(gene_pool->pop_param_bin);
 	free(gene_pool->pop_param_bin_cross_buffer);
