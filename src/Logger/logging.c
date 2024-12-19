@@ -124,12 +124,12 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 	for (int individual = 0; individual < log_top_n; individual++) {
 
 		int individual_id = gene_pool->sorted_indexes[gene_pool->individuals - individual - 1];
-
+		double result = gene_pool->pop_result_set[individual_id] * task->config_ga.fx_param.fx_optim_mode; // result and invert if optim mode is minimisation
 		copy_to_bin_buffer(&task_result, &adaptive_memory->iteration_counter, sizeof(int));
 		copy_to_bin_buffer(&task_result, &task->task_id, sizeof(int));
 		copy_to_bin_buffer(&task_result, &individual_id, sizeof(int));
 		copy_to_bin_buffer(&task_result, &individual, sizeof(int)); // position
-		copy_to_bin_buffer(&task_result, &gene_pool->pop_result_set[individual_id], sizeof(double));
+		copy_to_bin_buffer(&task_result, &result, sizeof(double));
 		copy_to_bin_buffer(&task_result, task->lower, sizeof(double) * thread_param->runtime_param.genes);
 		copy_to_bin_buffer(&task_result, task->upper, sizeof(double) * thread_param->runtime_param.genes);
 		copy_to_bin_buffer(&task_result, gene_pool->pop_param_double[individual_id], sizeof(double) * thread_param->runtime_param.genes);
@@ -143,7 +143,7 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 				task->task_id,
 				individual_id,
                 individual, // position
-				gene_pool->pop_result_set[individual_id] // result
+                result 
 			);
 			for (int i = 0; i < thread_param->runtime_param.genes; i++)
 			{

@@ -1,15 +1,5 @@
-﻿  Genetic_Algorithm.c
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(19,20): warning C4101: 'end': unreferenced local variable
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(106,17): warning C4047: 'function': 'uint32_t' differs in levels of indirection from 'void *'
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(106,17): warning C4024: 'seedRandThread': different types for formal and actual parameter 1
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(154,10): warning C4101: 'j': unreferenced local variable
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(194,38): warning C4028: formal parameter 1 different from declaration
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(194,65): warning C4028: formal parameter 2 different from declaration
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(194,8): warning C4029: declared formal parameter list different from definition
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(205,55): warning C4047: 'function': 'thread_param_t *' differs in levels of indirection from 'thread_param_t **'
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(205,55): warning C4024: 'start_threads': different types for formal and actual parameter 4
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(103,1): warning C4715: 'process_log_thread': not all control paths return a value
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(213,1): warning C4716: 'Genetic_Algorithm': must return a value
+﻿  logging.c
+D:\School\Libraries\GeneticAlgorithm\src\Logger\logging.c(39,117): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
   Genetic Algrotihm.vcxproj -> D:\School\Libraries\GeneticAlgorithm\src\x64\Debug\Genetic Algrotihm.exe
   'pwsh.exe' is not recognized as an internal or external command,
   operable program or batch file.

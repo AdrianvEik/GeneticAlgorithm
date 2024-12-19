@@ -56,8 +56,6 @@ void process_fx(gene_pool_t* gene_pool, fx_param_t* fx_param, double* lower, dou
 	// convert the gene pool bin to double
 	ndbit2int32(gene_pool->pop_param_bin, gene_pool->genes, gene_pool->individuals, lower, upper, gene_pool->pop_param_double);
 
-	fx_param->fx_optim_mode = 1;
-
 	if (fx_param->fx_method == fx_method_Styblinski_Tang) {
 		fx_param->fx_optim_mode = -1;
 		for (int i = 0; i < gene_pool->individuals; i++) {
