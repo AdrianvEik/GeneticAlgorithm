@@ -22,6 +22,7 @@ void display_progress(int completed, int total, double current_best, double elap
     printf("| Current best: %.3f  |\n", current_best);
     printf("| Time: %.1f [s]       |\n", elapsed_time);
     printf("| Progress: %.2f%% [%d] |\n", progress * 100, completed);
+    printf("| Time per task: %.1f [s] |\n", elapsed_time / completed);
     printf("|-----------------------|\n");
 
     fflush(stdout); // Ensure output updates in real-time
