@@ -295,8 +295,9 @@ void make_task_list(runtime_param_t* runtime_param, config_ga_t config_ga, task_
 		printf("Tasks per gene %d: %d\n", i, tasks_per_gene[i]);
 	}
 	
-
-	runtime_param->task_count = generated_task_count;
+	if (runtime_param->zone_enable) {
+		runtime_param->task_count = generated_task_count;
+	}
 
 	int* position = (int*)malloc(sizeof(int) * runtime_param->genes);
 	if (position == NULL) {

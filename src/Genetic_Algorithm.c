@@ -245,7 +245,7 @@ int main() {
 	int repeats = 1;
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 0;
-	runtime_param.task_count = 100;
+	runtime_param.task_count = 200;
 	runtime_param.individuals = 128;
 	runtime_param.genes = 16;
 	config_ga_t config_ga = default_config(runtime_param);
