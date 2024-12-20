@@ -49,12 +49,24 @@ struct task_result_s {
 
 typedef struct task_result_s task_result_t;
 
+// TODO: is this the best way to handle progress?
+struct progress_s {
+    double best_result;
+    int tasks_completed;
+	int optim_mode;
+    int kill_progress_display; // 0: continue, 1: kill
+};
+
+typedef struct progress_s progress_t;
+
 struct task_result_queue_s {
     task_result_t* result_list;
 	pthread_t thread_id;
+    pthread_t thread_id_progress_display;
 	FILE* fileptr;
 	FILE* fileptrcsv;
 	runtime_param_t runtime_param;
+    progress_t progress;
 	int first_task_id;
     int next_task_id;
     int bin_single_entry_length;

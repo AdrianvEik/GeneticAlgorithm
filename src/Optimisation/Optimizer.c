@@ -26,14 +26,14 @@ static void check_convergence(task_param_t* task, adaptive_memory_t* adaptive_me
     adaptive_memory->iteration_counter++;
     if (adaptive_memory->iteration_counter > task->config_ga.optimizer_param.max_iterations) {
         adaptive_memory->convergence_reached = 1;
-        printf("Max iterations reached: %d\n", adaptive_memory->iteration_counter);
+        //printf("Max iterations reached: %d\n", adaptive_memory->iteration_counter);
     }
 
     if (fabs(best_result - adaptive_memory->previous_best_result) < task->config_ga.optimizer_param.convergence_threshold) {
         adaptive_memory->convergence_counter++;
         if (adaptive_memory->convergence_counter > task->config_ga.optimizer_param.convergence_window) {
             adaptive_memory->convergence_reached = 1;
-            printf("Converged at iteration: %d\n", adaptive_memory->iteration_counter);
+            //printf("Converged at iteration: %d\n", adaptive_memory->iteration_counter);
         }
     }
     else {

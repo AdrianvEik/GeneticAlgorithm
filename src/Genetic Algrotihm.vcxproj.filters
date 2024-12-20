@@ -57,6 +57,9 @@
     <ClCompile Include="Helper\Struct.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Logger\progress_display.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Function\Function.h">
@@ -102,6 +105,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Optimisation\Optimizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger\progress_display.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

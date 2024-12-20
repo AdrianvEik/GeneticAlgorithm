@@ -5,6 +5,7 @@ D:\School\Libraries\GeneticAlgorithm\src\Helper\multiprocessing.c;D:\School\Libr
 D:\School\Libraries\GeneticAlgorithm\src\Helper\rng.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\rng.obj
 D:\School\Libraries\GeneticAlgorithm\src\Helper\Struct.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\Struct.obj
 D:\School\Libraries\GeneticAlgorithm\src\Logger\logging.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\logging.obj
+D:\School\Libraries\GeneticAlgorithm\src\Logger\progress_display.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\progress_display.obj
 D:\School\Libraries\GeneticAlgorithm\src\Optimisation\Optimizer.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\Optimizer.obj
 D:\School\Libraries\GeneticAlgorithm\src\Utility\crossover.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\crossover.obj
 D:\School\Libraries\GeneticAlgorithm\src\Utility\flatten.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\flatten.obj

@@ -34,6 +34,7 @@
     <ClCompile Include="Helper\rng.c" />
     <ClCompile Include="Helper\Struct.c" />
     <ClCompile Include="Logger\logging.c" />
+    <ClCompile Include="Logger\progress_display.c" />
     <ClCompile Include="Optimisation\Optimizer.c" />
     <ClCompile Include="Utility\crossover.c" />
     <ClCompile Include="Utility\flatten.c" />
@@ -51,6 +52,7 @@
     <ClInclude Include="Helper\Struct.h" />
     <ClInclude Include="Genetic_Algorithm.h" />
     <ClInclude Include="Logger\logging.h" />
+    <ClInclude Include="Logger\progress_display.h" />
     <ClInclude Include="Optimisation\Optimizer.h" />
     <ClInclude Include="Utility\crossover.h" />
     <ClInclude Include="Utility\flatten.h" />

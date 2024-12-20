@@ -43,6 +43,11 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
 		exit(255);
 	}
 
+	//TODO: Should this be here?
+    task_result_queue->progress.kill_progress_display = 0;
+    task_result_queue->progress.tasks_completed = 0;
+    task_result_queue->progress.best_result = -INFINITY;
+
 	task_result_queue->first_task_id = 0;
 	task_result_queue->next_task_id = 0;
     task_result_queue->runtime_param = runtime_param;
@@ -325,4 +330,5 @@ void stop_result_logger(task_result_queue_t* task_result_queue, int thread_count
     }
 
     pthread_join(task_result_queue->thread_id, NULL);
+    pthread_join(task_result_queue->thread_id_progress_display, NULL);
 }

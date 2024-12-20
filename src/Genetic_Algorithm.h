@@ -13,6 +13,7 @@
 #include "Helper/rng.h"
 
 #include "Logger/logging.h"
+#include "Logger/progress_display.h"
 
 #include "Optimisation/Optimizer.h"
 
