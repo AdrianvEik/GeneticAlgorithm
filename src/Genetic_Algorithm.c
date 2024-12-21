@@ -137,7 +137,6 @@ void* process_log_thread(task_result_queue_t* task_result_queue) {
 
     while (1) {
         get_result(task_result_queue, &task_result);
-		task_result_queue->console_queue->progress.tasks_completed++;
 
         if (task_result.task_type == TERMINATE_THREAD) {
 			write_file_buffer(task_result_queue, &best_result);
@@ -147,6 +146,7 @@ void* process_log_thread(task_result_queue_t* task_result_queue) {
 
 		if (task_result.task_type == BEST_RESULT_TASK && task_result.result > current_best_res) {
 			current_best_res = task_result.result;
+			task_result_queue->console_queue->progress.tasks_completed++;
 			task_result_queue->console_queue->progress.best_result = current_best_res;
             copy_task_result(&best_result, &task_result);
 		}
