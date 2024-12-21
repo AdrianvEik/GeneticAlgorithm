@@ -1,9 +1,22 @@
-#include "stdio.h"
-#include "stdlib.h"
-#include "math.h"
-
 #include "process.h"
 
+#include "../Helper/Helper.h"
+#include "../Helper/Struct.h"
+#include "../Helper/rng.h"
+
+#include "../Multiprocessing/mp_solver_th.h"
+
+#include "flatten.h"
+#include "../Function/Function.h"
+#include "selection.h"
+#include "crossover.h"
+
+#include "pop.h"
+#include "mutation.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 static void eliminate_duplicates(gene_pool_t* gene_pool) {
 	int unique = 1;

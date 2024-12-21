@@ -1,10 +1,10 @@
 
-#include "../Helper/multiprocessing.h" 
-#include "../Helper/struct.h"
 
 #ifndef OPTIMIZER_H
 #define OPTIMIZER_H
 
+#include "../Helper/struct.h"
+#include "../Multiprocessing/mp_solver_th.h"
 
 struct adaptive_memory_s {
     // Mutation

@@ -1,3 +1,28 @@
+#include "Genetic_Algorithm.h"
+
+#include "Utility/process.h"
+#include "Utility/pop.h"
+#include "Utility/crossover.h"
+#include "Utility/mutation.h"
+#include "Utility/selection.h"
+#include "Utility/flatten.h"
+
+#include "Function/Function.h"
+
+#include "Helper/Helper.h"
+#include "Helper/Struct.h"
+#include "Helper/rng.h"
+
+#include "Multiprocessing/mp_logger.h"
+#include "Multiprocessing/mp_solver_th.h"
+#include "Multiprocessing/mp_task_gen.h"
+#include "Multiprocessing/mp_progress_disp.h"
+#include "Multiprocessing/mp_consts.h"
+
+#include "Logger/logging.h"
+#include "Logger/progress_display.h"
+
+#include "Optimisation/Optimizer.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,7 +34,6 @@
 #include <windows.h>
 #include <pthread.h>
 
-#include "Genetic_Algorithm.h"
 
 
 
@@ -37,6 +61,7 @@ void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t*
 			) {
 			if (adaptive_memory.convergence_reached == 1) {
 				report_task(thread_param->task_queue, task, &adaptive_memory, thread_param, gene_pool, 1);
+                con_printf(thread_param->task_queue->task_result_queue->console_queue, "Convergence reached at iteration %d\n", adaptive_memory.iteration_counter);
 				break;
 			}
 			else {
@@ -50,22 +75,31 @@ void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t*
 	thread_param->status = 2; // Completed
 }
 
-void* process_progress_display_thread(task_result_queue_t* task_result_queue) {
+void* process_progress_display_thread(console_queue_t* console_queue) {
 	clock_t start, last_update, current;
 	start = clock();
 
-	int total_tasks = task_result_queue->runtime_param.task_count;
+	int total_tasks = console_queue->task_count;
+
+    print_str_t print_str;
+
+	printf("\n\n\n\n\n\n"); // set the cursor below the progress, TODO: make nice 
 
     while (1) {
-		if (task_result_queue->progress.kill_progress_display == 1) {
-			break;
-		}
-
         current = clock(); // Update every second
         double elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
-        display_progress(task_result_queue->progress.tasks_completed, total_tasks, task_result_queue->progress.best_result, elapsed_time);
-        Sleep(500);
-    }
+        display_progress(console_queue->progress.tasks_completed, total_tasks, console_queue->progress.best_result, elapsed_time);
+		
+		if (get_print_str(console_queue, &print_str)) {
+			if (print_str.task_type == 255) {
+				break;
+			}
+			printf("%s", print_str.str);
+            free(print_str.str);
+		}
+		
+		Sleep(1000);
+	}
 }
 
 
@@ -103,18 +137,17 @@ void* process_log_thread(task_result_queue_t* task_result_queue) {
 
     while (1) {
         get_result(task_result_queue, &task_result);
-		task_result_queue->progress.tasks_completed++;
+		task_result_queue->console_queue->progress.tasks_completed++;
 
         if (task_result.task_type == TERMINATE_THREAD) {
 			write_file_buffer(task_result_queue, &best_result);
-			task_result_queue->progress.kill_progress_display = 1;
             free_task_result(&best_result);
             break;
         }
 
 		if (task_result.task_type == BEST_RESULT_TASK && task_result.result > current_best_res) {
 			current_best_res = task_result.result;
-            task_result_queue->progress.best_result = current_best_res;
+			task_result_queue->console_queue->progress.best_result = current_best_res;
             copy_task_result(&best_result, &task_result);
 		}
 		write_file_buffer(task_result_queue, &task_result);
@@ -189,8 +222,11 @@ void start_threads(task_queue_t* task_queue, runtime_param_t runtime_param, conf
             exit(1);
         }
 
-        int retid2 = 0;
-        retid2 = pthread_create(&(task_queue->task_result_queue->thread_id_progress_display), NULL, (void*)process_progress_display_thread, (void*)task_queue->task_result_queue);
+        int retid_console = pthread_create(&(task_queue->task_result_queue->console_queue->thread_id), NULL, (void*)process_progress_display_thread, (void*)task_queue->task_result_queue->console_queue);
+        if (retid_console) {
+            printf("Error creating thread\n");
+            exit(1);
+        }
 
 		for (i = 0; i < NTHREADS; i++)
 		{
@@ -220,8 +256,10 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 	double previous_best_res = -INFINITY;
 	double best_res = -INFINITY;
 	int convergence_counter = 0;
+    console_queue_t console_queue = init_console_queue();
+    console_queue.task_count = runtime_param.zone_enable ? compute_task_count(runtime_param) : runtime_param.task_count;
 	task_result_queue_t task_result_queue;
-	init_task_result_queue(&task_result_queue, runtime_param);
+	init_task_result_queue(&task_result_queue, runtime_param, &console_queue);
 	task_queue_t task_queue;
 	init_task_queue(&task_queue, runtime_param.thread_count * 4, &task_result_queue, runtime_param.thread_count);
 	thread_param_t* thread_param;
@@ -230,10 +268,13 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 
 	make_task_list(&runtime_param, config_ga, &task_queue);
 
-	stop_threads(&task_queue, runtime_param.thread_count);
+	stop_solver_threads(&task_queue, runtime_param.thread_count);
     stop_result_logger(&task_result_queue, runtime_param.thread_count);
+    con_kill(&console_queue);
+
 	close_file(&task_result_queue);
 	free_task_queue(&task_queue);
+	free_console_queue(&console_queue);
 }
 
 void free_config_ga(config_ga_t* config_ga) {
@@ -247,7 +288,8 @@ int main() {
 	runtime_param.zone_enable = 0;
 	runtime_param.task_count = 200;
 	runtime_param.individuals = 128;
-	runtime_param.genes = 16;
+	runtime_param.genes = 15;
+	runtime_param.thread_count = 32;
 	config_ga_t config_ga = default_config(runtime_param);
 	config_ga.selection_param.selection_method = selection_method_rank_space;
 

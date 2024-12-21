@@ -1,14 +1,16 @@
 ﻿  Genetic_Algorithm.c
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(19,20): warning C4101: 'end': unreferenced local variable
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(54,17): warning C4101: 'last_update': unreferenced local variable
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(127,17): warning C4047: 'function': 'uint32_t' differs in levels of indirection from 'void *'
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(127,17): warning C4024: 'seedRandThread': different types for formal and actual parameter 1
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(175,10): warning C4101: 'j': unreferenced local variable
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(229,55): warning C4047: 'function': 'thread_param_t *' differs in levels of indirection from 'thread_param_t **'
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(229,55): warning C4024: 'start_threads': different types for formal and actual parameter 4
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(124,1): warning C4715: 'process_log_thread': not all control paths return a value
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(69,1): warning C4716: 'process_progress_display_thread': must return a value
-D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(237,1): warning C4716: 'Genetic_Algorithm': must return a value
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(73,5): warning C4013: 'free_task' undefined; assuming extern returning int
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(43,20): warning C4101: 'end': unreferenced local variable
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(79,17): warning C4101: 'last_update': unreferenced local variable
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(144,13): warning C4013: 'free_task_result' undefined; assuming extern returning int
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(160,17): warning C4047: 'function': 'uint32_t' differs in levels of indirection from 'void *'
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(160,17): warning C4024: 'seedRandThread': different types for formal and actual parameter 1
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(208,10): warning C4101: 'j': unreferenced local variable
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(267,55): warning C4047: 'function': 'thread_param_t *' differs in levels of indirection from 'thread_param_t **'
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(267,55): warning C4024: 'start_threads': different types for formal and actual parameter 4
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(157,1): warning C4715: 'process_log_thread': not all control paths return a value
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(278,1): warning C4716: 'Genetic_Algorithm': must return a value
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(103,1): warning C4716: 'process_progress_display_thread': must return a value
   Genetic Algrotihm.vcxproj -> D:\School\Libraries\GeneticAlgorithm\src\x64\Debug\Genetic Algrotihm.exe
   'pwsh.exe' is not recognized as an internal or external command,
   operable program or batch file.

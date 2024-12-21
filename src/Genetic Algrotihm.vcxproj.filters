@@ -45,9 +45,6 @@
     <ClCompile Include="Logger\logging.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Helper\multiprocessing.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Helper\rng.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -58,6 +55,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Logger\progress_display.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Multiprocessing\mp_logger.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Multiprocessing\mp_progress_disp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Multiprocessing\mp_solver_th.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Multiprocessing\mp_task_gen.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,9 +107,6 @@
     <ClInclude Include="..\..\..\..\vcpkg\vcpkg\installed\x64-windows\include\pthread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Helper\multiprocessing.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Helper\rng.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -108,6 +114,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Logger\progress_display.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Multiprocessing\mp_logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Multiprocessing\mp_progress_disp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Multiprocessing\mp_solver_th.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Multiprocessing\mp_consts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Multiprocessing\mp_task_gen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

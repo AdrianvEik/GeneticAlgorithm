@@ -3,8 +3,10 @@
 #define LOGGING_H 
 
 #include "../helper/struct.h"
-#include "../Helper/multiprocessing.h"
 #include "../Optimisation/Optimizer.h"
+
+#include "../Multiprocessing/mp_logger.h"
+#include "../Multiprocessing/mp_solver_th.h"
 
 void copy_task_result(task_result_t* task_result, task_result_t* source);
 void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t* adaptive_memory, thread_param_t* thread_param, gene_pool_t* gene_pool, int best_result);

@@ -1,15 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "progress_display.h"
+
+// Function to finalize progress display and restore cursor
+void finalize_progress_display(int initialized) {
+    if (!initialized) return;
+
+    // Restore the saved cursor position
+    printf("\033[u"); // Restore cursor position
+    printf("\033[0J"); // Clear everything below the cursor
+    fflush(stdout);
+}
 
 // Function to display progress bar
 void display_progress(int completed, int total, double current_best, double elapsed_time) {
     static int initialized = 0;
+    static int saved_cursor = 0;
     int bar_width = 40; // Adjust as needed
     double progress = (double)completed / total;
 
-    // Initialize display layout only once
     if (!initialized) {
-        printf("\033[2J");            // Clear the screen
+        // Save the current cursor position
+        printf("\033[s"); // Save cursor position
+        saved_cursor = 1;
+
+        // Initialize display layout
+        //printf("\033[2J");            // Clear the screen
         printf("\033[H");             // Move cursor to the top-left corner
         printf("|<%.*s>|\n", bar_width, "........................................");
         printf("| Current best:          |\n");
@@ -36,6 +52,7 @@ void display_progress(int completed, int total, double current_best, double elap
     printf("\033[4;12H%.2f%% [%d]   ", progress * 100, completed); // Update progress
     if (completed > 0)
         printf("\033[5;17H%.1f [s]   ", elapsed_time / completed); // Update time per task
-
-    fflush(stdout); // Ensure the updated content is shown
+    
+    finalize_progress_display(initialized);
 }
+

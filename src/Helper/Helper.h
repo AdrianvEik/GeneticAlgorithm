@@ -1,5 +1,4 @@
 #include "rng.h"
-#include "../Helper/multiprocessing.h"
 
 #ifndef _HELPER_H
 #define _HELPER_H

@@ -7,7 +7,7 @@
 #include <time.h>
 
 #include "Helper.h"
-#include "../Helper/multiprocessing.h"
+
 #undef PI
 #define PI   3.14159265358979323846264338327950288419716939937510f
 

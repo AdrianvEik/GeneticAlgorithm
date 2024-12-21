@@ -1,5 +1,6 @@
 
 #include <math.h>
+#include <stdint.h>
 
 #include "../Optimisation/Optimizer.h"
 
