@@ -46,8 +46,8 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 	// Setups default configuration
 	flatten_param_t flatten_param;
 	flatten_param.flatten_method = flatten_method_none;
-	flatten_param.flatten_factor = 1.0f;
-	flatten_param.flatten_bias = 0.0f;
+	flatten_param.flatten_alpha = 1.0f;
+	flatten_param.flatten_beta = 0.0f;
 
 	crossover_param_t crossover_param;
 	crossover_param.crossover_method = crossover_method_uniform32;

@@ -17,7 +17,7 @@ static void lin_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_para
 	}
 
 	for (int i = 0; i < gene_pool->individuals; i++) {
-		gene_pool->flatten_result_set[i] = (gene_pool->pop_result_set[i] / sum) * flatten_param->flatten_factor + flatten_param->flatten_bias;
+		gene_pool->flatten_result_set[i] = (gene_pool->pop_result_set[i] / sum) * flatten_param->flatten_alpha + flatten_param->flatten_beta;
 	}
 
 }
@@ -45,7 +45,7 @@ static void exp_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_para
 	double max_exp = 0.0;
 	// compute normalized exp values
     for (int i = 0; i < gene_pool->individuals; i++) {
-        gene_pool->flatten_result_set[i] = exp((gene_pool->pop_result_set[i] / sum) * flatten_param->flatten_factor);
+        gene_pool->flatten_result_set[i] = exp((gene_pool->pop_result_set[i] / sum) * flatten_param->flatten_alpha);
 		if (gene_pool->flatten_result_set[i] > max_exp) {
 			max_exp = gene_pool->flatten_result_set[i];
 		}
@@ -53,7 +53,7 @@ static void exp_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_para
 
     // normalize and bias
     for (int i = 0; i < gene_pool->individuals; i++) {
-        gene_pool->flatten_result_set[i] = (gene_pool->flatten_result_set[i] / max_exp) + flatten_param->flatten_bias;
+        gene_pool->flatten_result_set[i] = (gene_pool->flatten_result_set[i] / max_exp) + flatten_param->flatten_beta;
         // clamp to domain [0, 1] TODO: make variable?
         if (gene_pool->flatten_result_set[i] < 0) {
             gene_pool->flatten_result_set[i] = 0;
@@ -95,7 +95,7 @@ static void log_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_para
     double delta = 1e-6;
 
     for (int i = 0; i < gene_pool->individuals; i++) {
-        gene_pool->flatten_result_set[i] = log(fmax(1 + ((gene_pool->pop_result_set[i] - min) / (range + eta)) * flatten_param->flatten_factor, delta)) + flatten_param->flatten_bias;
+        gene_pool->flatten_result_set[i] = log(fmax(1 + ((gene_pool->pop_result_set[i] - min) / (range + eta)) * flatten_param->flatten_alpha, delta)) + flatten_param->flatten_beta;
     }
 }
 
@@ -106,7 +106,7 @@ static void norm_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_par
 	double range = max - min;
 
 	for (int i = 0; i < gene_pool->individuals; i++) {
-        gene_pool->flatten_result_set[i] = ((gene_pool->pop_result_set[i] - min) / (range)) * flatten_param->flatten_factor + flatten_param->flatten_bias;
+        gene_pool->flatten_result_set[i] = ((gene_pool->pop_result_set[i] - min) / (range)) * flatten_param->flatten_alpha + flatten_param->flatten_beta;
 	}
 
 }
@@ -126,7 +126,7 @@ static void sig_flattening(gene_pool_t* gene_pool, flatten_param_t* flatten_para
             - The sigmoid function is useful for normalizing fitness values.
     */
     for (int i = 0; i < gene_pool->individuals; i++) {
-        gene_pool->flatten_result_set[i] = 1 / (1 + exp(-((flatten_param->flatten_factor * (gene_pool->pop_result_set[i] - flatten_param->flatten_bias)))));
+        gene_pool->flatten_result_set[i] = 1 / (1 + exp(-((flatten_param->flatten_alpha * (gene_pool->pop_result_set[i] - flatten_param->flatten_beta)))));
     }
 }
 

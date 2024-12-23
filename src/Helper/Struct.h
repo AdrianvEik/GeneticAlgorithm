@@ -34,8 +34,8 @@ struct selection_param_s {
 
 struct flatten_param_s {
 	int flatten_method; // DEFAULT = 5
-	double flatten_factor; // DEFAULT = 1 (> 0)
-	double flatten_bias; // DEFAULT = 0
+	double flatten_alpha; // DEFAULT = 1 (> 0)
+	double flatten_beta; // DEFAULT = 0
 };
 
 struct crossover_param_s {
@@ -43,11 +43,20 @@ struct crossover_param_s {
 	double crossover_prob; // DEFAULT = 0.5
 };
 
+// TODO: per gene mutation probability and mutation pressure (rank dependant)
+//struct mutation_param_s {
+//	int mutation_method; // DEFAULT = 0
+//	double* mutation_prob; // DEFAULT = 0.5
+//	int mutation_rate; // DEFAULT = 6
+//    double mutation_alpha; // DEFAULT = 1
+//    double mutation_beta; // DEFAULT = 0
+//};
 struct mutation_param_s {
 	int mutation_method; // DEFAULT = 0
 	double mutation_prob; // DEFAULT = 0.5
 	int mutation_rate; // DEFAULT = 6
 };
+
 
 typedef double (*fx_ptr)(double*, int);
 struct fx_param_s {
