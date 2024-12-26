@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdint.h>
+
 #define PI   3.14159265358979323846264338327950288419716939937510f
 
 #include "pop.h"
@@ -151,25 +152,90 @@ void init_gene_pool(gene_pool_t* gene_pool) {
 	// int individuals;
 	// int elitism;
 
-	if ((gene_pool->flatten_result_set = malloc(gene_pool->individuals * sizeof(double))) == NULL ||
-		(gene_pool->pop_param_bin = (int**)malloc(gene_pool->individuals * sizeof(int*))) == NULL ||
-		(gene_pool->pop_param_bin_cross_buffer = (int**)malloc(gene_pool->individuals * sizeof(int*))) == NULL ||
-		(gene_pool->pop_param_double = malloc(gene_pool->individuals * sizeof(double*))) == NULL ||
-		(gene_pool->pop_result_set = malloc(gene_pool->individuals * sizeof(double))) == NULL ||
-		(gene_pool->selected_indexes = malloc(gene_pool->individuals * sizeof(int))) == NULL ||
-		(gene_pool->sorted_indexes = malloc(gene_pool->individuals * sizeof(int))) == NULL) {
-		fprintf(stderr, "Memory allocation failed: init_gene_pool\n");
-		exit(EXIT_FAILURE);
+
+	uint64_t total_memsize = 0;
+	uint64_t current_mem_ptr = 0;
+
+    // Calculate the total memory size needed
+    total_memsize += gene_pool->individuals * sizeof(double); // flatten result set
+    total_memsize += gene_pool->individuals * sizeof(int*); // pop_param_bin
+    total_memsize += gene_pool->individuals * sizeof(int*); // pop_param_bin_cross_buffer
+    total_memsize += gene_pool->individuals * sizeof(double*); // pop_param_double
+    total_memsize += gene_pool->individuals * sizeof(double); // pop_result_set
+    total_memsize += gene_pool->individuals * sizeof(int); // selected_indexes
+    total_memsize += gene_pool->individuals * sizeof(int); // sorted_indexes
+
+    total_memsize += gene_pool->individuals * gene_pool->genes * sizeof(int); // pop_param_bin
+    total_memsize += gene_pool->individuals * gene_pool->genes * sizeof(int); // pop_param_bin_cross_buffer
+    total_memsize += gene_pool->individuals * gene_pool->genes * sizeof(double); // pop_param_double
+
+    // Allocate the memory
+	if ((gene_pool->gene_pool_memory_ptr = malloc(total_memsize)) == NULL) {
+        fprintf(stderr, "Memory allocation failed: init_gene_pool\n");
+        exit(EXIT_FAILURE);
 	}
 
-	for (int i = 0; i < gene_pool->individuals; i++) {
-		if ((gene_pool->pop_param_bin[i] = (int*)malloc(gene_pool->genes * sizeof(int))) == NULL ||
-			(gene_pool->pop_param_bin_cross_buffer[i] = (int*)malloc(gene_pool->genes * sizeof(int))) == NULL ||
-			(gene_pool->pop_param_double[i] = (double*)malloc(gene_pool->genes * sizeof(double))) == NULL) {
-			fprintf(stderr, "Memory allocation failed: init_gene_pool individual %d\n", i);
-			exit(EXIT_FAILURE);
-		}
-	}
+	// pointers to blocks
+	current_mem_ptr = gene_pool->gene_pool_memory_ptr;
+    gene_pool->flatten_result_set = (double*) current_mem_ptr;
+	current_mem_ptr += gene_pool->individuals * sizeof(double);
+
+    gene_pool->pop_param_bin = (int**)current_mem_ptr ;
+    current_mem_ptr += gene_pool->individuals * sizeof(int*);
+
+    gene_pool->pop_param_bin_cross_buffer = (int**)current_mem_ptr;
+    current_mem_ptr += gene_pool->individuals * sizeof(int*);
+
+    gene_pool->pop_param_double = (double**)current_mem_ptr;
+    current_mem_ptr += gene_pool->individuals * sizeof(double*);
+
+    gene_pool->pop_result_set = (double*)current_mem_ptr;
+    current_mem_ptr += gene_pool->individuals * sizeof(double);
+
+    gene_pool->selected_indexes = (int*)current_mem_ptr;
+    current_mem_ptr += gene_pool->individuals * sizeof(int);
+
+    gene_pool->sorted_indexes = (int*)current_mem_ptr;
+    current_mem_ptr += gene_pool->individuals * sizeof(int);
+
+    // pointers to data
+    for (int i = 0; i < gene_pool->individuals; i++) {
+        gene_pool->pop_param_bin[i] = (int*)current_mem_ptr;
+        current_mem_ptr += gene_pool->genes * sizeof(int);
+
+        gene_pool->pop_param_bin_cross_buffer[i] = (int*)current_mem_ptr;
+        current_mem_ptr += gene_pool->genes * sizeof(int);
+
+        gene_pool->pop_param_double[i] = (double*)current_mem_ptr;
+        current_mem_ptr += gene_pool->genes * sizeof(double);
+    }
+
+    if ((uint64_t) gene_pool->gene_pool_memory_ptr + total_memsize != current_mem_ptr) {
+        fprintf(stderr, "Memory allocation failed: init_gene_pool\n");
+        exit(EXIT_FAILURE);
+    }
+
+
+
+	//if ((gene_pool->flatten_result_set = malloc(gene_pool->individuals * sizeof(double))) == NULL ||
+	//	(gene_pool->pop_param_bin = (int**)malloc(gene_pool->individuals * sizeof(int*))) == NULL ||
+	//	(gene_pool->pop_param_bin_cross_buffer = (int**)malloc(gene_pool->individuals * sizeof(int*))) == NULL ||
+	//	(gene_pool->pop_param_double = malloc(gene_pool->individuals * sizeof(double*))) == NULL ||
+	//	(gene_pool->pop_result_set = malloc(gene_pool->individuals * sizeof(double))) == NULL ||
+	//	(gene_pool->selected_indexes = malloc(gene_pool->individuals * sizeof(int))) == NULL ||
+	//	(gene_pool->sorted_indexes = malloc(gene_pool->individuals * sizeof(int))) == NULL) {
+	//	fprintf(stderr, "Memory allocation failed: init_gene_pool\n");
+	//	exit(EXIT_FAILURE);
+	//}
+
+	//for (int i = 0; i < gene_pool->individuals; i++) {
+	//	if ((gene_pool->pop_param_bin[i] = (int*)malloc(gene_pool->genes * sizeof(int))) == NULL ||
+	//		(gene_pool->pop_param_bin_cross_buffer[i] = (int*)malloc(gene_pool->genes * sizeof(int))) == NULL ||
+	//		(gene_pool->pop_param_double[i] = (double*)malloc(gene_pool->genes * sizeof(double))) == NULL) {
+	//		fprintf(stderr, "Memory allocation failed: init_gene_pool individual %d\n", i);
+	//		exit(EXIT_FAILURE);
+	//	}
+	//}
 }
 void free_gene_pool(gene_pool_t* gene_pool) {
 	// DANGER
@@ -179,13 +245,7 @@ void free_gene_pool(gene_pool_t* gene_pool) {
 	//	free(gene_pool->pop_param_bin_cross_buffer[i]);
 	//	free(gene_pool->pop_param_double[i]);
 	//}
-	free(gene_pool->flatten_result_set);
-	free(gene_pool->pop_param_bin);
-	free(gene_pool->pop_param_bin_cross_buffer);
-	free(gene_pool->pop_param_double);
-	free(gene_pool->pop_result_set);
-	free(gene_pool->selected_indexes);
-	free(gene_pool->sorted_indexes);
+    free(gene_pool->gene_pool_memory_ptr);
 }
 
 void fill_individual(gene_pool_t* gene_pool, int individual) {
