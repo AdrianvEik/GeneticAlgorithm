@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "math.h"
+#include <string.h>
 
 #include "crossover.h"
 
@@ -150,23 +151,21 @@ void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_para
 		);
 	}
 
-	int skip_index = 0;
+	int elite_found;
 
 	// copy the crossed over values back to the population
 	for (int i = 0; i < nearest_even; i++) {
 
-		skip_index = 0;
+		elite_found = 0;
 		for (int k = nearest_even; k < gene_pool->individuals - 1; k++) {
 			if (gene_pool->selected_indexes[k] == i) {
 				// continue outer loop;
-				skip_index = 1;
+				elite_found = 1;
 				break;
 			}
 		}
-		if (skip_index) {
-			for (int j = 0; j < gene_pool->genes; j++) {
-				gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]][j] = gene_pool->pop_param_bin_cross_buffer[i][j];
-			}
+		if (!elite_found) {
+            memcpy(gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]], gene_pool->pop_param_bin_cross_buffer[i], gene_pool->genes * sizeof(int));
 		}
 	}
 }

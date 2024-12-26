@@ -34,10 +34,6 @@
 #include <windows.h>
 #include <pthread.h>
 
-
-
-
-
 void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t* gene_pool) {
 	//printf("Thread %d, Task %d\n", thread_param->thread_id, thread_param->task_id);
     clock_t start, end;
@@ -288,10 +284,10 @@ int main() {
 	int repeats = 1;
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 0;
-	runtime_param.task_count = 200;
-	runtime_param.individuals = 2512;
-	runtime_param.genes = 15;
-	runtime_param.thread_count = 32;
+	runtime_param.task_count = 8;
+	runtime_param.individuals = 16;
+	runtime_param.genes = 3;
+	runtime_param.thread_count = 4;
 	config_ga_t config_ga = default_config(runtime_param);
 	config_ga.selection_param.selection_method = selection_method_rank_space;
 

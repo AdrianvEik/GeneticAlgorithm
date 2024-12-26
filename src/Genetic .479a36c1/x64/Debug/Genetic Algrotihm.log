@@ -1,4 +1,6 @@
-﻿  process.c
-  Genetic Algrotihm.vcxproj -> D:\School\Libraries\GeneticAlgorithm\src\x64\Debug\Genetic Algrotihm.exe
+﻿  pop.c
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Utility\pop.c(41,43): warning C4244: 'return': conversion from 'double' to 'uint32_t', possible loss of data
+C:\Users\vanei\source\repos\GeneticAlgorithm\src\Utility\pop.c(136,41): warning C4293: '<<': shift count negative or too big, undefined behavior
+  Genetic Algrotihm.vcxproj -> C:\Users\vanei\source\repos\GeneticAlgorithm\src\x64\Debug\Genetic Algrotihm.exe
   'pwsh.exe' is not recognized as an internal or external command,
   operable program or batch file.
