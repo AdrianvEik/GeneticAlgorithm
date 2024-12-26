@@ -22,6 +22,9 @@ struct mt_rand_s {
 
 typedef struct mt_rand_s mt_rand_t;
 
+// Thread local rng generator
+__declspec(thread) mt_rand_t mt_thread;
+
 int rdrand_supported = -1;
 
 int is_RDRAND_supported()
@@ -135,30 +138,9 @@ mt_rand_t seedRand(uint32_t seed) {
 }
 
 
-
-// todo: __declspec(thread) thread_local_storage
-//void init_thread_rng(int thread_cnt) {
-//	thread_count = thread_cnt;
-//    mt_rand_lookup = (mt_rand_t*)malloc(sizeof(mt_rand_t) * thread_count);
-//    mt_rand_thread_mapper = (int*)malloc(sizeof(int) * thread_count);
-//}
-
-//void free_thread_rng() {
-//    free(mt_rand_lookup);
-//    free(mt_rand_thread_mapper);
-//}
-
-__declspec(thread) mt_rand_t mt_thread;
-
-
 void seedRandThread(uint32_t seed) {
 	mt_thread = seedRand(seed);
 }
-
-//void seedRandThread(uint32_t thread_id, uint32_t seed) {
-//	mt_rand_thread_mapper[thread_id] = pthread_getw32threadid_np(pthread_self());
-//	mt_rand_lookup[thread_id] = seedRand(seed);
-//}
 
 /**
  * Generates a pseudo-randomly generated long.

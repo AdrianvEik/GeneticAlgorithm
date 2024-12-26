@@ -289,7 +289,7 @@ int main() {
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 0;
 	runtime_param.task_count = 200;
-	runtime_param.individuals = 128;
+	runtime_param.individuals = 2512;
 	runtime_param.genes = 15;
 	runtime_param.thread_count = 32;
 	config_ga_t config_ga = default_config(runtime_param);

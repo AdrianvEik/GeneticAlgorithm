@@ -55,7 +55,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 
 	mutation_param_t mutation_param;
 	mutation_param.mutation_method = 0;
-	mutation_param.mutation_prob = 0.5f;
+	mutation_param.mutation_prob = 0.5;
 	mutation_param.mutation_rate = 6;
 
 	fx_param_t fx_param;

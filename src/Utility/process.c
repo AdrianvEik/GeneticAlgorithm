@@ -18,6 +18,14 @@
 #include <stdlib.h>
 #include <math.h>
 
+void init_pre_compute(gene_pool_t* gene_pool) {
+    init_pre_compute_selection(gene_pool);
+}
+
+void free_pre_compute() {
+    free_pre_compute_selection();
+}
+
 static void eliminate_duplicates(gene_pool_t* gene_pool) {
 	int unique = 1;
 	// eliminate duplicates

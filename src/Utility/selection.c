@@ -17,7 +17,7 @@ __declspec(thread) double current_temp_param;
 __declspec(thread) double* distances;
 __declspec(thread) double* central_point;
 
-void init_pre_compute(gene_pool_t* gene_pool) {
+void init_pre_compute_selection(gene_pool_t* gene_pool) {
 	/*
 	*/
 	prob_distr = (double*)malloc(gene_pool->individuals * sizeof(double));
@@ -28,14 +28,12 @@ void init_pre_compute(gene_pool_t* gene_pool) {
         exit(255);
     }
 
-    for (int i = 0; i < gene_pool->individuals; i++) {
-        prob_distr[i] = -1; // Set to -1 to indicate that the distribution has not been computed
-        boltzmann_distr[i] = -1;
-    }
+    memset(prob_distr, -1, gene_pool->individuals * sizeof(double));
+    memset(boltzmann_distr, -1, gene_pool->individuals * sizeof(double));
 }
 
 // This needs to be called externally to free the memory
-void free_pre_compute() {
+void free_pre_compute_selection() {
 	/*
 	*/
     free(prob_distr);
