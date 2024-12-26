@@ -151,6 +151,7 @@ void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_para
 		);
 	}
 
+    // TODO: this requires more investigation
 	int elite_found;
 
 	// copy the crossed over values back to the population
