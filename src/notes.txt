@@ -32,3 +32,11 @@ Data:
 * param
 * config_int (mutation_rate)
 * config_double (convergence_moving_window)
+
+020125
+-proper parameter verification:
+	Elitism > 0
+	Indiviuals > 0
+	genes > 0 
+	...
+	...

@@ -250,6 +250,7 @@ void start_threads(task_queue_t* task_queue, runtime_param_t runtime_param, conf
 }
 
 double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
+	verify_input_parameters(config_ga, runtime_param);
 
 	double previous_best_res = -INFINITY;
 	double best_res = -INFINITY;
@@ -285,7 +286,7 @@ int main() {
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 0;
 	runtime_param.task_count = 8;
-	runtime_param.individuals = 512;
+	runtime_param.individuals = 32;
 	runtime_param.genes = 15;
 	runtime_param.thread_count = 4;
 	config_ga_t config_ga = default_config(runtime_param);

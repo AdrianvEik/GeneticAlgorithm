@@ -139,9 +139,9 @@ static void crossover(int* parent1, int* parent2, int* child1, int* child2, int 
 
 void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_param) {
 	//double** pop_parameter_bin, int individuals, int genes, int* selected, int skipped_pairs){
-	int nearest_even = (gene_pool->individuals - gene_pool->elitism) - ((gene_pool->individuals - gene_pool->elitism) % 2);
+	int next_even = (gene_pool->individuals - gene_pool->elitism) + ((gene_pool->individuals - gene_pool->elitism) % 2);
 
-	for (int i = 0; i < nearest_even; i += 2) {
+	for (int i = 0; i < next_even; i += 2) {
 		crossover(gene_pool->pop_param_bin[gene_pool->selected_indexes[i]],
 			gene_pool->pop_param_bin[gene_pool->selected_indexes[i + 1]],
 			gene_pool->pop_param_bin_cross_buffer[i],
@@ -151,23 +151,12 @@ void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_para
 		);
 	}
 
-    // TODO: this requires more investigation
-	int elite_found;
-
 	// copy the crossed over values back to the population
-	for (int i = 0; i < nearest_even; i++) {
-
-		elite_found = 0;
-		for (int k = nearest_even; k < gene_pool->individuals - 1; k++) {
-			if (gene_pool->selected_indexes[k] == i) {
-				// continue outer loop;
-				elite_found = 1;
-				break;
-			}
-		}
-		if (!elite_found) {
-            memcpy(gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]], gene_pool->pop_param_bin_cross_buffer[i], gene_pool->genes * sizeof(int));
-		}
+	for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
+        memcpy(gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]],
+			gene_pool->pop_param_bin_cross_buffer[i],
+			gene_pool->genes * sizeof(int));
+		
 	}
 }
 

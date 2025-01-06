@@ -101,3 +101,18 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 
 	return config_ga;
 }
+
+void verify_input_parameters(config_ga_t config_ga, runtime_param_t runtime_param) {
+	if (runtime_param.elitism > runtime_param.individuals) {
+		perror("Elitism cannot be greater than the number of individuals");
+		exit(250);
+	}
+	if (runtime_param.individuals > 2) {
+		perror("The number of individuals must be greater than two");
+		exit(250);
+	}
+	if (runtime_param.genes != 0) {
+		perror("The number of genes must be greater than zero");
+		exit(250);
+	}
+}
