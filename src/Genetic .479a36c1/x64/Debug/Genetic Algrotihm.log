@@ -1,45 +1,16 @@
-﻿  Function.c
-  Genetic_Algorithm.c
-  Struct.c
-  logging.c
-  mp_logger.c
-  mp_progress_disp.c
-  mp_solver_th.c
-  mp_task_gen.c
-  Optimizer.c
-  crossover.c
-  flatten.c
-  mutation.c
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(69,5): warning C4013: 'free_task' undefined; assuming extern returning int
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(39,20): warning C4101: 'end': unreferenced local variable
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(75,17): warning C4101: 'last_update': unreferenced local variable
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(139,13): warning C4013: 'free_task_result' undefined; assuming extern returning int
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(158,17): warning C4047: 'function': 'uint32_t' differs in levels of indirection from 'void *'
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(158,17): warning C4024: 'seedRandThread': different types for formal and actual parameter 1
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(206,10): warning C4101: 'j': unreferenced local variable
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(266,55): warning C4047: 'function': 'thread_param_t *' differs in levels of indirection from 'thread_param_t **'
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(266,55): warning C4024: 'start_threads': different types for formal and actual parameter 4
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Logger\logging.c(42,117): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Multiprocessing\mp_logger.c(50,2): warning C4098: 'init_task_result_queue': 'void' function returning a value
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Multiprocessing\mp_logger.c(106,4): warning C4013: 'Sleep' undefined; assuming extern returning int
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Multiprocessing\mp_progress_disp.c(52,13): warning C4013: 'Sleep' undefined; assuming extern returning int
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Multiprocessing\mp_progress_disp.c(102,49): warning C4267: 'function': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Multiprocessing\mp_solver_th.c(41,5): warning C4098: 'init_task_queue': 'void' function returning a value
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Multiprocessing\mp_solver_th.c(60,5): warning C4098: 'init_task': 'void' function returning a value
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Multiprocessing\mp_solver_th.c(68,13): warning C4013: 'Sleep' undefined; assuming extern returning int
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Multiprocessing\mp_task_gen.c(9,41): warning C4028: formal parameter 1 different from declaration
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Utility\mutation.c(23,35): warning C4244: '/=': conversion from 'double' to 'int', possible loss of data
-  pop.c
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Utility\pop.c(42,43): warning C4244: 'return': conversion from 'double' to 'uint32_t', possible loss of data
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Utility\pop.c(137,41): warning C4293: '<<': shift count negative or too big, undefined behavior
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Utility\pop.c(179,18): warning C4047: '=': 'uint64_t' differs in levels of indirection from 'char *'
-  process.c
-  selection.c
-  Generating Code...
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Multiprocessing\mp_progress_disp.c(78,1): warning C4715: 'get_print_str': not all control paths return a value
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(155,1): warning C4715: 'process_log_thread': not all control paths return a value
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(99,1): warning C4716: 'process_progress_display_thread': must return a value
-C:\Users\vanei\source\repos\GeneticAlgorithm\src\Genetic_Algorithm.c(277,1): warning C4716: 'Genetic_Algorithm': must return a value
-  Genetic Algrotihm.vcxproj -> C:\Users\vanei\source\repos\GeneticAlgorithm\src\x64\Debug\Genetic Algrotihm.exe
+﻿  Genetic_Algorithm.c
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(69,5): warning C4013: 'free_task' undefined; assuming extern returning int
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(39,20): warning C4101: 'end': unreferenced local variable
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(75,17): warning C4101: 'last_update': unreferenced local variable
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(146,13): warning C4013: 'free_task_result' undefined; assuming extern returning int
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(173,17): warning C4047: 'function': 'uint32_t' differs in levels of indirection from 'void *'
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(173,17): warning C4024: 'seedRandThread': different types for formal and actual parameter 1
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(221,10): warning C4101: 'j': unreferenced local variable
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(281,55): warning C4047: 'function': 'thread_param_t *' differs in levels of indirection from 'thread_param_t **'
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(281,55): warning C4024: 'start_threads': different types for formal and actual parameter 4
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(106,1): warning C4716: 'process_progress_display_thread': must return a value
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(292,1): warning C4716: 'Genetic_Algorithm': must return a value
+D:\School\Libraries\GeneticAlgorithm\src\Genetic_Algorithm.c(170,1): warning C4715: 'process_log_thread': not all control paths return a value
+  Genetic Algrotihm.vcxproj -> D:\School\Libraries\GeneticAlgorithm\src\x64\Debug\Genetic Algrotihm.exe
   'pwsh.exe' is not recognized as an internal or external command,
   operable program or batch file.

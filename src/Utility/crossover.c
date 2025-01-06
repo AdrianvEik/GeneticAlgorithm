@@ -156,7 +156,6 @@ void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_para
         memcpy(gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]],
 			gene_pool->pop_param_bin_cross_buffer[i],
 			gene_pool->genes * sizeof(int));
-		
 	}
 }
 

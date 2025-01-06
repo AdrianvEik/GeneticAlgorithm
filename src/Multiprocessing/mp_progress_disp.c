@@ -34,6 +34,8 @@ console_queue_t init_console_queue() {
     console_queue.progress.best_result = -INFINITY;
     console_queue.progress.tasks_completed = 0;
     console_queue.progress.optim_mode = 0;
+    console_queue.progress.average_result = 0;
+    console_queue.progress.result_standard_deviation = 0;
     return console_queue;
 }
 
@@ -104,4 +106,6 @@ void con_printf(console_queue_t* console_queue, const char* format, ...) {
 
 void con_kill(console_queue_t* console_queue) {
     add_print_str(console_queue, "", 0, 255);
+
+    pthread_join(console_queue->thread_id, NULL);
 }

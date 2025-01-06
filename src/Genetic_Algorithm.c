@@ -84,18 +84,25 @@ void* process_progress_display_thread(console_queue_t* console_queue) {
     while (1) {
         current = clock(); // Update every second
         double elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
-        display_progress(console_queue->progress.tasks_completed, total_tasks, console_queue->progress.best_result, elapsed_time);
+        		
+		display_progress(console_queue, total_tasks, elapsed_time);
 		
-		if (get_print_str(console_queue, &print_str)) {
+		Sleep(500);
+
+		while (get_print_str(console_queue, &print_str)) {
 			if (print_str.task_type == 255) {
-				break;
+				current = clock(); // Update every second
+				double elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
+
+                // update the progress one last time
+				display_progress(console_queue, total_tasks, elapsed_time);
+                goto end;
 			}
 			printf("%s", print_str.str);
             free(print_str.str);
 		}
-		
-		Sleep(1000);
 	}
+	end:;
 }
 
 
@@ -142,6 +149,14 @@ void* process_log_thread(task_result_queue_t* task_result_queue) {
 
 		if (task_result.task_type == BEST_RESULT_TASK) {
 			task_result_queue->console_queue->progress.tasks_completed++;
+			// add the results to be processed to an answer in the console
+            // to be divided by the number of tasks completed
+			task_result_queue->console_queue->progress.average_result += task_result.result;
+            // to be divided by the number of tasks completed - 1 and sqrt
+            task_result_queue->console_queue->progress.result_standard_deviation += pow(
+				(task_result.result - (task_result_queue->console_queue->progress.average_result) / task_result_queue->console_queue->progress.tasks_completed), 2
+			);
+			
 			if (task_result.result > current_best_res) {
 				current_best_res = task_result.result;
 				task_result_queue->console_queue->progress.best_result = current_best_res;
@@ -285,12 +300,13 @@ int main() {
 	int repeats = 1;
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 0;
-	runtime_param.task_count = 8;
-	runtime_param.individuals = 32;
-	runtime_param.genes = 15;
-	runtime_param.thread_count = 4;
+	runtime_param.task_count = 32;
+	runtime_param.individuals = 128;
+	runtime_param.genes = 4;
+	runtime_param.thread_count = 8;
 	config_ga_t config_ga = default_config(runtime_param);
 	config_ga.selection_param.selection_method = selection_method_rank_space;
+	config_ga.population_param.reseed_bottom_N = 1;
 
 	for (int i = 0; i < repeats; i++) {
 		printf("\n Run number: %d\n", i);

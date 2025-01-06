@@ -14,6 +14,8 @@ typedef struct print_str_s print_str_t;
 
 struct progress_s {
     double best_result;
+    double average_result;
+    double result_standard_deviation;
     int tasks_completed;
     int optim_mode;
 };

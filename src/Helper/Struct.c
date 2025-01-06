@@ -72,6 +72,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 		pop_param.lower[i] = -5.0f;
 		pop_param.upper[i] = 5.0f;
 	}
+	pop_param.reseed_bottom_N = 2;
 
 	selection_param_t selection_param;
 	selection_param.selection_method = selection_method_roulette;
@@ -107,11 +108,11 @@ void verify_input_parameters(config_ga_t config_ga, runtime_param_t runtime_para
 		perror("Elitism cannot be greater than the number of individuals");
 		exit(250);
 	}
-	if (runtime_param.individuals > 2) {
+	if (runtime_param.individuals < 2) {
 		perror("The number of individuals must be greater than two");
 		exit(250);
 	}
-	if (runtime_param.genes != 0) {
+	if (runtime_param.genes < 1) {
 		perror("The number of genes must be greater than zero");
 		exit(250);
 	}

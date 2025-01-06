@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "progress_display.h"
+#include "../Multiprocessing/mp_progress_disp.h"
 
 // Function to finalize progress display and restore cursor
 void finalize_progress_display(int initialized) {
@@ -13,11 +15,14 @@ void finalize_progress_display(int initialized) {
 }
 
 // Function to display progress bar
-void display_progress(int completed, int total, double current_best, double elapsed_time) {
+void display_progress(console_queue_t* con_queue, int total_tasks, double elapsed_time) {
     static int initialized = 0;
     static int saved_cursor = 0;
     int bar_width = 40; // Adjust as needed
-    double progress = (double)completed / total;
+    double progress = (double) con_queue->progress.tasks_completed / total_tasks;
+    double average_result = con_queue->progress.average_result / con_queue->progress.tasks_completed;
+    double average_standard_deviation = sqrt(con_queue->progress.result_standard_deviation / (con_queue->progress.tasks_completed-1));
+
 
     if (!initialized) {
         // Save the current cursor position
@@ -28,11 +33,12 @@ void display_progress(int completed, int total, double current_best, double elap
         //printf("\033[2J");            // Clear the screen
         printf("\033[H");             // Move cursor to the top-left corner
         printf("|<%.*s>|\n", bar_width, "........................................");
-        printf("| Current best:          |\n");
-        printf("| Time:                  |\n");
-        printf("| Progress:              |\n");
-        printf("| Time per task:         |\n");
-        printf("|-----------------------|\n");
+        printf("| Current best:                         |\n");
+        printf("| Average best:                         |\n");
+        printf("| Time:                                 |\n");
+        printf("| Progress:                             |\n");
+        printf("| Time per task:                        |\n");
+        printf("|---------------------------------------|\n");
         fflush(stdout);
         initialized = 1;
     }
@@ -47,11 +53,13 @@ void display_progress(int completed, int total, double current_best, double elap
             printf(".");
     }
 
-    printf("\033[2;18H%.3f", current_best);   // Update current best
-    printf("\033[3;8H%.1f [s]       ", elapsed_time); // Update elapsed time
-    printf("\033[4;12H%.2f%% [%d]   ", progress * 100, completed); // Update progress
-    if (completed > 0)
-        printf("\033[5;17H%.1f [s]   ", elapsed_time / completed); // Update time per task
+    printf("\033[2;18H%.3f", con_queue->progress.best_result);   // Update current best
+    printf("\033[3;18H%.3f e: %.3f", average_result, average_standard_deviation);     // average and standard deviation
+    printf("\033[4;8H%.3f [s]       ", elapsed_time); // Update elapsed time
+    printf("\033[5;12H%.2f%% [%d]   ", progress * 100, con_queue->progress.tasks_completed); // Update progress
+    if (con_queue->progress.tasks_completed > 0)
+        printf("\033[6;17H%.3f [s]   ", elapsed_time / con_queue->progress.tasks_completed); // Update time per task
+
     
     finalize_progress_display(initialized);
 }
