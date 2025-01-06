@@ -22,6 +22,7 @@ struct population_param_s {
 	int sigma; // DEFAULT = 1
 	double* lower; // DEFAULT = 5
 	double* upper; // DEFAULT = 0
+    int reseed_bottom_N; // DEFAULT = 2
 };
 
 struct selection_param_s {

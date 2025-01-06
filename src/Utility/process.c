@@ -26,10 +26,10 @@ void free_pre_compute() {
     free_pre_compute_selection();
 }
 
-static void eliminate_duplicates(gene_pool_t* gene_pool) {
+static void post_process_population(gene_pool_t* gene_pool, population_param_t* pop_param) {
 	int unique = 1;
 	// eliminate duplicates
-	for (int i = 0; i < gene_pool->individuals - 1; i++) {
+	for (int i = pop_param->reseed_bottom_N; i < gene_pool->individuals - 1; i++) {
 		unique = 1;
 		if (gene_pool->pop_result_set[gene_pool->sorted_indexes[i]] == gene_pool->pop_result_set[gene_pool->sorted_indexes[i + 1]]) {
 			for (int k = 0; k < gene_pool->genes; k++) {
@@ -44,6 +44,10 @@ static void eliminate_duplicates(gene_pool_t* gene_pool) {
 			}
 		}
 	}
+    // reseed bottom N
+    for (int i = 0; i < pop_param->reseed_bottom_N; i++) {
+		fill_individual(gene_pool, gene_pool->sorted_indexes[i]);
+    }
 }
 
 void process_pop(gene_pool_t* gene_pool, task_param_t* task) {
@@ -68,11 +72,12 @@ void process_pop(gene_pool_t* gene_pool, task_param_t* task) {
 
 	process_selection(gene_pool, &(task->config_ga.selection_param));
 
-	// // crossover
+	// crossover
 	process_crossover(gene_pool, &(task->config_ga.crossover_param));
 
 	// mutation
 	mutate32(gene_pool, &(task->config_ga.mutation_param));
 
-	eliminate_duplicates(gene_pool);
+    // Eliminate duplicates and reseed bottom N
+	post_process_population(gene_pool, &(task->config_ga.population_param));
 }
