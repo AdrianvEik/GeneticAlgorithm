@@ -11,21 +11,18 @@
 
 #include "../Helper/Struct.h"
 #include "../Helper/rng.h"
+#include "../Helper/error_handling.h"
 
 
 console_queue_t init_console_queue() {
     console_queue_t console_queue;
     console_queue.queue_size = 1000;
     console_queue.str_list = (print_str_t*)malloc(sizeof(print_str_t) * console_queue.queue_size);
-    if (console_queue.str_list == NULL) {
-        printf("Memory allocation failed: init_console_queue");
-        exit(255);
-    }
+    if (console_queue.str_list == NULL) EXIT_MEM_ERROR();
+
     console_queue.lock = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
-    if (console_queue.lock == NULL) {
-        printf("Memory allocation failed: init_console_queue");
-        exit(255);
-    }
+    if (console_queue.lock == NULL) EXIT_MEM_ERROR();
+
     pthread_mutex_init(console_queue.lock, NULL);
     console_queue.current_task_id = 0;
     console_queue.first_task_id = 0;

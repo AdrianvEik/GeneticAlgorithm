@@ -9,6 +9,7 @@ D:\School\Libraries\GeneticAlgorithm\src\Multiprocessing\mp_logger.c;D:\School\L
 D:\School\Libraries\GeneticAlgorithm\src\Multiprocessing\mp_progress_disp.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\mp_progress_disp.obj
 D:\School\Libraries\GeneticAlgorithm\src\Multiprocessing\mp_solver_th.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\mp_solver_th.obj
 D:\School\Libraries\GeneticAlgorithm\src\Multiprocessing\mp_task_gen.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\mp_task_gen.obj
+D:\School\Libraries\GeneticAlgorithm\src\Multiprocessing\mp_thread_locals.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\mp_thread_locals.obj
 D:\School\Libraries\GeneticAlgorithm\src\Optimisation\Optimizer.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\Optimizer.obj
 D:\School\Libraries\GeneticAlgorithm\src\Utility\crossover.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\crossover.obj
 D:\School\Libraries\GeneticAlgorithm\src\Utility\flatten.c;D:\School\Libraries\GeneticAlgorithm\src\Genetic .479a36c1\x64\Debug\flatten.obj

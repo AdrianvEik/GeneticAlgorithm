@@ -6,6 +6,7 @@
 
 #include "../Helper/Helper.h"
 #include "../Helper/Struct.h"
+#include "../Helper/error_handling.h"
 
 
 double Styblinski_Tang_fx(double* parameter_set, int genes) {
@@ -32,10 +33,7 @@ double wheelers_ridge_fx(double* parameter_set, int genes) {
 	double a = 1.5;
 
 	// check if genes = 2
-	if (genes != 2) {
-		printf("Error: Wheelers Ridge function requires 2 genes\n");
-		return 0;
-	}
+    if (genes != 2) EXIT_WITH_ERROR("Genes must be 2 for Wheelers Ridge", 255);
 
 	double x1 = parameter_set[0];
 	double x2 = parameter_set[1];
@@ -80,12 +78,12 @@ void process_fx(gene_pool_t* gene_pool, fx_param_t* fx_param, double* lower, dou
 			param_ptr_array = (void**)gene_pool->pop_param_bin;
 		}
 		else {
-			printf("Error: Unknown data type\n");
+            EXIT_WITH_ERROR("Unknown data type", 255);
 		}
 
         if (param_ptr_array == NULL) {
-            printf("Error: param_ptr_array is NULL\n");
-        }
+			EXIT_WITH_ERROR("Param ptr is NULL", 255);
+		}
 
 		for (int i = 0; i < gene_pool->individuals; i++) {
 			gene_pool->pop_result_set[i] = fx_param->fx_optim_mode *
@@ -93,6 +91,6 @@ void process_fx(gene_pool_t* gene_pool, fx_param_t* fx_param, double* lower, dou
 		}
 	}
 	else {
-		printf("Error: Unknown fitness function\n");
+		EXIT_WITH_ERROR("Unkown fitness function", 255);
 	}
 }

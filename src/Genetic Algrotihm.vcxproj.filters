@@ -69,6 +69,9 @@
     <ClCompile Include="Multiprocessing\mp_task_gen.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Multiprocessing\mp_thread_locals.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Function\Function.h">
@@ -129,6 +132,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Multiprocessing\mp_task_gen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Multiprocessing\mp_thread_locals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Helper\error_handling.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

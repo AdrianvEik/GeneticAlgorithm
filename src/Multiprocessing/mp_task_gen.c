@@ -5,6 +5,7 @@
 #include <math.h>
 #include "mp_solver_th.h"
 #include "../Helper/Struct.h"
+#include "../Helper/error_handling.h"
 
 int compute_task_count(runtime_param_t* runtime_param) {
     int task_count = 1;
@@ -65,16 +66,10 @@ void make_task_list(runtime_param_t* runtime_param, config_ga_t config_ga, task_
 		int minimum_tasks_per_gene = 2;
 
 		int* tasks_per_gene = (int*)malloc(sizeof(int) * runtime_param->genes);
-		if (tasks_per_gene == NULL) {
-			printf("Memory allocation failed: make_task_list");
-			exit(255);
-		}
+		if (tasks_per_gene == NULL) EXIT_MEM_ERROR();
 
 		int* position = (int*)malloc(sizeof(int) * runtime_param->genes);
-		if (position == NULL) {
-			printf("Memory allocation failed: make_task_list");
-			exit(255);
-		}
+		if (position == NULL) EXIT_MEM_ERROR();
 
 		for (int i = 0; i < runtime_param->genes; i++) {
 			if (remaining_tasks == 1) {

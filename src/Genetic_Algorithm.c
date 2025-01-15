@@ -12,6 +12,7 @@
 #include "Helper/Helper.h"
 #include "Helper/Struct.h"
 #include "Helper/rng.h"
+#include "Helper/error_handling.h"
 
 #include "Multiprocessing/mp_logger.h"
 #include "Multiprocessing/mp_solver_th.h"
@@ -113,10 +114,7 @@ void* process_log_thread(task_result_queue_t* task_result_queue) {
 	char* log_file;
 	log_file = (char*)malloc(sizeof(char) * 255);
 
-    if (log_file == NULL) {
-        printf("Memory allocation failed: process_log_thread");
-        exit(255);
-    }
+    if(log_file == NULL) EXIT_MEM_ERROR();
 
 	if (task_result_queue->runtime_param.logging_param.fully_qualified_basename == NULL) {
 		strcpy_s(log_file, 255, "C:/temp/GA\0");
@@ -223,32 +221,20 @@ void start_threads(task_queue_t* task_queue, runtime_param_t runtime_param, conf
 
 		thread_param = (thread_param_t *) malloc(sizeof(thread_param_t) * NTHREADS);
 
-		if (thread_param == NULL) {
-            printf("Memory allocation failed: start_threads");
-            exit(255);
-        }
+		if (thread_param == NULL) EXIT_MEM_ERROR();
 
 		int retid = 0;
 		retid = pthread_create(&(task_queue->task_result_queue->thread_id), NULL, (void*)process_log_thread, (void*)task_queue->task_result_queue);
 
-        if (retid) {
-            printf("Error creating thread\n");
-            exit(1);
-        }
+        if (retid) EXIT_WITH_ERROR("Thread creation", 1);
 
         int retid_console = pthread_create(&(task_queue->task_result_queue->console_queue->thread_id), NULL, (void*)process_progress_display_thread, (void*)task_queue->task_result_queue->console_queue);
-        if (retid_console) {
-            printf("Error creating thread\n");
-            exit(1);
-        }
+        if (retid_console) EXIT_WITH_ERROR("Thread creation", 1);
 
 		for (i = 0; i < NTHREADS; i++)
 		{
             thread_param[i].task_queue = malloc(sizeof(task_queue_t));
-            if (thread_param[i].task_queue == NULL) {
-                printf("Memory allocation failed: start_threads");
-                exit(255);
-            }
+            if (thread_param[i].task_queue == NULL) EXIT_MEM_ERROR();
 
 			thread_param[i].task_queue = task_queue;
 			thread_param[i].runtime_param = runtime_param;
@@ -256,11 +242,7 @@ void start_threads(task_queue_t* task_queue, runtime_param_t runtime_param, conf
 			//thread_param[i].task_id = i;
 			retid = pthread_create(&(task_queue->thread_id[i]), NULL, (void *) process_task_thread, (void *) & thread_param[i]);
 
-			if(retid)
-            {
-                printf("Error creating thread %d\n", i);
-                exit(1);
-            }
+			if(retid) EXIT_WITH_ERROR("Thread creation", 1);
 		}
 	}
 }
@@ -298,29 +280,29 @@ void free_config_ga(config_ga_t* config_ga) {
     free(config_ga->population_param.upper);
 }
 
-//int main() {
-//	int repeats = 1;
-//	runtime_param_t runtime_param = default_runtime_param();
-//	runtime_param.zone_enable = 0;
-//	runtime_param.task_count = 32;
-//	runtime_param.individuals = 128;
-//	runtime_param.genes = 4;
-//	runtime_param.thread_count = 8;
-//	config_ga_t config_ga = default_config(runtime_param);
-//	config_ga.selection_param.selection_method = selection_method_rank_space;
-//	config_ga.population_param.reseed_bottom_N = 1;
-//
-//	for (int i = 0; i < repeats; i++) {
-//		printf("\n Run number: %d\n", i);
-//
-//		//strcpy_s(runtime_param.fully_qualified_basename, 255, "C:/temp/GA\0");
-//		//printf("%s\n", runtime_param.fully_qualified_basename);
-//		//printf("%d\n", strlen(runtime_param.fully_qualified_basename));
-//		//Genetic_Algorithm(config_ga, runtime_param);
-//
-//        Genetic_Algorithm(config_ga, runtime_param);
-//	}
-//    free_config_ga(&config_ga);
-//
-//	return 0;
-//}
+int main() {
+	int repeats = 1;
+	runtime_param_t runtime_param = default_runtime_param();
+	runtime_param.zone_enable = 0;
+	runtime_param.task_count = 32;
+	runtime_param.individuals = 128;
+	runtime_param.genes = 4;
+	runtime_param.thread_count = 8;
+	config_ga_t config_ga = default_config(runtime_param);
+	config_ga.selection_param.selection_method = selection_method_rank_space;
+	config_ga.population_param.reseed_bottom_N = 1;
+
+	for (int i = 0; i < repeats; i++) {
+		printf("\n Run number: %d\n", i);
+
+		//strcpy_s(runtime_param.fully_qualified_basename, 255, "C:/temp/GA\0");
+		//printf("%s\n", runtime_param.fully_qualified_basename);
+		//printf("%d\n", strlen(runtime_param.fully_qualified_basename));
+		//Genetic_Algorithm(config_ga, runtime_param);
+
+        Genetic_Algorithm(config_ga, runtime_param);
+	}
+    free_config_ga(&config_ga);
+
+	return 0;
+}

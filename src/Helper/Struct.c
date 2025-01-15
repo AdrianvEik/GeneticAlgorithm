@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "Struct.h"
+#include "error_handling.h"
 #include "../Utility/process.h"
 #include "../Utility/pop.h"
 #include "../Utility/crossover.h"
@@ -72,7 +73,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 
     if (pop_param.lower == NULL || pop_param.upper == NULL) {
         perror("Memory allocation failed: default_config");
-        exit(250);
+        exit(255);
     }
 
 	for (int i = 0; i < runtime_param.genes; i++) {
@@ -111,16 +112,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 }
 
 void verify_input_parameters(config_ga_t config_ga, runtime_param_t runtime_param) {
-	if (runtime_param.elitism > runtime_param.individuals) {
-		perror("Elitism cannot be greater than the number of individuals");
-		exit(250);
-	}
-	if (runtime_param.individuals < 2) {
-		perror("The number of individuals must be greater than two");
-		exit(250);
-	}
-	if (runtime_param.genes < 1) {
-		perror("The number of genes must be greater than zero");
-		exit(250);
-	}
+	if (runtime_param.elitism > runtime_param.individuals) EXIT_WITH_ERROR("Elitism cannot be greater than the number of individuals creation", 250);
+	if (runtime_param.individuals < 2) EXIT_WITH_ERROR("The number of individuals must be greater than two", 250);
+	if (runtime_param.genes < 1) EXIT_WITH_ERROR("The number of genes must be greater than zero", 250);
 }

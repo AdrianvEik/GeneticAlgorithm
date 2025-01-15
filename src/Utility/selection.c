@@ -7,6 +7,7 @@
 
 #include "selection.h"
 #include "../Multiprocessing/mp_thread_locals.h"
+#include "../Helper/error_handling.h"
 // Maybe we can use this in rng too?
 
 
@@ -44,18 +45,12 @@ inline void compute_distances(gene_pool_t* gene_pool) {
     // Compute the central point of the distribution as a vector
     if (central_point == NULL) {
         central_point = (double*)malloc(gene_pool->genes * sizeof(double));
-        if (central_point == NULL) {
-            printf("Memory allocation failed: compute_distances");
-            exit(255);
-        }
+        if (central_point == NULL) EXIT_MEM_ERROR();
     }
 
     if (distances == NULL) {
         distances = (double*)malloc(gene_pool->individuals * sizeof(double));
-        if (distances == NULL) {
-            printf("Memory allocation failed: compute_distances");
-            exit(255);
-        }
+        if (distances == NULL) EXIT_MEM_ERROR();
     }
 
 
@@ -133,10 +128,7 @@ static void space_selection(gene_pool_t* gene_pool, selection_param_t* selection
 
     // Using the fitness values plus distance times the distance parameter as the selection probability
     double* selection_prob = (double*)malloc(gene_pool->individuals * sizeof(double));
-    if (selection_prob == NULL) {
-        printf("Memory allocation failed");
-        exit(255);
-    }
+    if (selection_prob == NULL) EXIT_MEM_ERROR();
 
     for (int i = 0; i < gene_pool->individuals; i++) {
         // For now it is not "rank" maybe this should be a seperate function

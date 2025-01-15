@@ -8,26 +8,19 @@
 #include <pthread.h>
 
 #include "../Helper/Struct.h"
+#include "../Helper/error_handling.h"
 
 
 void init_task_queue(task_queue_t* task_queue, int queue_size, task_result_queue_t* task_result_queue, int thread_count) {
     task_param_t* task_list = (task_param_t*)malloc(sizeof(task_param_t) * queue_size);
-    if (task_list == NULL) {
-        printf("Memory allocation failed: init_task_queue");
-        exit(255);
-    }
+    if (task_list == NULL) EXIT_MEM_ERROR();
+
     pthread_t* thread_id;
     thread_id = (pthread_t*)malloc(sizeof(pthread_t) * thread_count);
-    if (thread_id == NULL) {
-        printf("Memory allocation failed: init_task_queue");
-        exit(255);
-    }
+    if (thread_id == NULL) EXIT_MEM_ERROR();
 
     task_queue->lock = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
-    if (task_queue->lock == NULL) {
-        printf("Memory allocation failed: init_task_queue");
-        exit(255);
-    }
+    if (task_queue->lock == NULL) EXIT_MEM_ERROR();
 
     task_queue->thread_id = thread_id;
     task_queue->task_list = task_list;
@@ -52,10 +45,8 @@ void init_task(runtime_param_t runtime_param, config_ga_t config_ga, task_param_
     task->task_type = GA_TASK;
     task->lower = (double*)malloc(sizeof(double) * runtime_param.genes);
     task->upper = (double*)malloc(sizeof(double) * runtime_param.genes);
-    if (task->lower == NULL || task->upper == NULL) {
-        printf("Memory allocation failed: init_task");
-        exit(255);
-    }
+    if (task->lower == NULL || task->upper == NULL) EXIT_MEM_ERROR();
+
     task->config_ga = config_ga;
     return task;
 }
