@@ -1,8 +1,10 @@
 
-#ifndef _MP_THREAD_LOCALS_H
-#define _MP_THREAD_LOCALS_H
+#ifndef MP_THREAD_LOCALS_H
+#define MP_THREAD_LOCALS_H
 
 #include "../Helper/Struct.h"
+
+#define thread_local __declspec( thread )
 
 void init_pre_compute(gene_pool_t* gene_pool);
 void free_pre_compute();
@@ -11,18 +13,18 @@ void free_pre_compute();
 // has a thread local seed struct for each thread
 
 // Selection parameters
-__declspec(thread) double* prob_distr;
-__declspec(thread) double* boltzmann_distr;
-__declspec(thread) double current_prob_param;
-__declspec(thread) double current_temp_param;
+extern thread_local double* prob_distr;
+extern thread_local double* boltzmann_distr;
+extern thread_local double current_prob_param;
+extern thread_local double current_temp_param;
 
 // In case of using the rank_space selection method
-__declspec(thread) double* distances;
-__declspec(thread) double* central_point;
+extern thread_local double* distances;
+extern thread_local double* central_point;
 
 // Mutation parameters
-__declspec (thread) int* muation_boost_distr;
-__declspec (thread) double current_alpha;
-__declspec (thread) double current_beta;
+extern thread_local int* muation_boost_distr;
+extern thread_local double current_alpha;
+extern thread_local double current_beta;
 
-#endif // !_MP_THREAD_LOCALS_H
+#endif // !MP_THREAD_LOCALS_H
