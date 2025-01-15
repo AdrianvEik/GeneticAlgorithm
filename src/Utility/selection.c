@@ -6,16 +6,9 @@
 
 
 #include "selection.h"
-
+#include "../Multiprocessing/mp_thread_locals.h"
 // Maybe we can use this in rng too?
-__declspec(thread) double* prob_distr;
-__declspec(thread) double* boltzmann_distr; // It should be an option to use this for selection instead of prob_distr
-__declspec(thread) double current_prob_param;
-__declspec(thread) double current_temp_param;
 
-// In case of using the rank_space selection method
-__declspec(thread) double* distances;
-__declspec(thread) double* central_point;
 
 void init_pre_compute_selection(gene_pool_t* gene_pool) {
 	/*

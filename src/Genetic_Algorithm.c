@@ -18,6 +18,7 @@
 #include "Multiprocessing/mp_task_gen.h"
 #include "Multiprocessing/mp_progress_disp.h"
 #include "Multiprocessing/mp_consts.h"
+#include "Multiprocessing/mp_thread_locals.h"
 
 #include "Logger/logging.h"
 #include "Logger/progress_display.h"
@@ -283,12 +284,13 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 	make_task_list(&runtime_param, config_ga, &task_queue);
 
 	stop_solver_threads(&task_queue, runtime_param.thread_count);
-    stop_result_logger(&task_result_queue, runtime_param.thread_count);
+    stop_result_logger(&task_result_queue, runtime_param.thread_count, &best_res);
     con_kill(&console_queue);
 
 	close_file(&task_result_queue);
 	free_task_queue(&task_queue);
 	free_console_queue(&console_queue);
+    return best_res;
 }
 
 void free_config_ga(config_ga_t* config_ga) {
@@ -296,29 +298,29 @@ void free_config_ga(config_ga_t* config_ga) {
     free(config_ga->population_param.upper);
 }
 
-int main() {
-	int repeats = 1;
-	runtime_param_t runtime_param = default_runtime_param();
-	runtime_param.zone_enable = 0;
-	runtime_param.task_count = 32;
-	runtime_param.individuals = 128;
-	runtime_param.genes = 4;
-	runtime_param.thread_count = 8;
-	config_ga_t config_ga = default_config(runtime_param);
-	config_ga.selection_param.selection_method = selection_method_rank_space;
-	config_ga.population_param.reseed_bottom_N = 1;
-
-	for (int i = 0; i < repeats; i++) {
-		printf("\n Run number: %d\n", i);
-
-		//strcpy_s(runtime_param.fully_qualified_basename, 255, "C:/temp/GA\0");
-		//printf("%s\n", runtime_param.fully_qualified_basename);
-		//printf("%d\n", strlen(runtime_param.fully_qualified_basename));
-		//Genetic_Algorithm(config_ga, runtime_param);
-
-        Genetic_Algorithm(config_ga, runtime_param);
-	}
-    free_config_ga(&config_ga);
-
-	return 0;
-}
+//int main() {
+//	int repeats = 1;
+//	runtime_param_t runtime_param = default_runtime_param();
+//	runtime_param.zone_enable = 0;
+//	runtime_param.task_count = 32;
+//	runtime_param.individuals = 128;
+//	runtime_param.genes = 4;
+//	runtime_param.thread_count = 8;
+//	config_ga_t config_ga = default_config(runtime_param);
+//	config_ga.selection_param.selection_method = selection_method_rank_space;
+//	config_ga.population_param.reseed_bottom_N = 1;
+//
+//	for (int i = 0; i < repeats; i++) {
+//		printf("\n Run number: %d\n", i);
+//
+//		//strcpy_s(runtime_param.fully_qualified_basename, 255, "C:/temp/GA\0");
+//		//printf("%s\n", runtime_param.fully_qualified_basename);
+//		//printf("%d\n", strlen(runtime_param.fully_qualified_basename));
+//		//Genetic_Algorithm(config_ga, runtime_param);
+//
+//        Genetic_Algorithm(config_ga, runtime_param);
+//	}
+//    free_config_ga(&config_ga);
+//
+//	return 0;
+//}

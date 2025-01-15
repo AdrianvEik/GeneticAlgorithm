@@ -3,11 +3,8 @@
 #include "math.h"
 
 #include "mutation.h"
+#include "../Multiprocessing/mp_thread_locals.h"
 
-
-__declspec (thread) int* muation_boost_distr;
-__declspec (thread) double current_alpha;
-__declspec (thread) double current_beta;
 
 void compute_mutation_distr(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {
     /*

@@ -6,7 +6,7 @@ struct gene_pool_s {
 	char* gene_pool_memory_ptr;
 	unsigned int** pop_param_bin;
 	unsigned int** pop_param_bin_cross_buffer;
-	double** pop_param_double;
+	//double** pop_param_double;
 	double* pop_result_set;
 	double* flatten_result_set;
 	int* selected_indexes;
