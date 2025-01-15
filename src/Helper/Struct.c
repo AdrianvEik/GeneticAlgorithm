@@ -61,13 +61,20 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 	fx_param_t fx_param;
 	fx_param.fx_method = fx_method_Styblinski_Tang;
 	fx_param.fx_optim_mode = 1;
-	fx_param.fx_function = NULL;
+    fx_param.fx_function = NULL;
+    fx_param.fx_data_type = fx_data_type_double;
 
 	population_param_t pop_param;
 	pop_param.sampling_type = pop_normal;
 	pop_param.sigma = 1;
 	pop_param.lower = malloc(sizeof(double) * runtime_param.genes);
 	pop_param.upper = malloc(sizeof(double) * runtime_param.genes);
+
+    if (pop_param.lower == NULL || pop_param.upper == NULL) {
+        perror("Memory allocation failed: default_config");
+        exit(250);
+    }
+
 	for (int i = 0; i < runtime_param.genes; i++) {
 		pop_param.lower[i] = -5.0f;
 		pop_param.upper[i] = 5.0f;

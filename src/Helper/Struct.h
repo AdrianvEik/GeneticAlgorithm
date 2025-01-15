@@ -6,7 +6,7 @@ struct gene_pool_s {
 	char* gene_pool_memory_ptr;
 	unsigned int** pop_param_bin;
 	unsigned int** pop_param_bin_cross_buffer;
-	//double** pop_param_double;
+	double** pop_param_double;
 	double* pop_result_set;
 	double* flatten_result_set;
 	int* selected_indexes;
@@ -54,11 +54,13 @@ struct mutation_param_s {
     double mutation_beta; // DEFAULT = 0
 };
 
-typedef double (*fx_ptr)(double*, int);
+typedef double (*fx_ptr_generic)(void*, int);
+
 struct fx_param_s {
 	int fx_method; // DEFAULT = 0
 	int fx_optim_mode; // DEFAULT = 0
-    fx_ptr fx_function; // DEFAULT = NULL
+    int fx_data_type; // DEFAULT = 0
+	fx_ptr_generic fx_function;
 };
 
 struct optimizer_param_s {

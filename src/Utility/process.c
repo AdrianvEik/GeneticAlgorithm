@@ -18,8 +18,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-
-
 static void post_process_population(gene_pool_t* gene_pool, population_param_t* pop_param) {
 	int unique = 1;
 	// eliminate duplicates
