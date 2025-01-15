@@ -18,13 +18,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-void init_pre_compute(gene_pool_t* gene_pool) {
-    init_pre_compute_selection(gene_pool);
-}
 
-void free_pre_compute() {
-    free_pre_compute_selection();
-}
 
 static void post_process_population(gene_pool_t* gene_pool, population_param_t* pop_param) {
 	int unique = 1;
@@ -33,7 +27,7 @@ static void post_process_population(gene_pool_t* gene_pool, population_param_t* 
 		unique = 1;
 		if (gene_pool->pop_result_set[gene_pool->sorted_indexes[i]] == gene_pool->pop_result_set[gene_pool->sorted_indexes[i + 1]]) {
 			for (int k = 0; k < gene_pool->genes; k++) {
-				if (gene_pool->pop_param_double[gene_pool->sorted_indexes[i]][k] == gene_pool->pop_param_double[gene_pool->sorted_indexes[i + 1]][k]) {
+				if (gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]][k] == gene_pool->pop_param_bin[gene_pool->sorted_indexes[i + 1]][k]) {
 					unique = 0;
 					break;
 				}
