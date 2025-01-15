@@ -56,12 +56,14 @@ void free_task_result_queue(task_result_queue_t* task_result_queue) {
     free(task_result_queue->lock);
 }
 
-void stop_result_logger(task_result_queue_t* task_result_queue, int thread_count) {
+void stop_result_logger(task_result_queue_t* task_result_queue, int thread_count, double* best_res) {
 	for (int i = 0; i < thread_count; i++) {
 		task_result_t result;
 		result.task_type = TERMINATE_THREAD;
 		add_result(task_result_queue, &result);
 	}
+
+    *best_res = task_result_queue->console_queue->progress.best_result;
 
 	pthread_join(task_result_queue->thread_id, NULL);
 }

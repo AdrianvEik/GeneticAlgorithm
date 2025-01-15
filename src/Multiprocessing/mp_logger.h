@@ -52,7 +52,7 @@ void init_task_result(task_result_queue_t* task_result_queue, task_result_t* tas
 void add_result(task_result_queue_t* task_result_queue, task_result_t* result);
 void get_result(task_result_queue_t* task_result_queue, task_result_t* result);
 
-void stop_result_logger(task_result_queue_t* task_result_queue, int thread_count);
+void stop_result_logger(task_result_queue_t* task_result_queue, int thread_count, double* best_res);
 
 
 #endif // MP_LOGGER_H
