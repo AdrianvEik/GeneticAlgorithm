@@ -1,6 +1,8 @@
 
 #include "../Helper/struct.h"
 #include "../Helper/Helper.h"
+#include "../Helper/error_handling.h"
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,13 +46,11 @@ void open_file(task_result_queue_t* task_result_queue)
 	char* filename_bin = malloc(fully_qualified_basename_size + 4);
 
 	if (fully_qualified_basename_size == 0) {
-		printf("File name is empty");
-		exit(1);
+		EXIT_WITH_ERROR("Empty file name", 1);
 	}
 
 	if (filename_csv == NULL || filename_bin == NULL) {
-		printf("Memory allocation failed");
-		exit(255);
+		EXIT_MEM_ERROR();
 	}
 
 	strcpy_s(filename_csv, fully_qualified_basename_size, task_result_queue->runtime_param.logging_param.fully_qualified_basename);
@@ -63,8 +63,7 @@ void open_file(task_result_queue_t* task_result_queue)
 	if(fopen_s (&(task_result_queue->fileptr), filename_bin, "wb") != 0 ||
 	   fopen_s (&(task_result_queue->fileptrcsv), filename_csv, "w") != 0)
 	{
-		printf("Error opening file!\n");
-		exit(1);
+		EXIT_WITH_ERROR("Cannot open file!", 1);
 	}
 	//struct task_result_s {
 //	int task_type; // 0: GA, 1: kill

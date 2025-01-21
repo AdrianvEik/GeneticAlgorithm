@@ -9,19 +9,14 @@
 
 #include "../Helper/Struct.h"
 #include "../Helper/rng.h"
+#include "../Helper/error_handling.h"
 
 void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_param_t runtime_param, console_queue_t* console_queue) {
 	task_result_queue->result_list = (task_result_t*)malloc(sizeof(task_result_t) * runtime_param.logging_param.queue_size);
-	if (task_result_queue->result_list == NULL) {
-		printf("Memory allocation failed: init_task_result_queue");
-		exit(255);
-	}
+	if (task_result_queue->result_list == NULL) EXIT_MEM_ERROR();
 
 	task_result_queue->lock = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
-	if (task_result_queue->lock == NULL) {
-		printf("Memory allocation failed: init_task_result_queue");
-		exit(255);
-	}
+	if (task_result_queue->lock == NULL) EXIT_MEM_ERROR();
 
 	//TODO: Should this be here?
     task_result_queue->console_queue = console_queue;
@@ -75,17 +70,11 @@ void init_task_result(task_result_queue_t* task_result_queue, task_result_t* tas
 	}
 
 	task_result->bin_buffer = malloc(sizeof(unsigned char) * task_result_queue->bin_single_entry_length * entry_count);
-	if (task_result->bin_buffer == NULL) {
-		printf("Memory allocation failed: init_task_result");
-		exit(255);
-	}
+	if (task_result->bin_buffer == NULL) EXIT_MEM_ERROR();
 
 	if (task_result_queue->runtime_param.logging_param.write_csv == 1) {
 		task_result->csv_buffer = malloc(sizeof(char) * task_result_queue->csv_single_entry_length * entry_count);
-		if (task_result->csv_buffer == NULL) {
-			printf("Memory allocation failed: init_task_result");
-			exit(255);
-		}
+		if (task_result->csv_buffer == NULL) EXIT_MEM_ERROR();
 		task_result->csv_buffer[0] = '\0';
 	}
 	else {

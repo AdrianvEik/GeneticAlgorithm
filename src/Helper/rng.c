@@ -9,6 +9,7 @@
 #include "intrin.h"
 
 #include "rng.h"
+#include "../Multiprocessing/mp_thread_locals.h"
 
 #define UPPER_MASK		0x80000000
 #define LOWER_MASK		0x7fffffff
@@ -23,7 +24,7 @@ struct mt_rand_s {
 typedef struct mt_rand_s mt_rand_t;
 
 // Thread local rng generator
-__declspec(thread) mt_rand_t mt_thread;
+thread_local mt_rand_t mt_thread;
 
 int rdrand_supported = -1;
 
