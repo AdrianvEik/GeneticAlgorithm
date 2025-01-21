@@ -292,7 +292,6 @@ int main() {
 	runtime_param.individuals = 128;
 	runtime_param.genes = 4;
 	runtime_param.thread_count = 8;
-    runtime_param.logging_param.write_config = 0;
 	config_ga_t config_ga = default_config(runtime_param);
 	config_ga.selection_param.selection_method = selection_method_rank_space;
 	config_ga.population_param.reseed_bottom_N = 1;

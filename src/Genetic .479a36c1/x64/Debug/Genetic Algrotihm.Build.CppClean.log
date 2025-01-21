@@ -7,6 +7,7 @@ d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\mutation.ob
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\flatten.obj
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\crossover.obj
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\optimizer.obj
+d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\mp_thread_locals.obj
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\mp_task_gen.obj
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\mp_solver_th.obj
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\mp_progress_disp.obj
@@ -18,17 +19,19 @@ d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\rng.obj
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic_algorithm.obj
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\helper.obj
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\function.obj
-c:\users\vanei\source\repos\geneticalgorithm\src\x64\debug\pthreadvc3d.dll
-d:\school\libraries\geneticalgorithm\src\x64\debug\pthreadvc3d.dll
-d:\school\libraries\geneticalgorithm\src\x64\debug\genetic algrotihm.exe
 d:\school\libraries\geneticalgorithm\src\x64\debug\genetic algrotihm.pdb
-d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic algrotihm.ilk
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\cl.command.1.tlog
-d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\cl.items.tlog
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\cl.read.1.tlog
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\cl.write.1.tlog
-d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\genetic algrotihm.write.1u.tlog
+d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\link-cvtres.read.1.tlog
+d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\link-cvtres.write.1.tlog
+d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\link-rc.read.1.tlog
+d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\link-rc.write.1.tlog
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\link.command.1.tlog
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\link.read.1.tlog
-d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\link.secondary.1.tlog
+d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\link.read.2.tlog
+d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\link.read.3.tlog
+d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\link.read.4.tlog
+d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\link.read.5.tlog
+d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\link.read.6.tlog
 d:\school\libraries\geneticalgorithm\src\genetic .479a36c1\x64\debug\genetic .479a36c1.tlog\link.write.1.tlog

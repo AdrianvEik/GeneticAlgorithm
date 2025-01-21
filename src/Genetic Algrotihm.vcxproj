@@ -38,6 +38,7 @@
     <ClCompile Include="Multiprocessing\mp_progress_disp.c" />
     <ClCompile Include="Multiprocessing\mp_solver_th.c" />
     <ClCompile Include="Multiprocessing\mp_task_gen.c" />
+    <ClCompile Include="Multiprocessing\mp_thread_locals.c" />
     <ClCompile Include="Optimisation\Optimizer.c" />
     <ClCompile Include="Utility\crossover.c" />
     <ClCompile Include="Utility\flatten.c" />
@@ -49,6 +50,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\vcpkg\vcpkg\installed\x64-windows\include\pthread.h" />
     <ClInclude Include="Function\Function.h" />
+    <ClInclude Include="Helper\error_handling.h" />
     <ClInclude Include="Helper\Helper.h" />
     <ClInclude Include="Helper\rng.h" />
     <ClInclude Include="Helper\Struct.h" />
@@ -60,6 +62,7 @@
     <ClInclude Include="Multiprocessing\mp_progress_disp.h" />
     <ClInclude Include="Multiprocessing\mp_solver_th.h" />
     <ClInclude Include="Multiprocessing\mp_task_gen.h" />
+    <ClInclude Include="Multiprocessing\mp_thread_locals.h" />
     <ClInclude Include="Optimisation\Optimizer.h" />
     <ClInclude Include="Utility\crossover.h" />
     <ClInclude Include="Utility\flatten.h" />
