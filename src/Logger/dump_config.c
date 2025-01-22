@@ -12,7 +12,7 @@ void write_config(
 )
 {
     int fully_qualified_basename_size = strlen(runtime_param.logging_param.fully_qualified_basename) + 1;
-    char* filename_json = malloc(fully_qualified_basename_size + 5);
+    char* filename_json = (char*)malloc(fully_qualified_basename_size + 5);
 
     if (filename_json == NULL) EXIT_MEM_ERROR();
 

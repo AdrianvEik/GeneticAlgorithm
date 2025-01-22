@@ -29,8 +29,10 @@ void init_pre_compute_selection(gene_pool_t* gene_pool) {
 
     if (prob_distr == NULL || boltzmann_distr == NULL) EXIT_MEM_ERROR();
 
-    memset(prob_distr, -1, gene_pool->individuals * sizeof(double));
-    memset(boltzmann_distr, -1, gene_pool->individuals * sizeof(double));
+    for (int i = 0; i < gene_pool->individuals; i++) {
+        prob_distr[i] = -1;
+        boltzmann_distr[i] = -1;
+    }
 }
 
 // This needs to be called externally to free the memory

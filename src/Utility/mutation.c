@@ -53,7 +53,7 @@ void mutate32(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {
 	int mutation_gene;
 	int mutation_bit = 0;
 	for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
-		for (int j = 0; j < mutation_param->mutation_rate; j++) { // check if works
+		for (int j = 0; j < mutation_param->mutation_rate[i]; j++) { // check if works
 			// ensure that the selected gene is positive
 			mutation_gene = gen_mt_rand() % gene_pool->genes;
 			mutation_bit = (int)1 << (gen_mt_rand() % sizeof(int) * 8); // mask
@@ -76,6 +76,5 @@ void process_mutation(gene_pool_t* gene_pool, mutation_param_t* mutation_param) 
         compute_mutation_distr(gene_pool, mutation_param);
     }
 
-
-
+    mutate32(gene_pool, mutation_param);
 }

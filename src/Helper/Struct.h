@@ -49,7 +49,7 @@ struct crossover_param_s {
 struct mutation_param_s {
 	int mutation_method; // DEFAULT = 0
 	double mutation_prob; // DEFAULT = 0.5
-	int mutation_rate; // DEFAULT = 6
+	int* mutation_rate; // DEFAULT = 6
     double mutation_alpha; // DEFAULT = 1
     double mutation_beta; // DEFAULT = 0
 };

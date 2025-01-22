@@ -1,5 +1,6 @@
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "Struct.h"
 #include "error_handling.h"
@@ -58,7 +59,16 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 	mutation_param_t mutation_param;
 	mutation_param.mutation_method = 0;
 	mutation_param.mutation_prob = 0.5;
-	mutation_param.mutation_rate = 6;
+	mutation_param.mutation_rate = malloc(sizeof(double) * runtime_param.individuals);
+    
+	if (mutation_param.mutation_rate == NULL) EXIT_MEM_ERROR();
+
+	for (int i = 0; i < runtime_param.individuals; i++) {
+        mutation_param.mutation_rate[i] = 6;
+	}
+
+    mutation_param.mutation_alpha = 1;
+    mutation_param.mutation_beta = 0;
 
 	fx_param_t fx_param;
 	fx_param.fx_method = fx_method_Styblinski_Tang;
@@ -72,15 +82,13 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 	pop_param.lower = malloc(sizeof(double) * runtime_param.genes);
 	pop_param.upper = malloc(sizeof(double) * runtime_param.genes);
 
-    if (pop_param.lower == NULL || pop_param.upper == NULL) {
-        perror("Memory allocation failed: default_config");
-        exit(255);
+    if (pop_param.lower == NULL || pop_param.upper == NULL) EXIT_MEM_ERROR();
+
+    for (int i = 0; i < runtime_param.genes; i++) {
+        pop_param.lower[i] = -5.0;
+        pop_param.upper[i] = 5.0;
     }
 
-	for (int i = 0; i < runtime_param.genes; i++) {
-		pop_param.lower[i] = -5.0f;
-		pop_param.upper[i] = 5.0f;
-	}
 	pop_param.reseed_bottom_N = 2;
 
 	selection_param_t selection_param;
