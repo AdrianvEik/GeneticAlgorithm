@@ -4,6 +4,23 @@ src/x64
 
 # zipped folders
 .zip
+*.csv
+*.bin
+*.pdb
+*.exe
+.vs/
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
 
 # vscode
 .vs
