@@ -43,32 +43,33 @@ static void check_convergence(task_param_t* task, adaptive_memory_t* adaptive_me
     adaptive_memory->previous_best_result = best_result;
 }
 
-static void compute_mutation_rate(task_param_t* task, adaptive_memory_t* adaptive_memory, double best_result) {
+static void compute_mutation_rate(task_param_t* task, adaptive_memory_t* adaptive_memory, double best_result, int individuals) {
     int computed_mutation;
-
-    if (adaptive_memory->convergence_moving_window == 0) {
-        if (task->config_ga.mutation_param.mutation_rate < task->config_ga.optimizer_param.max_mutations) {
-            task->config_ga.mutation_param.mutation_rate++;
-        }
-    }
-    else {
-        // TODO: check if log is correct
-        adaptive_memory->computed_mutation = sqrt(task->config_ga.optimizer_param.convergence_threshold / (best_result - adaptive_memory->convergence_moving_window)) * task->config_ga.optimizer_param.mutation_factor;
-        if (adaptive_memory->computed_mutation < INT32_MAX) {
-            computed_mutation = (int)adaptive_memory->computed_mutation;
+    for (int i = 0; i < individuals; i++) {
+        if (adaptive_memory->convergence_moving_window == 0) {
+            if (task->config_ga.mutation_param.mutation_rate[i] < task->config_ga.optimizer_param.max_mutations) {
+                task->config_ga.mutation_param.mutation_rate[i]++;
+            }
         }
         else {
-            computed_mutation = INT32_MAX;
-        }
+            // TODO: check if log is correct
+            adaptive_memory->computed_mutation = sqrt(task->config_ga.optimizer_param.convergence_threshold / (best_result - adaptive_memory->convergence_moving_window)) * task->config_ga.optimizer_param.mutation_factor;
+            if (adaptive_memory->computed_mutation < INT32_MAX) {
+                computed_mutation = (int)adaptive_memory->computed_mutation;
+            }
+            else {
+                computed_mutation = INT32_MAX;
+            }
 
-        if (computed_mutation < task->config_ga.optimizer_param.min_mutations) {
-            task->config_ga.mutation_param.mutation_rate = task->config_ga.optimizer_param.min_mutations;
-        }
-        else if (computed_mutation > task->config_ga.optimizer_param.max_mutations) {
-            task->config_ga.mutation_param.mutation_rate = task->config_ga.optimizer_param.max_mutations;
-        }
-        else {
-            task->config_ga.mutation_param.mutation_rate = computed_mutation;
+            if (computed_mutation < task->config_ga.optimizer_param.min_mutations) {
+                task->config_ga.mutation_param.mutation_rate[i] = task->config_ga.optimizer_param.min_mutations;
+            }
+            else if (computed_mutation > task->config_ga.optimizer_param.max_mutations) {
+                task->config_ga.mutation_param.mutation_rate[i] = task->config_ga.optimizer_param.max_mutations;
+            }
+            else {
+                task->config_ga.mutation_param.mutation_rate[i] = computed_mutation;
+            }
         }
     }
 }
@@ -95,7 +96,7 @@ void adapt_param(task_param_t* task, gene_pool_t* gene_pool, adaptive_memory_t* 
 	}
 
     // Compute mutation rate
-    compute_mutation_rate(task, adaptive_memory, best_result);
+    compute_mutation_rate(task, adaptive_memory, best_result, gene_pool->individuals);
 
     // Compute flatten factor
 }

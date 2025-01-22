@@ -5,22 +5,6 @@
 #include "mutation.h"
 #include "../Multiprocessing/mp_thread_locals.h"
 
-
-void compute_mutation_distr(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {
-    /*
-    */
-    double sum = 0;
-    current_alpha = mutation_param->mutation_alpha;
-    current_beta = mutation_param->mutation_beta;
-    for (int i = 0; i < gene_pool->individuals; i++) {
-        muation_boost_distr[i] = 0;
-        sum += muation_boost_distr[i];
-    }
-    for (int i = 0; i < gene_pool->individuals; i++) {
-        muation_boost_distr[i] /= sum;
-    }
-}
-
 void mutate32(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {
 
 	/*
@@ -68,13 +52,5 @@ void process_mutation(gene_pool_t* gene_pool, mutation_param_t* mutation_param) 
     /*
     */
     // Check if the distributions are up to date
-
-	// to Optimizer.c?
-    if (current_alpha != mutation_param->mutation_alpha ||
-        current_beta != mutation_param->mutation_beta ||
-		muation_boost_distr[0] == -1) { // Change or not initialized
-        compute_mutation_distr(gene_pool, mutation_param);
-    }
-
     mutate32(gene_pool, mutation_param);
 }

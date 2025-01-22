@@ -101,7 +101,7 @@ void* process_progress_display_thread(console_queue_t* console_queue) {
 				display_progress(console_queue, total_tasks, elapsed_time);
                 goto end;
 			}
-			printf("%s", print_str.str);
+			//printf("%s", print_str.str);
             free(print_str.str);
 		}
 	}
@@ -280,6 +280,7 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 }
 
 void free_config_ga(config_ga_t* config_ga) {
+    free(config_ga->mutation_param.mutation_rate);
     free(config_ga->population_param.lower);
     free(config_ga->population_param.upper);
 }
