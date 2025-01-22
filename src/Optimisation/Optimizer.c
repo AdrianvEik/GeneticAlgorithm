@@ -45,6 +45,7 @@ static void check_convergence(task_param_t* task, adaptive_memory_t* adaptive_me
 
 static void compute_mutation_rate(task_param_t* task, adaptive_memory_t* adaptive_memory, double best_result, int individuals) {
     int computed_mutation;
+    double beta_factor;
     for (int i = 0; i < individuals; i++) {
         if (adaptive_memory->convergence_moving_window == 0) {
             if (task->config_ga.mutation_param.mutation_rate[i] < task->config_ga.optimizer_param.max_mutations) {
@@ -60,6 +61,10 @@ static void compute_mutation_rate(task_param_t* task, adaptive_memory_t* adaptiv
             else {
                 computed_mutation = INT32_MAX;
             }
+
+            // now add the distribution according to mutation alpha and beta
+            double sigmoid_factor = 1 / (1 + exp(-task->config_ga.mutation_param.mutation_alpha * (i - task->config_ga.mutation_param.mutation_beta)));
+            computed_mutation = (int) round(sigmoid_factor * (task->config_ga.optimizer_param.max_mutations - task->config_ga.optimizer_param.min_mutations) + task->config_ga.optimizer_param.min_mutations);
 
             if (computed_mutation < task->config_ga.optimizer_param.min_mutations) {
                 task->config_ga.mutation_param.mutation_rate[i] = task->config_ga.optimizer_param.min_mutations;
