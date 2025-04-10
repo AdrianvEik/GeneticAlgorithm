@@ -15,7 +15,6 @@ thread_local double current_temp_param = 0.0;
 thread_local double* distances = NULL;
 thread_local double* central_point = NULL;
 
-
 void init_pre_compute_selection(gene_pool_t* gene_pool) {
     /*
     */

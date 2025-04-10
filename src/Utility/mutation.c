@@ -5,8 +5,8 @@
 
 #include "..\Helper\AVX_helper.h"
 #include "mutation.h"
-#include "../Multiprocessing/mp_thread_locals.h"
-#include "../Helper/compile_flags.h"
+#include "..\Multiprocessing\mp_thread_locals.h"
+#include "..\Helper\compile_flags.h"
 
 inline unsigned int set_single_bit_switch(unsigned int position) {
 	union int_bytes {
@@ -346,7 +346,7 @@ void mutateAVXFast(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {
 	__mAVXi** pop_param_bin_ptr = (__mAVXi**)gene_pool->pop_param_bin;
 	union AVX_union_bytes {
 		__mAVXi i;
-		char c[AVX_bytes];
+		uint32_t c[AVX_dwords];
 	};
 	union AVX_union_bytes mask;
 	mask.i = AVX_setzero();
@@ -354,7 +354,7 @@ void mutateAVXFast(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {
 	//mutation_per_memoryblock = calloc(memory_blocks, sizeof(uint32_t));
 	double mutation_per_memoryblock;
 	mutation_rnd = gen_mt_rand();
-	uint32_t memblock_rng_bits_left = 32;
+	//uint32_t memblock_rng_bits_left = 32;
 	double mutation_factor = (2.0 / (double)memory_blocks) / (double)INT32_MAX;
 
 	for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
@@ -366,14 +366,26 @@ void mutateAVXFast(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {
 			if (mutation_per_memoryblock > 1) {
 				mask.i = AVX_setzero();
 				for (double k = 0.0; k < mutation_per_memoryblock; k++) {
-					if (memblock_rng_bits_left < AVX_bytepointer_bits) {
-						mutation_rnd = gen_mt_rand();
-						memblock_rng_bits_left = 32;
-					}
-					uint32_t b = (mutation_rnd >> 3) & AVX_bytepointer_mask; // divide by 8 == shift right 3, it sets the wrong byte, but it does to consistently (it flips order of bytes)
-					mask.c[b] &= 1 << (mutation_rnd & 0x7);
+					//if (memblock_rng_bits_left < AVX_dwordpointer_bits * 3) {
+					mutation_rnd = gen_mt_rand();
+					//	memblock_rng_bits_left = 32;
+					//}
+					uint32_t b = (mutation_rnd >> 3) & AVX_dwordpointer_mask; // divide by 8 == shift right 3, it sets the wrong byte, but it does to consistently (it flips order of bytes)
+					mask.c[b] |= 1 << (mutation_rnd & 0x1f);
 					mutation_rnd = mutation_rnd >> AVX_bitpointer_bits;
-					memblock_rng_bits_left -= AVX_bytepointer_bits;
+					//if (mutation_per_memoryblock - k > 1.5f) {
+					//	b = (mutation_rnd >> 3) & AVX_dwordpointer_mask; // divide by 8 == shift right 3, it sets the wrong byte, but it does to consistently (it flips order of bytes)
+					//	mask.c[b] &= 1 << (mutation_rnd & 0x1f);
+					//	mutation_rnd = mutation_rnd >> AVX_bitpointer_bits;
+						//b = (mutation_rnd >> 3) & AVX_dwordpointer_mask; // divide by 8 == shift right 3, it sets the wrong byte, but it does to consistently (it flips order of bytes)
+						//mask.c[b] &= 1 << (mutation_rnd & 0x1f);
+						//mutation_rnd = mutation_rnd >> AVX_bitpointer_bits;
+					/*}*/
+      //              else if (mutation_per_memoryblock - k > 1.5f) {
+						//b = (mutation_rnd >> 3) & AVX_dwordpointer_mask; // divide by 8 == shift right 3, it sets the wrong byte, but it does to consistently (it flips order of bytes)
+						//mask.c[b] &= 1 << (mutation_rnd & 0x1f);
+						//mutation_rnd = mutation_rnd >> AVX_bitpointer_bits;
+      //              }
 				}
 				pop_param_bin_ptr[gene_pool->sorted_indexes[i]][memory_block] = AVX_xor(
 					pop_param_bin_ptr[gene_pool->sorted_indexes[i]][memory_block],

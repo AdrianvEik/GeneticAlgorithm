@@ -1,7 +1,7 @@
 
 #ifndef STRUCT_H
 #define STRUCT_H
-
+#include <stdint.h>
 struct gene_pool_s {
 	char* gene_pool_memory_ptr;
 	unsigned int** pop_param_bin;
@@ -123,5 +123,4 @@ typedef struct logging_param_s logging_param_t;
 runtime_param_t default_runtime_param();
 config_ga_t default_config(runtime_param_t runtime_param);
 void verify_input_parameters(config_ga_t config_ga, runtime_param_t runtime_param);
-
 #endif // STRUCT_H

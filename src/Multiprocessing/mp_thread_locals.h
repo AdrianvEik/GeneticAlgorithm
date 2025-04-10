@@ -3,7 +3,7 @@
 #define MP_THREAD_LOCALS_H
 
 #include "../Helper/Struct.h"
-
+#include <stdint.h>
 #define thread_local __declspec( thread )
 
 void init_pre_compute(gene_pool_t* gene_pool);

@@ -27,27 +27,27 @@ static void single_point_crossoverAVX(int* parent1, int* parent2, int* child1, i
 
 	union AVX_union_bytes {
 		__mAVXi i;
-		char c[AVX_bytes];
+		uint32_t c[AVX_dwords];
 	};
 	union AVX_union_bytes mask;
 	uint32_t crosspoint_rnd = gen_mt_rand();
-	uint32_t crosspoint_gene_AVX = (crosspoint_rnd >> 9) % memory_blocks;
+	uint32_t crosspoint_gene_AVX = (crosspoint_rnd >> AVX_bitpointer_bits) % memory_blocks;
 	mask.i = AVX_setzero();
-	uint32_t b = ((crosspoint_rnd >> 3) & AVX_bytepointer_mask);
+	uint32_t b = ((crosspoint_rnd >> 5) & AVX_dwordpointer_mask);
 #ifdef __AVX512VL__
-	uint64_t set_mask = 0xffffffffffffffffu << (AVX_bytes - b);
-	_mm512_mask_set1_epi8(mask.i, set_mask, 0xff);
+	uint16_t set_mask = (uint16_t)0xffffu << (AVX_dwords - b);
+    _mm512_mask_set1_epi32(mask.i, set_mask, 0xffffffff);
 #else 
 #ifdef __AVX2__
-	uint32_t set_mask = 0xffffffffu << b;
-	_mm256_mask_set1_epi8(mask.i, set_mask, 0xff);
+	uint8_t set_mask = (uint8_t)0xffu << b;
+	_mm256_mask_set1_epi32(mask.i, set_mask, 0xffffffff);
 #else
 	for (uint32_t j = 0; j < b; j++) {
-		mask.c[j] = 0xff;
+		mask.c[j] = 0xffffffff;
 	}
 #endif
 #endif
-	mask.c[b] = 0xff << (crosspoint_rnd & 0x7);
+	mask.c[b] = 0xffffffff << (crosspoint_rnd & 0x1f);
 
 	for (uint32_t i = 0; i < memory_blocks; i++) {
 		if (i < crosspoint_gene_AVX) {
@@ -154,42 +154,42 @@ static void two_point_crossoverAVX(int* parent1, int* parent2, int* child1, int*
 
 	union AVX_union_bytes {
 		__mAVXi i;
-		char c[AVX_bytes];
+		uint32_t c[AVX_dwords];
 	};
 	union AVX_union_bytes mask_a;
 
 	uint32_t crosspoint_memblock_a_AVX = (crosspoint_rnd_a >> AVX_bitpointer_bits);
 	mask_a.i = AVX_setzero();
-	uint32_t crossbyte_a = (crosspoint_rnd_a >> 3) & AVX_bytepointer_mask;
+	uint32_t crossbyte_a = (crosspoint_rnd_a >> 5) & AVX_dwordpointer_mask;
 
 	union AVX_union_bytes mask_b;
 	uint32_t crosspoint_memblock_b_AVX = (crosspoint_rnd_b >> AVX_bitpointer_bits);
 	mask_b.i = AVX_setzero();
-	uint32_t crossbyte_b = (crosspoint_rnd_b >> 3) & AVX_bytepointer_mask;
+	uint32_t crossbyte_b = (crosspoint_rnd_b >> 5) & AVX_dwordpointer_mask;
 #ifdef __AVX512VL__
-	uint64_t set_mask_a = 0xffffffffffffffffu >> (AVX_bytes - crossbyte_a);
-	mask_a.i = _mm512_mask_set1_epi8(mask_a.i, set_mask_a, 0xff);
-	uint64_t set_mask_b = 0xffffffffffffffffu << (crossbyte_b);
-	mask_b.i = _mm512_mask_set1_epi8(mask_b.i, set_mask_b, 0xff);
+	uint16_t set_mask_a = (uint16_t)0xffffu >> (AVX_dwords - crossbyte_a);
+	mask_a.i = _mm512_mask_set1_epi32(mask_a.i, set_mask_a, 0xffffffff);
+	uint16_t set_mask_b = (uint16_t)0xffffu << (crossbyte_b);
+	mask_b.i = _mm512_mask_set1_epi32(mask_b.i, set_mask_b, 0xffffffff);
 #else 
 #ifdef __AVX2__
-	uint32_t set_mask_a = 0xffffffffu << crossbyte_a;
-	mask_a.i = _mm256_mask_set1_epi8(mask_a.i, set_mask_a, 0xff);
+	uint8_t set_mask_a = (uint8_t)0xffu << crossbyte_a;
+	mask_a.i = _mm256_mask_set1_epi32(mask_a.i, set_mask_a, 0xffffffff);
 
-	uint32_t set_mask_b = 0xffffffffu >> crossbyte_b;
-	mask_b.i = _mm256_mask_set1_epi8(mask_b.i, set_mask_b, 0xff);
+	uint8_t set_mask_b = (uint8_t)0xffu >> crossbyte_b;
+	mask_b.i = _mm256_mask_set1_epi32(mask_b.i, set_mask_b, 0xffffffff);
 #else
 	for (uint32_t j = 0; j < crossbyte_a; j++) {
-		mask_a.c[j] = 0xff;
+		mask_a.c[j] = 0xffffffff;
 	}
 
 	for (uint32_t j = crossbyte_b + 1; j < 3; j++) {
-		mask_b.c[j] = 0xff;
+		mask_b.c[j] = 0xffffffff;
 	}
 #endif
 #endif
-	mask_a.c[crossbyte_a] = 0xff << (8 - (crosspoint_rnd_a & 0x7));
-	mask_b.c[crossbyte_b] = 0xff >> (crosspoint_rnd_b & 0x7);
+	mask_a.c[crossbyte_a] = 0xffffffff << (32 - (crosspoint_rnd_a & 0x1f));
+	mask_b.c[crossbyte_b] = 0xffffffff >> (crosspoint_rnd_b & 0x1f);
 
 	for (uint32_t i = 0; i < memory_blocks; i++) {
 		if (i < crosspoint_memblock_a_AVX || i > crosspoint_memblock_b_AVX) {

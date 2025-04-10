@@ -126,3 +126,4 @@ void verify_input_parameters(config_ga_t config_ga, runtime_param_t runtime_para
 	if (runtime_param.individuals < 2) EXIT_WITH_ERROR("The number of individuals must be greater than two", 250);
 	if (runtime_param.genes < 1) EXIT_WITH_ERROR("The number of genes must be greater than zero", 250);
 }
+

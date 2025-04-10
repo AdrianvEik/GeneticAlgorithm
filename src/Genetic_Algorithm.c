@@ -289,10 +289,15 @@ int main() {
 	runtime_param.individuals = 128;
 	runtime_param.genes = 32;
 	runtime_param.thread_count = 8;
+	
 	config_ga_t config_ga = default_config(runtime_param);
 	config_ga.selection_param.selection_method = selection_method_rank_space;
 	config_ga.population_param.reseed_bottom_N = 1;
     config_ga.crossover_param.crossover_method = crossover_method_two_point32;
+
+	config_ga.optimizer_param.max_iterations = 10000;
+	config_ga.optimizer_param.max_mutations = 5;
+
 
 	for (int i = 0; i < repeats; i++) {
 		printf("\n Run number: %d\n", i);
