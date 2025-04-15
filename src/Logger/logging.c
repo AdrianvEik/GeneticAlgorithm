@@ -173,8 +173,8 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 				task_result.csv_position += snprintf(
 					task_result.csv_buffer + task_result.csv_position,
 					task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
-					"%d;%e;%e;",
-                    *(task->config_ga.mutation_param.mutation_rate),
+					"%e;%e;%e;",
+                    task->config_ga.mutation_param.mutation_rate[individual_id],
 					adaptive_memory->computed_mutation,
                     adaptive_memory->convergence_moving_window
 				);
