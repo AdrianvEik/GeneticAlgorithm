@@ -21,7 +21,7 @@
 
 //int rdrand();
 
-void seedRandThread(uint32_t seed);
+void seed_rand_threadlocal(uint32_t seed);
 uint32_t gen_mt_rand();
 uint64_t gen_mt_rand64();
 

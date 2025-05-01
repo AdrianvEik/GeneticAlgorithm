@@ -1,14 +1,6 @@
 
-#include <math.h>
-#include <stdio.h>
 
 #include "Function.h"
-
-#include "../Helper/Helper.h"
-#include "../Helper/Struct.h"
-#include "../Helper/error_handling.h"
-#include "../Multiprocessing/mp_thread_locals.h"
-
 
 double Styblinski_Tang_fx(double* parameter_set, int genes) {
 	double result = 0;
@@ -54,7 +46,11 @@ void process_fx(gene_pool_t* gene_pool, fx_param_t* fx_param, double* lower, dou
 
 	// convert the gene pool bin to double
 	if (fx_param->fx_data_type == fx_data_type_double) {
-		ndbit2int32(gene_pool->pop_param_bin, gene_pool->genes, gene_pool->individuals, lower, upper, gene_pool->pop_param_double);
+		for (int i = 0; i < gene_pool->individuals; i++) {
+			for (int j = 0; j < gene_pool->genes; j++) {
+				gene_pool->pop_param_double[i][j] = (double)(gene_pool->pop_param_bin[i][j] * (upper[j] - lower[j])) / UINT32_MAX + lower[j];
+			}
+		}
 	}
 
 	if (fx_param->fx_method == fx_method_Styblinski_Tang) {

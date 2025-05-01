@@ -1,9 +1,7 @@
 
-#include <stdlib.h>
-#include <string.h>
+
 #include "mp_thread_locals.h"
-#include "../Helper/Struct.h"
-#include "../Helper/error_handling.h"
+
 
 // Selection parameters
 thread_local double* prob_distr = NULL;

@@ -1,10 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-#include "../Helper/struct.h"
-#include "../Helper/error_handling.h"
-#include "../Multiprocessing/mp_solver_th.h"
+#include "dump_config.h"
 
 void write_config(
     runtime_param_t runtime_param,

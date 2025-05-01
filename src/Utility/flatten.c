@@ -1,9 +1,4 @@
-﻿#include "stdio.h"
-#include "stdlib.h"
-#include "math.h"
-
-
-
+﻿
 #include "flatten.h"
 
 // Flattening functions

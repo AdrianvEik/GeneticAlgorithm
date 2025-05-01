@@ -1,8 +1,7 @@
 
-#include <stdlib.h>
-#include <string.h>
 
 #include "Struct.h"
+
 #include "error_handling.h"
 #include "../Utility/process.h"
 #include "../Utility/pop.h"
@@ -54,7 +53,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 	flatten_param.flatten_beta = 0.0f;
 
 	crossover_param_t crossover_param;
-	crossover_param.crossover_method = crossover_method_uniform32;
+	crossover_param.crossover_method = crossover_method_uniform;
 	crossover_param.crossover_prob = 0.5f;
 
 	mutation_param_t mutation_param;

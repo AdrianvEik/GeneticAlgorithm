@@ -78,34 +78,38 @@ void process_progress_display_thread(console_queue_t* console_queue) {
 	clock_t start, current;
 	start = clock();
 
-	int total_tasks = console_queue->task_count;
-
-    print_str_t print_str;
+    console_message_t print_str;
 
 	printf("\n\n\n\n\n\n"); // set the cursor below the progress, TODO: make nice 
 
+
+
+    int last_message = 0;
+
     while (1) {
         current = clock(); // Update every second
-        double elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
-        		
-		display_progress(console_queue, total_tasks, elapsed_time);
-		
-		Sleep(500);
+		console_queue->progress.elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
 
-		while (get_print_str(console_queue, &print_str)) {
+		while (get_from_console_queue(console_queue, &print_str)) {
 			if (print_str.task_type == 255) {
 				current = clock(); // Update every second
-				double elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
+				console_queue->progress.elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
 
                 // update the progress one last time
-				display_progress(console_queue, total_tasks, elapsed_time);
-                goto end;
+				display_progress(console_queue);
+				return;
 			}
-			printf("%s", print_str.str);
-            free(print_str.str);
+			//printf("%s", print_str.str);
+
+            display_console_message(print_str.str, last_message);
+            last_message = (last_message + 1) % console_queue->message_list_size;
+
 		}
+
+		display_progress(console_queue);
+
+		Sleep(500);
 	}
-	end:;
 }
 
 
@@ -170,7 +174,7 @@ void process_log_thread(task_result_queue_t* task_result_queue) {
 }
 
 void process_task_thread(thread_param_t* thread_param) {
-	seedRandThread(0); // todo fix thread local storage
+	seed_rand_threadlocal(0); // todo fix thread local storage
 
 	gene_pool_t gene_pool;
 	//printf("cfgbin2int, %f", thread_param->config_ga.fx_param.lower[0]);
@@ -205,7 +209,7 @@ void start_threads(task_queue_t* task_queue, runtime_param_t runtime_param, conf
 		//thread_param.runtime_param = runtime_param;
 		//thread_param.config_ga = config_ga;
 
-		//seedRandThread(0, NULL);
+		//seed_rand_threadlocal(0, NULL);
 
 		//double best_result = 0.0f;
 		//process_thread(&thread_param);
@@ -254,7 +258,7 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 	double best_res = -INFINITY;
 	int convergence_counter = 0;
     console_queue_t console_queue = init_console_queue();
-    console_queue.task_count = runtime_param.zone_enable ? compute_task_count(&runtime_param) : runtime_param.task_count;
+    console_queue.message_count = runtime_param.zone_enable ? compute_task_count(&runtime_param) : runtime_param.task_count;
 	task_result_queue_t task_result_queue;
 	init_task_result_queue(&task_result_queue, runtime_param, &console_queue);
 	task_queue_t task_queue;
@@ -285,22 +289,22 @@ int main() {
 	int repeats = 1;
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 0;
-	runtime_param.task_count = 1;
-	runtime_param.individuals = 128;
-	runtime_param.genes = 32;
+	runtime_param.task_count = 64;
+	runtime_param.individuals = 16;
+	runtime_param.genes = 8;
 	runtime_param.thread_count = 8;
 
 	runtime_param.logging_param.include_config = 1;
     //runtime_param.logging_param.write_config = 1; // JSON dump
     runtime_param.logging_param.write_csv = 1;
-    runtime_param.logging_param.export_interval = 10;
+    runtime_param.logging_param.export_interval = 0;
 	runtime_param.logging_param.top_n_export = 1;
 
 	
 	config_ga_t config_ga = default_config(runtime_param);
 	config_ga.selection_param.selection_method = selection_method_rank_space;
 	config_ga.population_param.reseed_bottom_N = 1;
-    config_ga.crossover_param.crossover_method = crossover_method_two_point32;
+    config_ga.crossover_param.crossover_method = crossover_method_two_point;
 
 	config_ga.optimizer_param.convergence_window = 1000;
 	config_ga.optimizer_param.convergence_moving_window_size = 100;

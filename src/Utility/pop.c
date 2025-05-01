@@ -1,16 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <stdint.h>
-#include <immintrin.h>
 
-#include "../Helper/compile_flags.h"
 #include "pop.h"
-#include "../Helper/error_handling.h"
 
 #define PI   3.14159265358979323846264338327950288419716939937510f
 
-void bitpop32(int genes, int* result) {
+void populate_uniform(int genes, int* result) {
 
 	/*
 	Fill a vector with uniformly distributed random bits.
@@ -31,7 +24,7 @@ void bitpop32(int genes, int* result) {
 
 }
 
-inline uint32_t double2bin(double val, double lower, double upper) {
+inline uint32_t double2int(double val, double lower, double upper) {
     /*
     Convert an integer to a double. andersom!
 
@@ -44,7 +37,7 @@ inline uint32_t double2bin(double val, double lower, double upper) {
 	return (uint32_t)(((val - lower) / (upper - lower)) * UINT32_MAX);
 }
 
-static void normal_bit_pop_boxmuller(int** result, int individuals, int genes) {
+static void populate_normal_box_muller(int** result, int individuals, int genes) {
 	/*
 	Fill a matrix with bits according to a normal distribution.
 	using the following probability density function:
@@ -90,16 +83,28 @@ static void normal_bit_pop_boxmuller(int** result, int individuals, int genes) {
 			z2 = sqrt(-2 * log(U1)) * sin(2 * PI * U2); 
 
             // Box muller generates normalised values between -6.7 and 6.7 (using int32 resolution)
-			result[i][j] = double2bin((z1), -6.7, 6.7);
+			result[i][j] = double2int((z1), -6.7, 6.7);
             if (j <= genes) { // Check if the next gene is within the bounds of the genes
-				result[i][j+1] = double2bin((z2), -6.7, 6.7);
+				result[i][j+1] = double2int((z2), -6.7, 6.7);
 			}
 		}
         
 	}
 }
 
-static void cauchy_bit_pop(int** result, int individuals, int genes, population_param_t pop_param) {
+inline double cauchy(double x, double mu, double sigma) {
+	/*
+	Calculate the cauchy of x
+
+	x is the input
+	mu is the mean
+	sigma is the standard deviation
+	*/
+
+	return (1 / PI) * (sigma / (pow(x - mu, 2) + pow(sigma, 2)));
+}
+
+static void populate_cauchy(int** result, int individuals, int genes, population_param_t pop_param) {
 	/*
 
 	Produce a normal distributed set of values using the Cauchy distribution:
@@ -139,7 +144,7 @@ static void cauchy_bit_pop(int** result, int individuals, int genes, population_
 			cauchydouble = cauchy(gen_mt_rand64(), 0, 1); //TODO: casting int to double produces undesirable results
             scaledcauchy = (cauchydouble * scale) + loc;
 			
-			result[i][j] = double2bin(scaledcauchy, pop_param.lower[i], pop_param.upper[i]);
+			result[i][j] = double2int(scaledcauchy, pop_param.lower[i], pop_param.upper[i]);
 		}
 	}
 }
@@ -250,8 +255,7 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
 	//}
 }
 void free_gene_pool(gene_pool_t* gene_pool) {
-	// DANGER
-	// TODO: why does this not work for uneven genes?
+
 	//for (int i = 0; i < gene_pool->individuals; i++) {
 	//	free(gene_pool->pop_param_bin[i]);
 	//	free(gene_pool->pop_param_bin_cross_buffer[i]);
@@ -260,8 +264,8 @@ void free_gene_pool(gene_pool_t* gene_pool) {
     free(gene_pool->gene_pool_memory_ptr);
 }
 
-inline void fill_individual(gene_pool_t* gene_pool, int individual) {
-	//bitpop32(gene_pool->genes, gene_pool->pop_param_bin[individual]);
+inline void fill_individual_uniform(gene_pool_t* gene_pool, int individual) {
+	//populate_uniform(gene_pool->genes, gene_pool->pop_param_bin[individual]);
 #ifdef __AVX512VL__
 	uint32_t memory_blocks = gene_pool->individual_mem_size / sizeof(__m512i);
 	__m512i* ptr = (__m512i*)gene_pool->pop_param_bin[individual];
@@ -288,12 +292,12 @@ inline void fill_individual(gene_pool_t* gene_pool, int individual) {
 void fill_pop(gene_pool_t* gene_pool, population_param_t pop_param) {
 	if (pop_param.sampling_type == pop_uniform)
 		for (int i = 0; i < gene_pool->individuals; i++) {
-			fill_individual(gene_pool, i);
+			fill_individual_uniform(gene_pool, i);
 		}
 	else if (pop_param.sampling_type == pop_normal) {
-		normal_bit_pop_boxmuller(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes);
+		populate_normal_box_muller(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes);
 	}
 	else if (pop_param.sampling_type == pop_cauchy) {
-		cauchy_bit_pop(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes, pop_param);
+		populate_cauchy(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes, pop_param);
 	}
 }

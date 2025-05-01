@@ -1,15 +1,6 @@
 
 #include "mp_solver_th.h"
-#include "mp_progress_disp.h"
-#include "mp_consts.h"
 
-#include <windows.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
-
-#include "../Helper/Struct.h"
-#include "../Helper/error_handling.h"
 
 
 void init_task_queue(task_queue_t* task_queue, int queue_size, task_result_queue_t* task_result_queue, int thread_count) {

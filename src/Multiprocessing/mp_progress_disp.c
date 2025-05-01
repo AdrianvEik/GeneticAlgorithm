@@ -1,33 +1,23 @@
 
 #include "mp_progress_disp.h"
-#include "mp_consts.h"
 
-#include <windows.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <math.h>
-#include <pthread.h>
-
-#include "../Helper/Struct.h"
-#include "../Helper/rng.h"
-#include "../Helper/error_handling.h"
 
 
 console_queue_t init_console_queue() {
     console_queue_t console_queue;
-    console_queue.queue_size = 1000;
-    console_queue.str_list = (print_str_t*)malloc(sizeof(print_str_t) * console_queue.queue_size);
-    if (console_queue.str_list == NULL) EXIT_MEM_ERROR();
+    console_queue.queue_size = 100;
+    console_queue.message_queue = (console_message_t*)malloc(sizeof(console_message_t) * console_queue.queue_size);
+    if (console_queue.message_queue == NULL) EXIT_MEM_ERROR();
+
+    console_queue.message_list_size = 10;
 
     console_queue.lock = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
     if (console_queue.lock == NULL) EXIT_MEM_ERROR();
 
     pthread_mutex_init(console_queue.lock, NULL);
-    console_queue.current_task_id = 0;
-    console_queue.first_task_id = 0;
-    console_queue.next_task_id = 0;
+    console_queue.current_message_id = 0;
+    console_queue.first_message_id = 0;
+    console_queue.next_message_id = 0;
 
     console_queue.progress.best_result = -INFINITY;
     console_queue.progress.tasks_completed = 0;
@@ -39,43 +29,40 @@ console_queue_t init_console_queue() {
 
 void free_console_queue(console_queue_t* console_queue) {
     pthread_mutex_destroy(console_queue->lock);
-    free(console_queue->str_list);
+    free(console_queue->message_queue);
     free(console_queue->lock);
 }
 
-void add_print_str(console_queue_t* console_queue, char* str, uint64_t len, int task_type) {
-    int str_added = 0;
-    while (!str_added) {
+void add_to_console_queue(console_queue_t* console_queue, char* str, uint64_t len, int task_type) {
+    while (1) {
         pthread_mutex_lock(console_queue->lock);
-        if (console_queue->first_task_id == (console_queue->next_task_id + 1) % console_queue->queue_size) {
+        if (console_queue->first_message_id == (console_queue->next_message_id + 1) % console_queue->queue_size) {
             pthread_mutex_unlock(console_queue->lock);
             Sleep(1000);
             continue;
         }
-        console_queue->str_list[console_queue->next_task_id].str = str;
-        console_queue->str_list[console_queue->next_task_id].len = len;
-        console_queue->str_list[console_queue->next_task_id].task_type = task_type;
-        console_queue->next_task_id = (console_queue->next_task_id + 1) % console_queue->queue_size;
-        str_added = 1;
+        console_queue->message_queue[console_queue->next_message_id].str = str;
+        console_queue->message_queue[console_queue->next_message_id].len = len;
+        console_queue->message_queue[console_queue->next_message_id].task_type = task_type;
+        console_queue->next_message_id = (console_queue->next_message_id + 1) % console_queue->queue_size;
         pthread_mutex_unlock(console_queue->lock);
+        return;
     }
 }
 
-int get_print_str(console_queue_t* console_queue, print_str_t* str) {
-    int str_retrieved = 0;
-    while (!str_retrieved) {
-        pthread_mutex_lock(console_queue->lock);
-        if (console_queue->first_task_id == console_queue->next_task_id) {
-            pthread_mutex_unlock(console_queue->lock);
-            return str_retrieved;
-        }
-        *str = console_queue->str_list[console_queue->first_task_id];
-        console_queue->first_task_id = (console_queue->first_task_id + 1) % console_queue->queue_size;
+int get_from_console_queue(console_queue_t* console_queue, console_message_t* message) {
+    pthread_mutex_lock(console_queue->lock);
+    if (console_queue->first_message_id == console_queue->next_message_id) {
         pthread_mutex_unlock(console_queue->lock);
-        str_retrieved = 1;
-        return str_retrieved;
+        return 0;
     }
-    return 0;
+    message->str = console_queue->message_queue[console_queue->first_message_id].str;
+    message->len = console_queue->message_queue[console_queue->first_message_id].len;
+    message->task_type = console_queue->message_queue[console_queue->first_message_id].task_type;
+
+    console_queue->first_message_id = (console_queue->first_message_id + 1) % console_queue->queue_size;
+    pthread_mutex_unlock(console_queue->lock);
+    return 1;
 }
 
 void con_printf(console_queue_t* console_queue, const char* format, ...) {
@@ -99,11 +86,11 @@ void con_printf(console_queue_t* console_queue, const char* format, ...) {
     va_end(args);
 
     // Forward the formatted string to the buffer
-    add_print_str(console_queue, formatted_str, strlen(formatted_str), 0);
+    add_to_console_queue(console_queue, formatted_str, strlen(formatted_str), 0);
 }
 
 void con_kill(console_queue_t* console_queue) {
-    add_print_str(console_queue, "", 0, 255);
+    add_to_console_queue(console_queue, "", 0, 255);
 
     pthread_join(console_queue->thread_id, NULL);
 }

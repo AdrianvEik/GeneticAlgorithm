@@ -1,16 +1,6 @@
 
 #include "mp_logger.h"
-#include "mp_consts.h"
-#include "mp_progress_disp.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <windows.h>
-#include <pthread.h>
-
-#include "../Helper/Struct.h"
-#include "../Helper/rng.h"
-#include "../Helper/error_handling.h"
 
 void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_param_t runtime_param, console_queue_t* console_queue) {
 	task_result_queue->result_list = (task_result_t*)malloc(sizeof(task_result_t) * runtime_param.logging_param.queue_size);

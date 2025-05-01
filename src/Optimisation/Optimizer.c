@@ -9,6 +9,7 @@ void new_adaptive_memory(adaptive_memory_t* adaptive_memory) {
     adaptive_memory->convergence_moving_window_alpha = 0;
     adaptive_memory->convergence_moving_window_beta = 0;
 
+    // TODO: adaptive flattening, alpha/beta fitting, remember worst answer
     adaptive_memory->group_dispersion = 0;
     adaptive_memory->group_dispersion_alpha = 0;
     adaptive_memory->group_dispersion_beta = 0;

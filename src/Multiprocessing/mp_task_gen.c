@@ -1,11 +1,7 @@
 
 #include "mp_task_gen.h"
 
-#include <stdlib.h>
-#include <math.h>
-#include "mp_solver_th.h"
-#include "../Helper/Struct.h"
-#include "../Helper/error_handling.h"
+
 
 int compute_task_count(runtime_param_t* runtime_param) {
     int task_count = 1;

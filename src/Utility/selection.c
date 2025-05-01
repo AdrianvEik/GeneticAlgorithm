@@ -2,6 +2,54 @@
 #include "selection.h"
 
 // Maybe we can use this in rng too?
+void roulette_wheel(double* probabilities, int size, int ressize, int* result) {
+
+    /*
+    Roulette wheel selection of an index based on probabilities
+
+    :param probabilities: The probabilities of the indices
+    :type probabilities: array of doubles (double *)
+
+    :param size: The size of the probabilities array
+    :type size: int
+
+    :param ressize: The size of the result array (amount of indices to be selected)
+    :type ressize: int
+
+    :param result: The index selected
+    :type result: array of ints (int *)
+
+    */
+
+    // calculate the cumulative sum of the probabilities
+    double* cumsum = (double*)malloc(size * sizeof(double));
+    if (cumsum == NULL) {
+        printf("Memory allocation failed");
+        exit(255);
+    }
+    cumsum[0] = probabilities[0];
+
+    for (int i = 1; i < size; i++) {
+        cumsum[i] = cumsum[i - 1] + probabilities[i];
+    }
+
+    double normaliser = cumsum[size - 1] / (double)0xffffffff;
+
+    // generate random numbers and select the indices
+    for (int i = 0; i < ressize; i++) {
+        double randnum = ((double)gen_mt_rand()) * normaliser;
+
+        for (int j = 0; j < size; j++) {
+            if (randnum < cumsum[j]) {
+                result[i] = j;
+                break;
+            }
+        }
+    }
+
+    // free the arrays
+    free(cumsum);
+}
 
 
 void compute_distr(gene_pool_t* gene_pool, selection_param_t* selection_param) {

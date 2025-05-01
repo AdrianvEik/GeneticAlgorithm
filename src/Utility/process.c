@@ -1,22 +1,21 @@
 #include "process.h"
 
-#include "../Helper/Helper.h"
-#include "../Helper/Struct.h"
-#include "../Helper/rng.h"
+void indexed_bubble_sort(double* arr, int* indices, int size) {
+	int swapped = 1;
+	int temp_idx;
 
-#include "../Multiprocessing/mp_solver_th.h"
-
-#include "flatten.h"
-#include "../Function/Function.h"
-#include "selection.h"
-#include "crossover.h"
-
-#include "pop.h"
-#include "mutation.h"
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+	for (int i = 0; i < size && swapped; i++) {
+		swapped = 0;
+		for (int j = 0; j < size - i - 1; j++) {
+			if (arr[indices[j]] > arr[indices[j + 1]]) {
+				temp_idx = indices[j];
+				indices[j] = indices[j + 1];
+				indices[j + 1] = temp_idx;
+				swapped = 1;
+			}
+		}
+	}
+}
 
 static void post_process_population(gene_pool_t* gene_pool, population_param_t* pop_param) {
 	int unique = 1;
@@ -32,13 +31,13 @@ static void post_process_population(gene_pool_t* gene_pool, population_param_t* 
 			}
 
 			if (unique == 0) {
-				fill_individual(gene_pool, gene_pool->sorted_indexes[i]);
+				fill_individual_uniform(gene_pool, gene_pool->sorted_indexes[i]);
 			}
 		}
 	}
     // reseed bottom N
     for (int i = 0; i < pop_param->reseed_bottom_N; i++) {
-		fill_individual(gene_pool, gene_pool->sorted_indexes[i]);
+		fill_individual_uniform(gene_pool, gene_pool->sorted_indexes[i]);
     }
 }
 
@@ -68,7 +67,7 @@ void process_pop(gene_pool_t* gene_pool, task_param_t* task) {
 	process_crossover(gene_pool, &(task->config_ga.crossover_param));
 
 	// mutation
-	mutateAVXFast(gene_pool, &(task->config_ga.mutation_param));
+	process_mutation(gene_pool, &(task->config_ga.mutation_param));
 
     // Eliminate duplicates and reseed bottom N
 	post_process_population(gene_pool, &(task->config_ga.population_param));
