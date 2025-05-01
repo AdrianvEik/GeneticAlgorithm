@@ -1,8 +1,5 @@
 
-#include <math.h>
-#include <stdint.h>
-
-#include "../Optimisation/Optimizer.h"
+#include "Optimizer.h"
 
 void new_adaptive_memory(adaptive_memory_t* adaptive_memory) {
     adaptive_memory->iteration_counter = -1;

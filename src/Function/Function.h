@@ -2,7 +2,14 @@
 #ifndef FUNCTION_H
 #define FUNCTION_H
 
+#include <math.h>
+#include <stdio.h>
+
+#include "../Helper/Helper.h"
 #include "../Helper/Struct.h"
+#include "../Helper/error_handling.h"
+
+#include "../Multiprocessing/mp_thread_locals.h"
 
 static const int fx_method_pointer_int = -2;
 static const int fx_method_pointer_double = -1;

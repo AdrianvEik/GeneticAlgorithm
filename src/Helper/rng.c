@@ -5,12 +5,14 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-#include "immintrin.h"
-#include "intrin.h"
+#include <immintrin.h>
+#include <intrin.h>
+
+#include "../Multiprocessing/mp_thread_locals.h"
+
 
 #include "../helper/rng/SFMT.h"
 #include "rng.h"
-#include "../Multiprocessing/mp_thread_locals.h"
 
 #define UPPER_MASK		0x80000000
 #define LOWER_MASK		0x7fffffff

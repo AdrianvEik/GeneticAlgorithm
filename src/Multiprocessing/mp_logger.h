@@ -3,10 +3,17 @@
 #define MP_LOGGER_H
 
 #include <stdio.h> 
-
-#include "mp_progress_disp.h"
-#include "../Helper/Struct.h"
+#include <stdlib.h>
+#include <windows.h>
 #include <pthread.h>
+
+#include "../Helper/Struct.h"
+#include "../Helper/rng.h"
+#include "../Helper/error_handling.h"
+
+#include "mp_consts.h"
+#include "mp_progress_disp.h"
+
 
 //// Forward declare pthread_t and pthread_mutex_t, since they are pointers internally
 //typedef struct __pthread_mutex_t pthread_mutex_t;

@@ -1,12 +1,14 @@
-#include "stdio.h"
-#include "stdlib.h"
-#include "math.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 #include <immintrin.h>
 
-#include "..\Helper\AVX_helper.h"
-#include "mutation.h"
 #include "..\Multiprocessing\mp_thread_locals.h"
+
 #include "..\Helper\compile_flags.h"
+#include "..\Helper\AVX_helper.h"
+
+#include "mutation.h"
 
 inline unsigned int set_single_bit_switch(unsigned int position) {
 	union int_bytes {

@@ -1,7 +1,9 @@
 
-
 #ifndef OPTIMIZER_H
 #define OPTIMIZER_H
+
+#include <math.h>
+#include <stdint.h>
 
 #include "../Helper/struct.h"
 #include "../Multiprocessing/mp_solver_th.h"

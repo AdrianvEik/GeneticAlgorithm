@@ -4,12 +4,20 @@
 
 #include <stdint.h>
 #include <immintrin.h>
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <intrin.h>
+
+#include "../Multiprocessing/mp_thread_locals.h"
+
+#include "../helper/rng/SFMT.h"
+
 #include "compile_flags.h"
 
 #define STATE_VECTOR_LENGTH 624
 #define STATE_VECTOR_M      397
-
-
 
 //int rdrand();
 

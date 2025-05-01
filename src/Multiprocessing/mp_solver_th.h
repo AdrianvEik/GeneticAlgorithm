@@ -2,9 +2,17 @@
 #ifndef _MP_SOLVER_TH_H_
 #define _MP_SOLVER_TH_H_
 
+#include <windows.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <pthread.h>
+
+#include "../Helper/error_handling.h"
 #include "../Helper/Struct.h"
+
 #include "mp_logger.h"
+#include "mp_progress_disp.h"
+#include "mp_consts.h"
 
 
 struct task_param_s {

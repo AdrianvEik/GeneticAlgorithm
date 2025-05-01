@@ -1,8 +1,13 @@
-#include "../Helper/Helper.h"
-#include "../Helper/Struct.h"
 
 #ifndef FLATTEN_H
 #define FLATTEN_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#include "..\Helper\Helper.h"
+#include "..\Helper\Struct.h"
 
 static const int flatten_method_linear = 0;
 static const int flatten_method_exponential = 1;

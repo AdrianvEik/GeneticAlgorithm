@@ -1,10 +1,18 @@
-#include "../Helper/Helper.h"
-#include "../Helper/Struct.h"
-#include "../Helper/rng.h"
 
 #ifndef _POP_H
 #define _POP_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <math.h>
+#include <immintrin.h>
+
+#include "../Helper/error_handling.h"
+#include "../Helper/compile_flags.h"
+#include "../Helper/Helper.h"
+#include "../Helper/Struct.h"
+#include "../Helper/rng.h"
 
 #define pop_uniform 0
 #define pop_normal 1

@@ -1,7 +1,21 @@
 
 #ifndef STRUCT_H
 #define STRUCT_H
+
 #include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "error_handling.h"
+#include "../Utility/process.h"
+#include "../Utility/pop.h"
+#include "../Utility/crossover.h"
+#include "../Utility/mutation.h"
+#include "../Utility/selection.h"
+#include "../Utility/flatten.h"
+
+#include "../Function/Function.h"
+
 struct gene_pool_s {
 	char* gene_pool_memory_ptr;
 	unsigned int** pop_param_bin;

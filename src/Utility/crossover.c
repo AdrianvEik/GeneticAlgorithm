@@ -1,14 +1,5 @@
-#include "stdio.h"
-#include "stdlib.h"
-#include "math.h"
-#include <immintrin.h>
-#include <string.h>
 
 #include "crossover.h"
-#include "..\Helper\AVX_helper.h"
-
-
-
 
 // Path: Utility/crossover.c
 

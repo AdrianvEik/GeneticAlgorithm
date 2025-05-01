@@ -3,6 +3,18 @@
 #define MP_PROGRESS_DISP_H
 
 #include <pthread.h>
+#include <windows.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <math.h>
+
+#include "../Helper/Struct.h"
+#include "../Helper/rng.h"
+#include "../Helper/error_handling.h"
+
+#include "mp_consts.h"
 
 struct print_str_s {
     char* str;

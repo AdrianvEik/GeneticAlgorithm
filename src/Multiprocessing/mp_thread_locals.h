@@ -2,8 +2,13 @@
 #ifndef MP_THREAD_LOCALS_H
 #define MP_THREAD_LOCALS_H
 
-#include "../Helper/Struct.h"
 #include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "../Helper/Struct.h"
+#include "../Helper/error_handling.h"
+
 #define thread_local __declspec( thread )
 
 void init_pre_compute(gene_pool_t* gene_pool);

@@ -5,6 +5,13 @@
 #ifndef SELECTION_H
 #define SELECTION_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <windows.h>
+#include <pthread.h>
+#include "../Multiprocessing/mp_thread_locals.h"
+#include "../Helper/error_handling.h"
 
 // Selection functions
 static const int selection_method_roulette = 0;

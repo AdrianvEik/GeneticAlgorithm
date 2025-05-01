@@ -1,13 +1,6 @@
-#include "stdio.h"
-#include "stdlib.h"
-#include <math.h>
-#include <windows.h>
-#include <pthread.h>
-
 
 #include "selection.h"
-#include "../Multiprocessing/mp_thread_locals.h"
-#include "../Helper/error_handling.h"
+
 // Maybe we can use this in rng too?
 
 

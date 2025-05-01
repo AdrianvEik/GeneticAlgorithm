@@ -2,8 +2,13 @@
 #ifndef _MP_TASK_GEN_H_
 #define _MP_TASK_GEN_H_
 
-#include "../Helper/Struct.h"
+#include <stdlib.h>
+#include <math.h>
+
 #include "mp_solver_th.h"
+#include "../Helper/Struct.h"
+#include "../Helper/error_handling.h"
+
 
 //// Forward declarations of structs from other headers
 //struct runtime_param_t;  // From "../Helper/Struct.h"

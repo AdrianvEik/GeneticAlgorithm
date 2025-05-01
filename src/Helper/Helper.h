@@ -1,7 +1,16 @@
-#include "rng.h"
 
 #ifndef _HELPER_H
 #define _HELPER_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <stdint.h>
+#include <time.h>
+
+#include "Helper.h"
+#include "rng.h"
 
 // Convesrion functions
 void ndbit2int32(unsigned int** valarr, int genes, int individuals,
