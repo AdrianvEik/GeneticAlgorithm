@@ -10,6 +10,7 @@
 
 #include "../Helper/error_handling.h"
 #include "../Helper/compile_flags.h"
+#include "../Helper/AVX_helper.h"
 #include "../Helper/Helper.h"
 #include "../Helper/Struct.h"
 #include "../Helper/rng.h"

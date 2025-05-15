@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdalign.h>
 #include <immintrin.h>
 
 #include "..\Multiprocessing\mp_thread_locals.h"

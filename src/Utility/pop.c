@@ -187,13 +187,13 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
 	total_memsize += gene_pool->individuals * gene_pool->genes * sizeof(double);
 
     // Allocate the memory
-	if ((gene_pool->gene_pool_memory_ptr = malloc(total_memsize)) == NULL) {
+	if ((gene_pool->gene_pool_memory_ptr = _aligned_malloc(total_memsize, AVX_bits)) == NULL) {
         fprintf(stderr, "Memory allocation failed: init_gene_pool\n");
         exit(EXIT_FAILURE);
 	}
 
 	// pointers to blocks
-	current_mem_ptr = (uint64_t) gene_pool->gene_pool_memory_ptr;
+	current_mem_ptr = (uint64_t) gene_pool->gene_pool_memory_ptr + 2 * gene_pool->individuals * gene_pool->individual_mem_size;
     gene_pool->flatten_result_set = (double*) current_mem_ptr;
 	current_mem_ptr += gene_pool->individuals * sizeof(double);
 
@@ -215,13 +215,14 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
     gene_pool->sorted_indexes = (int*)current_mem_ptr;
     current_mem_ptr += gene_pool->individuals * sizeof(int);
 
+	uint64_t alligned_mem_ptr = (uint64_t)gene_pool->gene_pool_memory_ptr;
     // pointers to data
     for (int i = 0; i < gene_pool->individuals; i++) {
-        gene_pool->pop_param_bin[i] = (int*)current_mem_ptr;
-        current_mem_ptr += gene_pool->individual_mem_size;
+        gene_pool->pop_param_bin[i] = (int*)alligned_mem_ptr;
+		alligned_mem_ptr += gene_pool->individual_mem_size;
 
-        gene_pool->pop_param_bin_cross_buffer[i] = (int*)current_mem_ptr;
-        current_mem_ptr += gene_pool->individual_mem_size;
+        gene_pool->pop_param_bin_cross_buffer[i] = (int*)alligned_mem_ptr;
+		alligned_mem_ptr += gene_pool->individual_mem_size;
 
 		gene_pool->pop_param_double[i] = (double*)current_mem_ptr;
 		current_mem_ptr += gene_pool->genes * sizeof(double);
@@ -261,7 +262,7 @@ void free_gene_pool(gene_pool_t* gene_pool) {
 	//	free(gene_pool->pop_param_bin_cross_buffer[i]);
 	//	free(gene_pool->pop_param_double[i]);
 	//}
-    free(gene_pool->gene_pool_memory_ptr);
+	_aligned_free(gene_pool->gene_pool_memory_ptr);
 }
 
 inline void fill_individual_uniform(gene_pool_t* gene_pool, int individual) {

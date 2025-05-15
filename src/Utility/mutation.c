@@ -26,7 +26,7 @@ void process_mutation(gene_pool_t* gene_pool, mutation_param_t* mutation_param) 
 
 	uint32_t mutation_rnd;
 	//uint32_t* mutation_per_memoryblock;
-
+	//__assume_aligned(mutation_param->mutation_rate, 32); // TODO: check if this is needed
 	uint32_t memory_blocks = gene_pool->individual_mem_size / sizeof(__mAVXi);
 	__mAVXi** pop_param_bin_ptr = (__mAVXi**)gene_pool->pop_param_bin;
 	union AVX_union_bytes {
