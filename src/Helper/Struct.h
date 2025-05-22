@@ -15,8 +15,10 @@ struct gene_pool_s {
 	double** pop_param_double;
 	double* pop_result_set;
 	double* flatten_result_set;
+	double* selection_temp;
 	int* selected_indexes;
 	int* sorted_indexes;
+    int* sorted_indexes_temp;
 	int genes;
 	int individuals;
 	int elitism;

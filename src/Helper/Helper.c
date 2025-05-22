@@ -1,56 +1,7 @@
 
 #include "Helper.h"
 
-//void indexed_merge_sort(double* arr, int* indices, int size) {
-//	if (size > 1) {
-//		int mid = size / 2;
-//		int* L_indices = (int*)malloc(mid * sizeof(int));
-//		int* R_indices = (int*)malloc((size - mid) * sizeof(int));
-//
-//
-//		for (int i = 0; i < mid; i++) {
-//			L_indices[i] = indices[i];
-//		}
-//		for (int i = mid; i < size; i++) {
-//			R_indices[i - mid] = indices[i];
-//		}
-//
-//		indexed_inv_merge_sort(arr, L_indices, mid);
-//		indexed_inv_merge_sort(arr, R_indices, size - mid);
-//
-//		int i = 0;
-//		int j = 0;
-//		int k = 0;
-//
-//		while (i < mid && j < size - mid) {
-//			if (arr[indices[i]] < arr[indices[j]]) {
-//				indices[k] = L_indices[i];
-//				i++;
-//			}
-//			else {
-//				indices[k] = R_indices[j];
-//				j++;
-//			}
-//			k++;
-//		}
-//
-//		while (i < mid) {
-//			indices[k] = L_indices[i];
-//			i++;
-//			k++;
-//		}
-//
-//		while (j < size - mid) {
-//			indices[k] = R_indices[j];
-//			j++;
-//			k++;
-//		}
-//
-//
-//		free(L_indices);
-//		free(R_indices);
-//	}
-//}
+
 //
 //void indexed_inv_merge_sort(double* arr, int* indices, int size) {
 //	if (size > 1) {

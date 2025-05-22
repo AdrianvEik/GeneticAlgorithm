@@ -1,8 +1,37 @@
 
 #include "selection.h"
 
+static inline int find_tree(double* arr, int lo, int hi, double value) {
+    /*
+    Binary search for the index of the first element in arr that is greater than or equal to value
+    :param arr: The array to search
+    :type arr: array of doubles (double *)
+    :param lo: The lower bound of the search
+    :type lo: int
+    :param hi: The upper bound of the search
+    :type hi: int
+    :param size: The size of the array
+    :type size: int
+    :param value: The value to search for
+    :type value: double
+    :return: The index of the first element in arr that is greater than or equal to value
+    :rtype: int
+    */
+    
+    while (lo < hi) {
+        int mid = (lo + hi) >> 1;
+        if (arr[mid] < value) {
+            lo = mid + 1;
+        }
+        else {
+            hi = mid;
+        }
+    }
+    return lo;
+}
+
 // Maybe we can use this in rng too?
-void roulette_wheel(double* probabilities, int size, int ressize, int* result) {
+void roulette_wheel(double* probabilities, double* selection_temp, int size, int ressize, int* result) {
 
     /*
     Roulette wheel selection of an index based on probabilities
@@ -22,33 +51,26 @@ void roulette_wheel(double* probabilities, int size, int ressize, int* result) {
     */
 
     // calculate the cumulative sum of the probabilities
-    double* cumsum = (double*)malloc(size * sizeof(double));
-    if (cumsum == NULL) {
-        printf("Memory allocation failed");
-        exit(255);
-    }
-    cumsum[0] = probabilities[0];
+    selection_temp[0] = probabilities[0];
 
     for (int i = 1; i < size; i++) {
-        cumsum[i] = cumsum[i - 1] + probabilities[i];
+        selection_temp[i] = selection_temp[i - 1] + probabilities[i];
     }
 
-    double normaliser = cumsum[size - 1] / (double)0xffffffff;
+    double normaliser = selection_temp[size - 1] / (double)0xffffffff;
 
     // generate random numbers and select the indices
     for (int i = 0; i < ressize; i++) {
         double randnum = ((double)gen_mt_rand()) * normaliser;
 
-        for (int j = 0; j < size; j++) {
-            if (randnum < cumsum[j]) {
-                result[i] = j;
-                break;
-            }
-        }
+        result[i] = find_tree(selection_temp, 0, size, randnum); // TODO: tree search?
+        //for (int j = 0; j < size; j++) {
+        //    if (randnum < selection_temp[j]) { // TODO: tree search?
+        //        result[i] = j;
+        //        break;
+        //    }
+        //}
     }
-
-    // free the arrays
-    free(cumsum);
 }
 
 
@@ -126,7 +148,7 @@ static void roulette_selection(gene_pool_t* gene_pool, selection_param_t* select
 	*/
 
 	// select individuals
-	roulette_wheel(gene_pool->flatten_result_set, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes);
+	roulette_wheel(gene_pool->flatten_result_set, gene_pool->selection_temp, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes);
 }
 
 static void tournament_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
@@ -153,7 +175,8 @@ static void rank_selection(gene_pool_t* gene_pool, selection_param_t* selection_
 
 	*/
     // The individuals are already sorted in ascending order so we can just use the indexes
-	roulette_wheel(selection_param->selection_rank_distr == 0 ? prob_distr : boltzmann_distr,
+	roulette_wheel(selection_param->selection_rank_distr == 0 ? prob_distr : boltzmann_distr, 
+        gene_pool->selection_temp,
         gene_pool->individuals,
         gene_pool->individuals - gene_pool->elitism,
         gene_pool->selected_indexes
@@ -177,7 +200,7 @@ static void space_selection(gene_pool_t* gene_pool, selection_param_t* selection
     }
 
     // Now we can use the roulette wheel selection
-    roulette_wheel(selection_prob, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes);
+    roulette_wheel(selection_prob, gene_pool->selection_temp, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes);
 
     // clear arrays to 0
     memset(central_point, 0, gene_pool->genes * sizeof(double));
@@ -222,13 +245,13 @@ static void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selec
         acceptance[0] = exp((gene_pool->flatten_result_set[second_competitor] - gene_pool->flatten_result_set[third_competitor]) / selection_param->selection_temp_param);
         acceptance[1] = 1 - acceptance[0];
         int winner_anti_acceptance;
-        roulette_wheel(acceptance, 2, 1, &winner_anti_acceptance);
+        roulette_wheel(acceptance, gene_pool->selection_temp, 2, 1, &winner_anti_acceptance);
 
         // The winner of the anti acceptance competition competes against the main competitor
         acceptance[0] = exp((gene_pool->flatten_result_set[main_competitor] - gene_pool->flatten_result_set[winner_anti_acceptance == 0 ? second_competitor : third_competitor]) / selection_param->selection_temp_param);
         acceptance[1] = 1 - acceptance[0];
         int winner_main_competitor;
-        roulette_wheel(acceptance, 2, 1, &winner_main_competitor);
+        roulette_wheel(acceptance, gene_pool->selection_temp, 2, 1, &winner_main_competitor);
 
         // If the main competitor wins he goes through, if not it depends on the outcome of the first competition
         if (winner_main_competitor == 0) {
