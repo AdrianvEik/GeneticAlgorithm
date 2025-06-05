@@ -3,7 +3,7 @@
 
 #define PI   3.14159265358979323846264338327950288419716939937510f
 
-void populate_uniform(int genes, int* result) {
+static void populate_uniform(int genes, int* result) {
 
 	/*
 	Fill a vector with uniformly distributed random bits.
@@ -24,7 +24,7 @@ void populate_uniform(int genes, int* result) {
 
 }
 
-inline uint32_t double2int(double val, double lower, double upper) {
+static inline uint32_t double2int(double val, double lower, double upper) {
     /*
     Convert an integer to a double. andersom!
 
@@ -92,62 +92,62 @@ static void populate_normal_box_muller(int** result, int individuals, int genes)
 	}
 }
 
-inline double cauchy(double x, double mu, double sigma) {
-	/*
-	Calculate the cauchy of x
-
-	x is the input
-	mu is the mean
-	sigma is the standard deviation
-	*/
-
-	return (1 / PI) * (sigma / (pow(x - mu, 2) + pow(sigma, 2)));
-}
-
-static void populate_cauchy(int** result, int individuals, int genes, population_param_t pop_param) {
-	/*
-
-	Produce a normal distributed set of values using the Cauchy distribution:
-
-	.. math::
-		f(x) = \frac{1}{\pi \gamma [1 + (\frac{x - x_0}{\gamma})^2]}
-
-	Where x is linearly spaced between (-factor and factor) + bias.
-
-	:param bitsize: The size of the bitstring.
-	:type bitsize: int
-
-	:param genes: The number of genes in the bitstring.
-	:type genes: int
-
-	:param individuals: The number of individuals in the bitstring.
-	:type individuals: int
-
-	:param result: The matrix to be filled with bits according to a normal distribution.
-				   shape = (individuals, genes * bitsize)
-	:type result: int**
-
-	*/
-	// Determine the steps between the values in the normal distribution
-		// make scale and loc in for loop
-	double scale;
-	double loc;
-
-	double cauchydouble;
-	double scaledcauchy;
-
-	for (int i = 0; i < individuals; i++) {
-		for (int j = 0; j < genes; j++) {
-			scale = 1 / pop_param.sigma * (pop_param.upper[i] - pop_param.lower[i]) / 2;
-			loc = (pop_param.upper[i] + pop_param.lower[i]) / 2;
-			
-			cauchydouble = cauchy(gen_mt_rand64(), 0, 1); //TODO: casting int to double produces undesirable results
-            scaledcauchy = (cauchydouble * scale) + loc;
-			
-			result[i][j] = double2int(scaledcauchy, pop_param.lower[i], pop_param.upper[i]);
-		}
-	}
-}
+//inline double cauchy(double x, double mu, double sigma) {
+//	/*
+//	Calculate the cauchy of x
+//
+//	x is the input
+//	mu is the mean
+//	sigma is the standard deviation
+//	*/
+//
+//	return (1 / PI) * (sigma / (pow(x - mu, 2) + pow(sigma, 2)));
+//}
+//
+//static void populate_cauchy(int** result, int individuals, int genes, population_param_t pop_param) {
+//	/*
+//
+//	Produce a normal distributed set of values using the Cauchy distribution:
+//
+//	.. math::
+//		f(x) = \frac{1}{\pi \gamma [1 + (\frac{x - x_0}{\gamma})^2]}
+//
+//	Where x is linearly spaced between (-factor and factor) + bias.
+//
+//	:param bitsize: The size of the bitstring.
+//	:type bitsize: int
+//
+//	:param genes: The number of genes in the bitstring.
+//	:type genes: int
+//
+//	:param individuals: The number of individuals in the bitstring.
+//	:type individuals: int
+//
+//	:param result: The matrix to be filled with bits according to a normal distribution.
+//				   shape = (individuals, genes * bitsize)
+//	:type result: int**
+//
+//	*/
+//	// Determine the steps between the values in the normal distribution
+//		// make scale and loc in for loop
+//	double scale;
+//	double loc;
+//
+//	double cauchydouble;
+//	double scaledcauchy;
+//
+//	for (int i = 0; i < individuals; i++) {
+//		for (int j = 0; j < genes; j++) {
+//			scale = 1 / pop_param.sigma * (pop_param.upper[i] - pop_param.lower[i]) / 2;
+//			loc = (pop_param.upper[i] + pop_param.lower[i]) / 2;
+//			
+//			cauchydouble = cauchy(gen_mt_rand64(), 0, 1); //TODO: casting int to double produces undesirable results
+//            scaledcauchy = (cauchydouble * scale) + loc;
+//			
+//			result[i][j] = double2int(scaledcauchy, pop_param.lower[i], pop_param.upper[i]);
+//		}
+//	}
+//}
 
 void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
 	//gene_pool_t {
@@ -180,21 +180,21 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
 
 
 #if defined __AVX512VL__
-    gene_pool->individual_mem_size = ((gene_pool->genes * gene_pool->gene_mem_size + 511) / 512) * sizeof(__m512i);
+    gene_pool->individual_mem_size = ((uint64_t)(gene_pool->genes * gene_pool->gene_mem_size + 511) / 512) * sizeof(__m512i);
 #else
 	gene_pool->individual_mem_size = ((gene_pool->genes * gene_pool->gene_mem_size + 255) / 256) * sizeof(__m256i);
 #endif
 
-	total_memsize += gene_pool->individuals * gene_pool->individual_mem_size; // pop_param_bin
-	total_memsize += gene_pool->individuals * gene_pool->individual_mem_size; // pop_param_bin_cross_buffer
-	total_memsize += gene_pool->individuals * gene_pool->genes * sizeof(double);
+	total_memsize += (uint64_t)gene_pool->individuals * gene_pool->individual_mem_size; // pop_param_bin
+	total_memsize += (uint64_t)gene_pool->individuals * gene_pool->individual_mem_size; // pop_param_bin_cross_buffer
+	total_memsize += (uint64_t)gene_pool->individuals * gene_pool->genes * sizeof(double);
 
     // Allocate the memory
 	if ((gene_pool->gene_pool_memory_ptr = _aligned_malloc(total_memsize, AVX_bits)) == NULL) EXIT_MEM_ERROR();
 	 
 
 	// pointers to blocks
-	current_mem_ptr = (uintptr_t) gene_pool->gene_pool_memory_ptr + 2 * gene_pool->individuals * gene_pool->individual_mem_size;
+	current_mem_ptr = (uintptr_t) gene_pool->gene_pool_memory_ptr + (uintptr_t) 2 * gene_pool->individuals * gene_pool->individual_mem_size;
     gene_pool->flatten_result_set = (double*) current_mem_ptr;
 	current_mem_ptr += gene_pool->individuals * sizeof(double);
 
@@ -276,7 +276,7 @@ void fill_pop(gene_pool_t* gene_pool, population_param_t pop_param) {
 	else if (pop_param.sampling_type == pop_normal) {
 		populate_normal_box_muller(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes);
 	}
-	else if (pop_param.sampling_type == pop_cauchy) {
-		populate_cauchy(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes, pop_param);
-	}
+	//else if (pop_param.sampling_type == pop_cauchy) {
+	//	populate_cauchy(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes, pop_param);
+	//}
 }

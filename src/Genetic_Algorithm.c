@@ -37,7 +37,7 @@
 #include <windows.h>
 #include <pthread.h>
 
-void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t* gene_pool) {
+static void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t* gene_pool) {
 	//printf("Thread %d, Task %d\n", thread_param->thread_id, thread_param->task_id);
     clock_t start;
     start = clock();
@@ -74,7 +74,7 @@ void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t*
 	thread_param->status = 2; // Completed
 }
 
-void process_progress_display_thread(console_queue_t* console_queue) {
+static void process_progress_display_thread(console_queue_t* console_queue) {
 	clock_t start, current;
 	start = clock();
 
@@ -113,7 +113,7 @@ void process_progress_display_thread(console_queue_t* console_queue) {
 }
 
 
-void process_log_thread(task_result_queue_t* task_result_queue) {
+static void process_log_thread(task_result_queue_t* task_result_queue) {
 	task_result_t task_result;
 
 	char* log_file;
@@ -173,7 +173,7 @@ void process_log_thread(task_result_queue_t* task_result_queue) {
     }
 }
 
-void process_task_thread(thread_param_t* thread_param) {
+static void process_task_thread(thread_param_t* thread_param) {
 	seed_rand_threadlocal(0); // todo fix thread local storage
 
 	gene_pool_t gene_pool;
@@ -197,7 +197,7 @@ void process_task_thread(thread_param_t* thread_param) {
 	return;
 }
 
-void start_threads(task_queue_t* task_queue, runtime_param_t runtime_param, config_ga_t config_ga, thread_param_t* thread_param) {
+static void start_threads(task_queue_t* task_queue, runtime_param_t runtime_param, config_ga_t config_ga, thread_param_t* thread_param) {
 	const parallel = 1;
 
 
@@ -279,7 +279,7 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
     return best_res;
 }
 
-void free_config_ga(config_ga_t* config_ga) {
+static void free_config_ga(config_ga_t* config_ga) {
     free(config_ga->mutation_param.mutation_rate);
     free(config_ga->population_param.lower);
     free(config_ga->population_param.upper);

@@ -31,7 +31,7 @@ static inline int find_tree(double* arr, int lo, int hi, double value) {
 }
 
 // Maybe we can use this in rng too?
-void roulette_wheel(double* probabilities, double* selection_temp, int size, int ressize, int* result) {
+static void roulette_wheel(double* probabilities, double* selection_temp, int size, int ressize, int* result) {
 
     /*
     Roulette wheel selection of an index based on probabilities
@@ -74,7 +74,7 @@ void roulette_wheel(double* probabilities, double* selection_temp, int size, int
 }
 
 
-void compute_distr(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+static void compute_distr(gene_pool_t* gene_pool, selection_param_t* selection_param) {
     /*
     */
     double sum = 0;
@@ -88,7 +88,7 @@ void compute_distr(gene_pool_t* gene_pool, selection_param_t* selection_param) {
     }
 }
 
-void compute_boltzmann_distr(gene_pool_t* gene_pool, selection_param_t* selection_param) {
+static void compute_boltzmann_distr(gene_pool_t* gene_pool, selection_param_t* selection_param) {
     /*
     */
     double sum = 0;
@@ -102,7 +102,7 @@ void compute_boltzmann_distr(gene_pool_t* gene_pool, selection_param_t* selectio
     }
 }
 
-inline void compute_distances(gene_pool_t* gene_pool) {
+static inline void compute_distances(gene_pool_t* gene_pool) {
     /*
     */
     // Compute the central point of the distribution as a vector
@@ -241,7 +241,7 @@ static void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selec
         }
 
         // Now we can have the anti acceptance competition between 2 and 3
-        double acceptance[2];
+        double acceptance[2] = {0};
         acceptance[0] = exp((gene_pool->flatten_result_set[second_competitor] - gene_pool->flatten_result_set[third_competitor]) / selection_param->selection_temp_param);
         acceptance[1] = 1 - acceptance[0];
         int winner_anti_acceptance;

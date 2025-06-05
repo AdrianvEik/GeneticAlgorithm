@@ -81,8 +81,8 @@ void write_config(
     // Write optimizer parameters
     fprintf(fileptrconfig, "\"optimizer_param\": {\n");
     fprintf(fileptrconfig, "    \"convergence_moving_window_size\": %d,\n", config_ga.optimizer_param.convergence_moving_window_size);
-    fprintf(fileptrconfig, "    \"min_mutations\": %d,\n", config_ga.optimizer_param.min_mutations);
-    fprintf(fileptrconfig, "    \"max_mutations\": %d,\n", config_ga.optimizer_param.max_mutations);
+    fprintf(fileptrconfig, "    \"min_mutations\": %f,\n", config_ga.optimizer_param.min_mutations);
+    fprintf(fileptrconfig, "    \"max_mutations\": %f,\n", config_ga.optimizer_param.max_mutations);
     fprintf(fileptrconfig, "    \"mutation_factor\": %f,\n", config_ga.optimizer_param.mutation_factor);
     fprintf(fileptrconfig, "    \"max_iterations\": %d,\n", config_ga.optimizer_param.max_iterations);
     fprintf(fileptrconfig, "    \"convergence_threshold\": %f,\n", config_ga.optimizer_param.convergence_threshold);

@@ -94,8 +94,8 @@ void close_file(task_result_queue_t* task_result_queue)
 	fclose(task_result_queue->fileptrcsv);
 }
 
-void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t* adaptive_memory, thread_param_t* thread_param, gene_pool_t* gene_pool, int best_result, int time_spent_us) {
-	task_result_t task_result;
+void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t* adaptive_memory, thread_param_t* thread_param, gene_pool_t* gene_pool, int best_result) {
+	task_result_t task_result = {0};
 	int log_top_n;
 
 	if (best_result == 1) {
@@ -128,7 +128,7 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 		if (thread_param->runtime_param.logging_param.write_csv == 1) {
 			task_result.csv_position += snprintf(
 				task_result.csv_buffer + task_result.csv_position,
-				task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
+				(uint64_t) task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
 				"%d;%d;%d;%d;%e;",
 				adaptive_memory->iteration_counter,
 				task->task_id,
@@ -140,7 +140,7 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 			{
 				task_result.csv_position += snprintf(
 					task_result.csv_buffer + task_result.csv_position,
-					task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
+					(uint64_t)task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
 					"%e;%e;%e;",
 					task->lower[i],
 					task->upper[i],
@@ -159,7 +159,7 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 			if (thread_param->runtime_param.logging_param.write_csv == 1) {
 				task_result.csv_position += snprintf(
 					task_result.csv_buffer + task_result.csv_position,
-					task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
+					(uint64_t)task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
 					"%e;%e;%e;",
                     task->config_ga.mutation_param.mutation_rate[individual_id],
 					adaptive_memory->computed_mutation,
@@ -170,7 +170,7 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 		if (thread_param->runtime_param.logging_param.write_csv == 1) {
 			task_result.csv_position += snprintf(
 				task_result.csv_buffer + task_result.csv_position,
-				task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
+				(uint64_t)task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
 				"\n"
 			);
 		}
