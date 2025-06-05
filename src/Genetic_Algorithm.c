@@ -34,13 +34,11 @@
 #include <string.h>
 #include <time.h>
 
-#include <windows.h>
+#include <Windows.h>
 #include <pthread.h>
 
 static void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t* gene_pool) {
 	//printf("Thread %d, Task %d\n", thread_param->thread_id, thread_param->task_id);
-    clock_t start;
-    start = clock();
 
 	fill_pop(gene_pool, task->config_ga.population_param);
 
@@ -119,7 +117,8 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
 	char* log_file;
 	log_file = (char*)malloc(sizeof(char) * 255);
 
-    if(log_file == NULL) EXIT_MEM_ERROR();
+	if (log_file == NULL) EXIT_MEM_ERROR(); 
+	
 
 	if (task_result_queue->runtime_param.logging_param.fully_qualified_basename == NULL) {
 		strcpy_s(log_file, 255, "C:/temp/GA\0");
@@ -171,6 +170,8 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
 
         free_task_result(&task_result);
     }
+	free(log_file);
+
 }
 
 static void process_task_thread(thread_param_t* thread_param) {
@@ -198,7 +199,7 @@ static void process_task_thread(thread_param_t* thread_param) {
 }
 
 static void start_threads(task_queue_t* task_queue, runtime_param_t runtime_param, config_ga_t config_ga, thread_param_t* thread_param) {
-	const parallel = 1;
+	const int parallel = 1;
 
 
 	if (parallel == 0) {
@@ -254,9 +255,9 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 		write_config(runtime_param, config_ga);
     }
 
-	double previous_best_res = -INFINITY;
+	//double previous_best_res = -INFINITY;
 	double best_res = -INFINITY;
-	int convergence_counter = 0;
+	//int convergence_counter = 0;
     console_queue_t console_queue = init_console_queue();
     console_queue.message_count = runtime_param.zone_enable ? compute_task_count(&runtime_param) : runtime_param.task_count;
 	task_result_queue_t task_result_queue;

@@ -3,7 +3,7 @@
 
 // Path: Utility/crossover.c
 
-static void single_point_crossover(int* parent1, int* parent2, int* child1, int* child2, int genes, int individual_mem_size) {
+static void single_point_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, int genes, int individual_mem_size) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// The function should fill child1 and child2 with the crossed over values
 
@@ -73,7 +73,7 @@ static void single_point_crossover(int* parent1, int* parent2, int* child1, int*
 	}
 }
 
-static void two_point_crossover(int* parent1, int* parent2, int* child1, int* child2, int genes, int individual_mem_size) {
+static void two_point_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, int genes, int individual_mem_size) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// The function should fill child1 and child2 with the crossed over values
 
@@ -232,7 +232,7 @@ static void two_point_crossover(int* parent1, int* parent2, int* child1, int* ch
 	}
 }
 
-static void uniform_crossover(int* parent1, int* parent2, int* child1, int* child2, int genes, int individual_mem_size) {
+static void uniform_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, int genes, int individual_mem_size) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// prob is the probability of a value being copied from the first parent
 	// The function should fill child1 and child2 with the crossed over values
@@ -284,7 +284,7 @@ static void uniform_crossover(int* parent1, int* parent2, int* child1, int* chil
 #endif
 }
 
-static void complete_crossover(int* parent1, int* parent2, int* child1, int* child2, int genes) {
+static void complete_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, int genes) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// The function should fill child1 and child2 with the crossed over values
 
@@ -302,7 +302,7 @@ static void complete_crossover(int* parent1, int* parent2, int* child1, int* chi
 	}
 }
 
-static void crossover(int* parent1, int* parent2, int* child1, int* child2, int genes, int individual_mem_size, crossover_param_t* crossover_param) {
+static void crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, int genes, int individual_mem_size, crossover_param_t* crossover_param) {
 
 	if (crossover_param->crossover_method == crossover_method_single_point) {
 		single_point_crossover(parent1, parent2, child1, child2, genes, individual_mem_size);
@@ -323,7 +323,7 @@ static void crossover(int* parent1, int* parent2, int* child1, int* child2, int 
 }
 
 void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_param) {
-	//double** pop_parameter_bin, int individuals, int genes, int* selected, int skipped_pairs){
+	//double** pop_parameter_bin, int individuals, int genes, uint32_t* selected, int skipped_pairs){
 	int next_even = (gene_pool->individuals - gene_pool->elitism) + ((gene_pool->individuals - gene_pool->elitism) % 2);
 
 	for (int i = 0; i < next_even; i += 2) {
@@ -339,9 +339,10 @@ void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_para
 
 	// copy the crossed over values back to the population
 	for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
-        memcpy(gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]],
+        if(memcpy_s(gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]],
+			gene_pool->individual_mem_size,
 			gene_pool->pop_param_bin_cross_buffer[i],
-			gene_pool->individual_mem_size);
+			gene_pool->individual_mem_size)) EXIT_MEM_ERROR();
 	}
 }
 

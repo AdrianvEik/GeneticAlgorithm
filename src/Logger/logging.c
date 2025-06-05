@@ -5,22 +5,23 @@ static inline void copy_to_bin_buffer(task_result_t* task_result, void* data, in
 	if (task_result->bin_single_entry_length < size + task_result->bin_position) {
 		printf("Buffer overflow\n");
 	}
-	memcpy(task_result->bin_buffer + task_result->bin_position, data, size);
+	if (memcpy_s(task_result->bin_buffer + task_result->bin_position, size ,data, size)) EXIT_MEM_ERROR();
+	
 	task_result->bin_position += size;
 }
 
-static inline void copy_to_csv_buffer(task_result_t* task_result, void* data, int size) {
-	if (task_result->csv_single_entry_length < size + task_result->csv_position) {
-		printf("Buffer overflow\n");
-	}
-	memcpy(task_result->csv_buffer + task_result->csv_position, data, size);
-	task_result->bin_position += size;
-}
+//static inline void copy_to_csv_buffer(task_result_t* task_result, void* data, int size) {
+//	if (task_result->csv_single_entry_length < size + task_result->csv_position) {
+//		printf("Buffer overflow\n");
+//	}
+//	memcpy(task_result->csv_buffer + task_result->csv_position, data, size);
+//	task_result->bin_position += size;
+//}
 
 void copy_task_result(task_result_t* task_result, task_result_t* source) {
-    memcpy(task_result->bin_buffer, source->bin_buffer, source->bin_position);
+    if (memcpy_s(task_result->bin_buffer, source->bin_position, source->bin_buffer, source->bin_position)) EXIT_MEM_ERROR();
 	if (source->csv_position > 0) {
-		memcpy(task_result->csv_buffer, source->csv_buffer, source->csv_position);
+		if(memcpy_s(task_result->csv_buffer, source->csv_position, source->csv_buffer, source->csv_position)) EXIT_MEM_ERROR();
 	}
     task_result->bin_position = source->bin_position;
     task_result->csv_position = source->csv_position;
@@ -34,10 +35,14 @@ void open_file(task_result_queue_t* task_result_queue)
 	char* filename_bin = malloc(fully_qualified_basename_size + 4);
 
 	if (fully_qualified_basename_size == 0) {
+		free(filename_csv);
+		free(filename_bin);
 		EXIT_WITH_ERROR("Empty file name", 1);
 	}
 
 	if (filename_csv == NULL || filename_bin == NULL) {
+		free(filename_csv);
+		free(filename_bin);
 		EXIT_MEM_ERROR();
 	}
 
@@ -48,9 +53,11 @@ void open_file(task_result_queue_t* task_result_queue)
 	strcat_s(filename_bin, fully_qualified_basename_size+4, ".bin");
 
 
-	if(fopen_s (&(task_result_queue->fileptr), filename_bin, "wb") != 0 ||
-	   fopen_s (&(task_result_queue->fileptrcsv), filename_csv, "w") != 0)
+	if(fopen_s (&(task_result_queue->fileptr), filename_bin, "wb") ||
+	   fopen_s (&(task_result_queue->fileptrcsv), filename_csv, "w"))
 	{
+        free(filename_csv);
+        free(filename_bin);
 		EXIT_WITH_ERROR("Cannot open file!", 1);
 	}
 	//struct task_result_s {
@@ -66,26 +73,28 @@ void open_file(task_result_queue_t* task_result_queue)
 //	int* config_int;
 //	double* config_double;
 //};
-	fprintf(task_result_queue->fileptrcsv, "iteration;task_id;individual_id;position;result;");
+	fprintf_s(task_result_queue->fileptrcsv, "iteration;task_id;individual_id;position;result;");
 	for (int i = 0; i < task_result_queue->runtime_param.genes; i++)
 	{
-		fprintf(task_result_queue->fileptrcsv, "lower%d;", i);
-        fprintf(task_result_queue->fileptrcsv, "upper%d;", i);
-		fprintf(task_result_queue->fileptrcsv, "gene%d;", i);
+		fprintf_s(task_result_queue->fileptrcsv, "lower%d;", i);
+        fprintf_s(task_result_queue->fileptrcsv, "upper%d;", i);
+		fprintf_s(task_result_queue->fileptrcsv, "gene%d;", i);
 	}
 	if (task_result_queue->runtime_param.logging_param.include_config == 1) {
 		for (int i = 0; i < task_result_queue->runtime_param.logging_param.config_int_count; i++)
 		{
-			fprintf(task_result_queue->fileptrcsv, "config_int%d;", i);
+			fprintf_s(task_result_queue->fileptrcsv, "config_int%d;", i);
 		}
 		for (int i = 0; i < task_result_queue->runtime_param.logging_param.config_double_count; i++)
 		{
-			fprintf(task_result_queue->fileptrcsv, "config_double%d;", i);
+			fprintf_s(task_result_queue->fileptrcsv, "config_double%d;", i);
 		}
 	}
 	
-	fprintf(task_result_queue->fileptrcsv, "\n");
-
+	fprintf_s(task_result_queue->fileptrcsv, "\n");
+    // local variables for the file names
+	free(filename_csv);
+	free(filename_bin);
 }
 
 void close_file(task_result_queue_t* task_result_queue)

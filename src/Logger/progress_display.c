@@ -4,7 +4,7 @@
 // Function to display progress bar
 void display_progress(console_queue_t* con_queue) {
     static int initialized = 0;
-    static int saved_cursor = 0;
+    //static int saved_cursor = 0;
     int bar_width = 40; // Adjust as needed
     double progress = (double) con_queue->progress.tasks_completed / con_queue->message_count;
     double average_result = con_queue->progress.average_result / con_queue->progress.tasks_completed;

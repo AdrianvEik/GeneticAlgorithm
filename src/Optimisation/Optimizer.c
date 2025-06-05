@@ -78,12 +78,12 @@ static void compute_mutation_rate(task_param_t* task, adaptive_memory_t* adaptiv
     }
 }
 
-static void compute_flatten_factors(task_param_t* task, adaptive_memory_t* adaptive_memory, double best_result) {
-    // Based on dispersion of the group compared to the best result and the average result of the group
-    // calculate the flatten factor and bias
-
-
-}
+//static void compute_flatten_factors(task_param_t* task, adaptive_memory_t* adaptive_memory, double best_result) {
+//    // Based on dispersion of the group compared to the best result and the average result of the group
+//    // calculate the flatten factor and bias
+//
+//
+//}
 
 
 void adapt_param(task_param_t* task, gene_pool_t* gene_pool, adaptive_memory_t* adaptive_memory) {

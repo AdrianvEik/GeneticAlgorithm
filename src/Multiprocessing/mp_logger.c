@@ -23,8 +23,8 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
 
 
 	if (runtime_param.logging_param.write_csv == 1) {
-		const len_of_engineering_double = 15; // -1.123456e+123;
-		const len_of_formatted_int = 12; // -12345678901;
+		const int len_of_engineering_double = 15; // -1.123456e+123;
+		const int len_of_formatted_int = 12; // -12345678901;
 		task_result_queue->csv_single_entry_length = 4 * len_of_formatted_int + 1 * len_of_engineering_double + runtime_param.genes * len_of_engineering_double * 3;
 		if (runtime_param.logging_param.include_config == 1) {
 			task_result_queue->csv_single_entry_length += runtime_param.logging_param.config_int_count * len_of_formatted_int + runtime_param.logging_param.config_double_count * len_of_engineering_double;
