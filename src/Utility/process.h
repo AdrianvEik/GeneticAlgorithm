@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <immintrin.h>
+#include <float.h>
 
 #include "../Helper/Helper.h"
 #include "../Helper/Struct.h"

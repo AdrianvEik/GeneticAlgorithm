@@ -6,6 +6,8 @@
 
 #ifdef __AVX512VL__
 #define __mAVXi __m512i
+#define __mAVXd __m512d
+
 #define AVX_setzero()   _mm512_setzero_si512()
 #define AVX_setone()    _mm512_set1_epi32(-1)
 #define AVX_and(left, right)                 _mm512_and_epi32(left, right)
