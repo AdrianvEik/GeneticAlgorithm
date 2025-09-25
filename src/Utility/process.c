@@ -64,54 +64,111 @@ void indexed_bubble_sort(double* arr, int* indices, int size) {
 //}
 //
 
-inline __m256i bitonic_sort_1v(__m512d input, __m256i index) { // todo update int to uint for index
+static inline void bitonic_sort_1v(__m512d* input, __m256i* index) { // todo update int to uint for index
 	//__m256i index = _mm256_loadu_epi32(indices);
     //__m512d input = _mm512_load_pd(arr);
     __m512d work;
 	__m256i work_idx;
 	__mmask8 cmp_res;
 
-	work = _mm512_permutexvar_pd(_mm512_set_epi64(6, 7, 4, 5, 2, 3, 0, 1), input);
-    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, input), 0xAA);
-    input = _mm512_mask_mov_pd(input, cmp_res, work);
-	work_idx = _mm256_mask_mov_epi32(index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(6, 7, 4, 5, 2, 3, 0, 1), index));
-    index = work_idx;
+	work = _mm512_permutexvar_pd(_mm512_set_epi64(6, 7, 4, 5, 2, 3, 0, 1), *input);
+    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xAA);
+    *input = _mm512_mask_mov_pd(*input, cmp_res, work);
+	work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(6, 7, 4, 5, 2, 3, 0, 1), *index));
+    *index = work_idx;
 
-    work = _mm512_permutexvar_pd(_mm512_set_epi64(4, 5, 6, 7, 0, 1, 2, 3), input);
-    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, input), 0xCC);
-    input = _mm512_mask_mov_pd(input, cmp_res, work);
-    work_idx = _mm256_mask_mov_epi32(index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(4, 5, 6, 7, 0, 1, 2, 3), index));
-    index = work_idx;
+    work = _mm512_permutexvar_pd(_mm512_set_epi64(4, 5, 6, 7, 0, 1, 2, 3), *input);
+    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xCC);
+    *input = _mm512_mask_mov_pd(*input, cmp_res, work);
+    work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(4, 5, 6, 7, 0, 1, 2, 3), *index));
+    *index = work_idx;
 
-    work = _mm512_permutexvar_pd(_mm512_set_epi64(6, 7, 4, 5, 2, 3, 0, 1), input);
-    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, input), 0xAA);
-    input = _mm512_mask_mov_pd(input, cmp_res, work);
-    work_idx = _mm256_mask_mov_epi32(index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(6, 7, 4, 5, 2, 3, 0, 1), index));
-    index = work_idx;
+    work = _mm512_permutexvar_pd(_mm512_set_epi64(6, 7, 4, 5, 2, 3, 0, 1), *input);
+    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xAA);
+    *input = _mm512_mask_mov_pd(*input, cmp_res, work);
+    work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(6, 7, 4, 5, 2, 3, 0, 1), *index));
+    *index = work_idx;
 
-    work = _mm512_permutexvar_pd(_mm512_set_epi64(0, 1, 2, 3, 4, 5, 6, 7), input);
-    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, input), 0xF0);
-    input = _mm512_mask_mov_pd(input, cmp_res, work);
-    work_idx = _mm256_mask_mov_epi32(index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(0, 1, 2, 3, 4, 5, 6, 7), index));
-    index = work_idx;
+    work = _mm512_permutexvar_pd(_mm512_set_epi64(0, 1, 2, 3, 4, 5, 6, 7), *input);
+    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xF0);
+    *input = _mm512_mask_mov_pd(*input, cmp_res, work);
+    work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(0, 1, 2, 3, 4, 5, 6, 7), *index));
+    *index = work_idx;
 
-    work = _mm512_permutexvar_pd(_mm512_set_epi64(5, 4, 7, 6, 1, 0, 3, 2), input);
-    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, input), 0xCC);
-    input = _mm512_mask_mov_pd(input, cmp_res, work);
-    work_idx = _mm256_mask_mov_epi32(index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(5, 4, 7, 6, 1, 0, 3, 2), index));
-    index = work_idx;
+    work = _mm512_permutexvar_pd(_mm512_set_epi64(5, 4, 7, 6, 1, 0, 3, 2), *input);
+    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xCC);
+    *input = _mm512_mask_mov_pd(*input, cmp_res, work);
+    work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(5, 4, 7, 6, 1, 0, 3, 2), *index));
+    *index = work_idx;
 
-    work = _mm512_permutexvar_pd(_mm512_set_epi64(6, 7, 4, 5, 2, 3, 0, 1), input);
-    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, input), 0xAA);
-    input = _mm512_mask_mov_pd(input, cmp_res, work);
-    work_idx = _mm256_mask_mov_epi32(index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(6, 7, 4, 5, 2, 3, 0, 1), index));
-    index = work_idx;
+    work = _mm512_permutexvar_pd(_mm512_set_epi64(6, 7, 4, 5, 2, 3, 0, 1), *input);
+    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xAA);
+    *input = _mm512_mask_mov_pd(*input, cmp_res, work);
+    work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(6, 7, 4, 5, 2, 3, 0, 1), *index));
+    *index = work_idx;
 
-    //_mm512_store_pd(arr, input); // store sorted values back to array??
-    //_mm256_storeu_epi32(indices, index);
-    // return set indexes
-    return index;
+    //_mm512_store_pd(arr, *input); // store sorted values back to array??
+    //_mm256_storeu_epi32(indices, *index);
+    // return set *indexes
 }
+
+static inline void bitonic_minmax_2v(__m512d* a, __m512d* b, __m256i* index_a, __m256i* index_b) {
+
+	__m512d swap_b = _mm512_permutexvar_pd(_mm512_set_epi64(0, 1, 2, 3, 4, 5, 6, 7), *b);
+	__m256i swap_index_b = _mm256_permutexvar_epi32(_mm256_set_epi32(0, 1, 2, 3, 4, 5, 6, 7), *index_b);
+	__mmask8 cmp_res = _mm512_cmplt_pd_mask(swap_b, *a);
+
+	*b = _mm512_mask_mov_pd(swap_b, cmp_res, *a);
+	__m256i work_index_b = _mm256_mask_mov_epi32(swap_index_b, cmp_res, *index_a);
+	*a = _mm512_mask_mov_pd(*a, cmp_res, swap_b);
+	*index_a = _mm256_mask_mov_epi32(*index_a, cmp_res, swap_index_b);
+
+    *index_b = work_index_b;
+
+	//input = 
+	//work_idx = _mm256_mask_mov_epi32(index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(6, 7, 4, 5, 2, 3, 0, 1), index));
+	//index = work_idx;
+
+	// __m512d perm_neigh = _mm512_permute_pd(swap, _MM_SHUFFLE(0, 1, 2, 3));
+	//__m512d perm_neigh_min = _mm512_min_pd(*a, perm_neigh);
+	//__m512d perm_neigh_max = _mm512_max_pd(*a, perm_neigh);
+	//*a = perm_neigh_min;
+	//*b = perm_neigh_max;
+}
+
+static inline void post_sort_1v(__m512d* input, __m256i* index) {
+	__m512d work;
+	__m256i work_idx;
+	__mmask8 cmp_res;
+
+	work = _mm512_permutexvar_pd(_mm512_set_epi64(3, 2, 1, 0, 7, 6, 5, 4), *input);
+	cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xF0);
+	*input = _mm512_mask_mov_pd(*input, cmp_res, work);
+	work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(0, 1, 2, 3, 4, 5, 6, 7), *index));
+	*index = work_idx;
+
+	work = _mm512_permutexvar_pd(_mm512_set_epi64(5, 4, 7, 6, 1, 0, 3, 2), *input);
+	cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xCC);
+	*input = _mm512_mask_mov_pd(*input, cmp_res, work);
+	work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(5, 4, 7, 6, 1, 0, 3, 2), *index));
+	*index = work_idx;
+
+	work = _mm512_permutexvar_pd(_mm512_set_epi64(6, 7, 4, 5, 2, 3, 0, 1), *input);
+	cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xAA);
+	*input = _mm512_mask_mov_pd(*input, cmp_res, work);
+	work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(6, 7, 4, 5, 2, 3, 0, 1), *index));
+	*index = work_idx;
+}
+
+static inline void bitonic_sort_2v(__m512d* a, __m512d* b, __m256i* index_a, __m256i* index_b) {
+	bitonic_sort_1v(a, index_a);
+    bitonic_sort_1v(b, index_b);
+	bitonic_minmax_2v(a, b, index_a, index_b);
+	post_sort_1v(a, index_a);
+	post_sort_1v(b, index_b);
+}
+
+
 
 void bottom_up_merge(double* arr, int* indices, int* temp_workspace, int lo, int hi, int size) {
     // merge blocks of size 8 to 16 , 16 to 32, 32 to 64, etc
@@ -121,33 +178,52 @@ void bottom_up_merge(double* arr, int* indices, int* temp_workspace, int lo, int
 
 void indexed_bitonic_sort(double* arr, uint32_t* indices, int* temp_workspace, int size ) {
 
-	for (int i = 0; i < size / 8; i++) {
-		__m256i index = _mm256_loadu_epi32(&indices[i * 8]);
-		__m512d input = _mm512_loadu_pd(&arr[i * 8]);
-		index = bitonic_sort_1v(input, index);
-		_mm256_storeu_epi32(&indices[i * 8], index);
+	for (int i = 0; i < size / 16; i++) {
+		__m256i index_a = _mm256_loadu_epi32(&indices[i * 8]);
+		__m512d input_a = _mm512_loadu_pd(&arr[i * 8]);
+
+        __m256i index_b = _mm256_loadu_epi32(&indices[i * 8 + 8]);
+        __m512d input_b = _mm512_loadu_pd(&arr[i * 8 + 8]);
+
+		bitonic_sort_2v(&input_a, &input_b, &index_a, &index_b);
+		_mm256_storeu_epi32(&indices[i * 8], index_a);
+        _mm256_storeu_epi32(&indices[i * 8 + 8], index_b);
 	}
 
 	// remainder
-	if (size % 8 != 0) {
-		int rem = size % 8;
+	int remaining = size & 0x0F;
+
+	if (remaining >= 7) {
+
+        int i = size & 0xFFF0;
+		__m256i index = _mm256_loadu_epi32(&indices[i]);
+		__m512d input = _mm512_loadu_pd(&arr[i]);
+
+		bitonic_sort_1v(&input, &index);
+		_mm256_storeu_epi32(&indices[i], index);
+
+        remaining -= 8;
+	}
+
+	if (remaining) {
+		int start = size & 0xFFF8;
 		double temp_arr[8] = { DBL_MAX };
 		uint32_t temp_idx[8] = { UINT32_MAX };
-		for (int i = 0; i < rem; i++) {
-			temp_arr[i] = arr[(size / 8) * 8 + i];
-			temp_idx[i] = indices[(size / 8) * 8 + i];
+		for (int i = 0; i < remaining; i++) {
+			temp_arr[i] = arr[start + i];
+			temp_idx[i] = indices[start + i];
 		}
 		__m256i index = _mm256_loadu_epi32(temp_idx);
 		__m512d input = _mm512_loadu_pd(temp_arr);
-		index = bitonic_sort_1v(input, index);
+		bitonic_sort_1v(&input, &index);
 		_mm256_storeu_epi32(temp_idx, index);
 		uint32_t skip_idx = 0;
-		for (int i = 0; i < rem; i++) {
+		for (int i = 0; i < remaining; i++) {
             if (temp_idx[i] == UINT32_MAX) {
                 skip_idx++;
 				continue;
 			}
-			indices[(size / 8) * 8 + i] = temp_idx[i+skip_idx];
+			indices[start + i] = temp_idx[i+skip_idx];
 		}
     }
 
