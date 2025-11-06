@@ -67,8 +67,9 @@ config_ga_t default_config(runtime_param_t runtime_param) {
         mutation_param.mutation_rate[i] = 6.0;
 	}
 
-    mutation_param.mutation_alpha = 1;
-    mutation_param.mutation_beta = 0;
+	mutation_param.mutation_slope = 1;
+    //mutation_param.mutation_alpha = 1;
+    //mutation_param.mutation_beta = 0;
 
 	fx_param_t fx_param;
 	fx_param.fx_method = fx_method_Styblinski_Tang;

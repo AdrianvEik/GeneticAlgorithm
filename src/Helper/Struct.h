@@ -60,8 +60,9 @@ struct mutation_param_s {
 	int mutation_method; // DEFAULT = 0
 	double mutation_prob; // DEFAULT = 0.5
 	double* mutation_rate; // DEFAULT = 6
-    double mutation_alpha; // DEFAULT = 1
-    double mutation_beta; // DEFAULT = 0
+    double mutation_slope; // DEFAULT = 1
+    //double mutation_alpha; // DEFAULT = 1
+    //double mutation_beta; // DEFAULT = 0
 };
 
 typedef double (*fx_ptr_generic)(void*, int);
