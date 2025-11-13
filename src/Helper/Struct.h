@@ -104,6 +104,7 @@ struct logging_param_s {
     int config_double_count; // DEFAULT = 2
     int queue_size; // DEFAULT = 128
     int write_config; // DEFAULT = 0
+    int console_enabled; // DEFAULT = 1
 };
 
 struct runtime_param_s {

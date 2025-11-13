@@ -24,24 +24,12 @@ struct console_message_s {
 
 typedef struct console_message_s console_message_t;
 
-struct progress_s {
-    double elapsed_time;
-    double best_result;
-    double average_result;
-    double result_standard_deviation;
-    int tasks_completed;
-    int optim_mode;
-};
-
-typedef struct progress_s progress_t;
-
 struct console_queue_s {
     int queue_size;
     int current_message_id;
     pthread_t thread_id;
     console_message_t* message_queue;
     int message_list_size;
-    progress_t progress;
     int message_count;
     int first_message_id;
     int next_message_id;
@@ -51,7 +39,7 @@ struct console_queue_s {
 typedef struct console_queue_s console_queue_t;
 
 
-console_queue_t init_console_queue();
+console_queue_t* init_console_queue();
 void free_console_queue(console_queue_t* console_queue);
 
 int get_from_console_queue(console_queue_t* console_queue, console_message_t* str);

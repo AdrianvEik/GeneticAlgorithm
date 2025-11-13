@@ -71,44 +71,42 @@ static void process_task(thread_param_t* thread_param, task_param_t* task, gene_
 
 	thread_param->status = 2; // Completed
 }
-
-static void process_progress_display_thread(console_queue_t* console_queue) {
-	clock_t start, current;
-	start = clock();
-
-    console_message_t print_str;
-
-	printf("\n\n\n\n\n\n"); // set the cursor below the progress, TODO: make nice 
-
-
-
-    int last_message = 0;
-
-    while (1) {
-        current = clock(); // Update every second
-		console_queue->progress.elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
-
-		while (get_from_console_queue(console_queue, &print_str)) {
-			if (print_str.task_type == 255) {
-				current = clock(); // Update every second
-				console_queue->progress.elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
-
-                // update the progress one last time
-				display_progress(console_queue);
-				return;
-			}
-			//printf("%s", print_str.str);
-
-            display_console_message(print_str.str, last_message);
-            last_message = (last_message + 1) % console_queue->message_list_size;
-
-		}
-
-		display_progress(console_queue);
-
-		Sleep(500);
-	}
-}
+//
+//static void process_progress_display_thread(console_queue_t* console_queue) {
+//	clock_t start, current;
+//	start = clock();
+//
+//    console_message_t print_str;
+//
+//	printf("\n\n\n\n\n\n"); // set the cursor below the progress, TODO: make nice 
+//
+//    int last_message = 0;
+//
+//    while (1) {
+//        current = clock(); // Update every second
+//		console_queue->task_result_queue->progress.elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
+//
+//		while (get_from_console_queue(console_queue, &print_str)) {
+//			if (print_str.task_type == 255) {
+//				current = clock(); // Update every second
+//				console_queue->task_result_queue->progress.elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
+//
+//                // update the progress one last time
+//				display_progress(console_queue);
+//				return;
+//			}
+//			//printf("%s", print_str.str);
+//
+//            display_console_message(print_str.str, last_message);
+//            last_message = (last_message + 1) % console_queue->message_list_size;
+//
+//		}
+//
+//		display_progress(console_queue);
+//
+//		Sleep(500);
+//	}
+//}
 
 
 static void process_log_thread(task_result_queue_t* task_result_queue) {
@@ -137,38 +135,68 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
 	task_result_t best_result;
 	init_task_result(task_result_queue, &best_result, 1);
 
+	clock_t start, current;
+	start = clock();
+
+	console_message_t print_str;
+
+	printf("\n\n\n\n\n\n"); // set the cursor below the progress, TODO: make nice 
+
+	int last_message = 0;
 	//task_result.task_id = task->task_id;
 	//task_result.iterations = iterations_required;
 	//task_result.result = best_res;
 
     while (1) {
-        get_result(task_result_queue, &task_result);
+        while(get_result(task_result_queue, &task_result)) {
+			if (task_result.task_type == TERMINATE_THREAD) {
+				write_file_buffer(task_result_queue, &best_result);
 
-        if (task_result.task_type == TERMINATE_THREAD) {
-			write_file_buffer(task_result_queue, &best_result);
-            free_task_result(&best_result);
-            break;
-        }
+				current = clock(); 
+				task_result_queue->progress.elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
 
-		if (task_result.task_type == BEST_RESULT_TASK) {
-			task_result_queue->console_queue->progress.tasks_completed++;
-			// add the results to be processed to an answer in the console
-            // to be divided by the number of tasks completed
-			task_result_queue->console_queue->progress.average_result += task_result.result;
-            // to be divided by the number of tasks completed - 1 and sqrt
-            task_result_queue->console_queue->progress.result_standard_deviation += pow(
-				(task_result.result - (task_result_queue->console_queue->progress.average_result) / task_result_queue->console_queue->progress.tasks_completed), 2
-			);
-			
-			if (task_result.result > current_best_res) {
-				current_best_res = task_result.result;
-				task_result_queue->console_queue->progress.best_result = current_best_res;
-				copy_task_result(&best_result, &task_result);
+				// update the progress one last time
+				display_progress(&task_result_queue->progress, task_result_queue->console_queue->message_list_size);
+				
+				free_task_result(&best_result);
+				break;
 			}
-		}
-		write_file_buffer(task_result_queue, &task_result);
 
-        free_task_result(&task_result);
+			if (task_result.task_type == BEST_RESULT_TASK) {
+				task_result_queue->progress.tasks_completed++;
+				// add the results to be processed to an answer in the console
+				// to be divided by the number of tasks completed
+				task_result_queue->progress.average_result += task_result.result;
+				// to be divided by the number of tasks completed - 1 and sqrt
+				task_result_queue->progress.result_standard_deviation += pow(
+					(task_result.result - (task_result_queue->progress.average_result) / task_result_queue->progress.tasks_completed), 2
+				);
+
+				if (task_result.result > current_best_res) {
+					current_best_res = task_result.result;
+					task_result_queue->progress.best_result = current_best_res;
+					copy_task_result(&best_result, &task_result);
+				}
+			}
+			write_file_buffer(task_result_queue, &task_result);
+
+			free_task_result(&task_result);
+		}
+
+		current = clock(); // Update every second
+		task_result_queue->progress.elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
+
+		while (get_from_console_queue(task_result_queue->console_queue, &print_str)) {
+			//printf("%s", print_str.str);
+
+			display_console_message(print_str.str, last_message);
+			last_message = (last_message + 1) % task_result_queue->console_queue->message_list_size;
+
+		}
+
+		display_progress(&task_result_queue->progress, task_result_queue->console_queue->message_list_size);
+
+		Sleep(500);
     }
 	free(log_file);
 
@@ -230,8 +258,10 @@ static void start_threads(task_queue_t* task_queue, runtime_param_t runtime_para
 
         if (retid) EXIT_WITH_ERROR("Thread creation", 1);
 
-        int retid_console = pthread_create(&(task_queue->task_result_queue->console_queue->thread_id), NULL, (void*)process_progress_display_thread, (void*)task_queue->task_result_queue->console_queue);
-        if (retid_console) EXIT_WITH_ERROR("Thread creation", 1);
+		//if (task_queue->console_queue) {
+		//	int retid_console = pthread_create(&(task_queue->console_queue->thread_id), NULL, (void*)process_progress_display_thread, (void*)task_queue->console_queue);
+		//	if (retid_console) EXIT_WITH_ERROR("Thread creation", 1);
+		//}
 
 		for (i = 0; i < NTHREADS; i++)
 		{
@@ -258,10 +288,16 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 	//double previous_best_res = -INFINITY;
 	double best_res = -INFINITY;
 	//int convergence_counter = 0;
-    console_queue_t console_queue = init_console_queue();
-    console_queue.message_count = runtime_param.zone_enable ? compute_task_count(&runtime_param) : runtime_param.task_count;
+	console_queue_t* console_queue = NULL;
+
+	if (runtime_param.logging_param.console_enabled) {
+		console_queue = init_console_queue();
+		console_queue->message_count = runtime_param.zone_enable ? compute_task_count(&runtime_param) : runtime_param.task_count;
+	}
+
 	task_result_queue_t task_result_queue;
-	init_task_result_queue(&task_result_queue, runtime_param, &console_queue);
+	init_task_result_queue(&task_result_queue, runtime_param, console_queue);
+
 	task_queue_t task_queue;
 	init_task_queue(&task_queue, runtime_param.thread_count * 4, &task_result_queue, runtime_param.thread_count);
 	thread_param_t thread_param;
@@ -272,11 +308,11 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 
 	stop_solver_threads(&task_queue, runtime_param.thread_count);
     stop_result_logger(&task_result_queue, runtime_param.thread_count, &best_res);
-    con_kill(&console_queue);
+    con_kill(console_queue);
 
 	close_file(&task_result_queue);
 	free_task_queue(&task_queue);
-	free_console_queue(&console_queue);
+	free_console_queue(console_queue);
     return best_res;
 }
 
@@ -290,16 +326,18 @@ int main() {
 	int repeats = 1;
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 0;
-	runtime_param.task_count = 64;
-	runtime_param.individuals = 128;
+	runtime_param.task_count = 1;
+	runtime_param.individuals = 256;
 	runtime_param.genes = 32;
 	runtime_param.thread_count = 8;
+
 
 	runtime_param.logging_param.include_config = 1;
     //runtime_param.logging_param.write_config = 1; // JSON dump
     runtime_param.logging_param.write_csv = 1;
-    runtime_param.logging_param.export_interval = 0;
+    runtime_param.logging_param.export_interval = 10;
 	runtime_param.logging_param.top_n_export = 1;
+	runtime_param.logging_param.console_enabled = 1;
 
 	
 	config_ga_t config_ga = default_config(runtime_param);
@@ -310,15 +348,16 @@ int main() {
 	config_ga.optimizer_param.convergence_window = 1000;
 	config_ga.optimizer_param.convergence_moving_window_size = 100;
 	config_ga.optimizer_param.max_iterations = 10000;
-	config_ga.optimizer_param.max_mutations = 10;
+	config_ga.optimizer_param.max_mutations = 300;
     config_ga.optimizer_param.min_mutations = 1;
-    config_ga.mutation_param.mutation_alpha = 10000;
-    config_ga.mutation_param.mutation_beta = 0.1;
+	config_ga.mutation_param.mutation_slope = 1.0;
+    //config_ga.mutation_param.mutation_alpha = 10;
+    //config_ga.mutation_param.mutation_beta = 0.1;
 
 
 
 	for (int i = 0; i < repeats; i++) {
-		printf("\n Run number: %d\n", i);
+		//printf("\n Run number: %d\n", i);
 
 		//strcpy_s(runtime_param.fully_qualified_basename, 255, "C:/temp/GA\0");
 		//printf("%s\n", runtime_param.fully_qualified_basename);

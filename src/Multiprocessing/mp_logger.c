@@ -10,6 +10,12 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
 	if (task_result_queue->lock == NULL) EXIT_MEM_ERROR();
 
 	//TODO: Should this be here?
+	task_result_queue->progress.best_result = -INFINITY;
+	task_result_queue->progress.tasks_completed = 0;
+	task_result_queue->progress.optim_mode = 0;
+	task_result_queue->progress.average_result = 0;
+	task_result_queue->progress.result_standard_deviation = 0;
+
     task_result_queue->console_queue = console_queue;
 
 	task_result_queue->first_task_id = 0;
@@ -47,7 +53,7 @@ void stop_result_logger(task_result_queue_t* task_result_queue, int thread_count
 		add_result(task_result_queue, &result);
 	}
 
-    *best_res = task_result_queue->console_queue->progress.best_result;
+    *best_res = task_result_queue->progress.best_result;
 
 	pthread_join(task_result_queue->thread_id, NULL);
 }
@@ -93,20 +99,16 @@ void add_result(task_result_queue_t* task_result_queue, task_result_t* result) {
 	}
 }
 
-void get_result(task_result_queue_t* task_result_queue, task_result_t* result) {
-	int result_retrieved = 0;
-	while (!result_retrieved) {
-		pthread_mutex_lock(task_result_queue->lock);
-		if (task_result_queue->first_task_id == task_result_queue->next_task_id) {
-			pthread_mutex_unlock(task_result_queue->lock);
-			Sleep(1000);
-			continue;
-		}
-		*result = task_result_queue->result_list[task_result_queue->first_task_id];
-		task_result_queue->first_task_id = (task_result_queue->first_task_id + 1) % task_result_queue->runtime_param.logging_param.queue_size;
+int get_result(task_result_queue_t* task_result_queue, task_result_t* result) {
+	pthread_mutex_lock(task_result_queue->lock);
+	if (task_result_queue->first_task_id == task_result_queue->next_task_id) {
 		pthread_mutex_unlock(task_result_queue->lock);
-		result_retrieved = 1;
+		return 0;
 	}
+    *result = task_result_queue->result_list[task_result_queue->first_task_id];
+	task_result_queue->first_task_id = (task_result_queue->first_task_id + 1) % task_result_queue->runtime_param.logging_param.queue_size;
+	pthread_mutex_unlock(task_result_queue->lock);
+	return 1;
 }
 
 void free_task_result(task_result_t* task_result) {

@@ -1,36 +1,32 @@
 
 #include "mp_progress_disp.h"
 
+console_queue_t* init_console_queue() {
+    console_queue_t* console_queue = (console_queue_t*)malloc(sizeof(console_queue_t));
+    console_queue->queue_size = 100;
+    console_queue->message_queue = (console_message_t*)malloc(sizeof(console_message_t) * console_queue->queue_size);
+    if (console_queue->message_queue == NULL) EXIT_MEM_ERROR();
 
+    console_queue->message_list_size = 10;
 
-console_queue_t init_console_queue() {
-    console_queue_t console_queue;
-    console_queue.queue_size = 100;
-    console_queue.message_queue = (console_message_t*)malloc(sizeof(console_message_t) * console_queue.queue_size);
-    if (console_queue.message_queue == NULL) EXIT_MEM_ERROR();
+    console_queue->lock = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
+    if (console_queue->lock == NULL) EXIT_MEM_ERROR();
 
-    console_queue.message_list_size = 10;
+    pthread_mutex_init(console_queue->lock, NULL);
+    console_queue->current_message_id = 0;
+    console_queue->first_message_id = 0;
+    console_queue->next_message_id = 0;
 
-    console_queue.lock = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
-    if (console_queue.lock == NULL) EXIT_MEM_ERROR();
-
-    pthread_mutex_init(console_queue.lock, NULL);
-    console_queue.current_message_id = 0;
-    console_queue.first_message_id = 0;
-    console_queue.next_message_id = 0;
-
-    console_queue.progress.best_result = -INFINITY;
-    console_queue.progress.tasks_completed = 0;
-    console_queue.progress.optim_mode = 0;
-    console_queue.progress.average_result = 0;
-    console_queue.progress.result_standard_deviation = 0;
     return console_queue;
 }
 
 void free_console_queue(console_queue_t* console_queue) {
+    if (console_queue == NULL) return;
+
     pthread_mutex_destroy(console_queue->lock);
     free(console_queue->message_queue);
     free(console_queue->lock);
+    free(console_queue);
 }
 
 void add_to_console_queue(console_queue_t* console_queue, char* str, uint64_t len, int task_type) {
@@ -66,6 +62,9 @@ int get_from_console_queue(console_queue_t* console_queue, console_message_t* me
 }
 
 void con_printf(console_queue_t* console_queue, const char* format, ...) {
+    // If console queue is not allocated it does not exist -> logging disabled
+    if (console_queue == NULL) return;
+
     va_list args;
     char* formatted_str;
     int required_length;
@@ -90,6 +89,8 @@ void con_printf(console_queue_t* console_queue, const char* format, ...) {
 }
 
 void con_kill(console_queue_t* console_queue) {
+    if (console_queue == NULL) return;
+
     add_to_console_queue(console_queue, "", 0, 255);
 
     pthread_join(console_queue->thread_id, NULL);

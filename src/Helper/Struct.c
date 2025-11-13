@@ -26,6 +26,7 @@ logging_param_t default_logging_param() {
 	logging_param.config_double_count = 2;
 	logging_param.queue_size = 128;
     logging_param.write_config = 0;
+    logging_param.console_enabled = 1;
 	return logging_param;
 }
 

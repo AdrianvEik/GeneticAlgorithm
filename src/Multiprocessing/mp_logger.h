@@ -4,6 +4,7 @@
 
 #include <stdio.h> 
 #include <stdlib.h>
+#include <math.h>
 #include <windows.h>
 #include <pthread.h>
 
@@ -13,7 +14,6 @@
 
 #include "mp_consts.h"
 #include "mp_progress_disp.h"
-
 
 //// Forward declare pthread_t and pthread_mutex_t, since they are pointers internally
 //typedef struct __pthread_mutex_t pthread_mutex_t;
@@ -36,6 +36,18 @@ struct task_result_s {
 
 typedef struct task_result_s task_result_t;
 
+struct progress_s {
+    double elapsed_time;
+    double best_result;
+    double average_result;
+    double result_standard_deviation;
+    int tasks_completed;
+    int max_tasks;
+    int optim_mode;
+};
+
+typedef struct progress_s progress_t;
+
 struct task_result_queue_s {
     task_result_t* result_list;
     pthread_t thread_id;
@@ -43,6 +55,7 @@ struct task_result_queue_s {
     FILE* fileptrcsv;
     runtime_param_t runtime_param;
     console_queue_t* console_queue; // TODO: check: shared in thread_param and here?
+    progress_t progress;
     int first_task_id;
     int next_task_id;
     int bin_single_entry_length;
@@ -58,7 +71,7 @@ void free_task_result_queue(task_result_queue_t* task_result_queue);
 void init_task_result(task_result_queue_t* task_result_queue, task_result_t* task_result, int entry_count);
 void add_result(task_result_queue_t* task_result_queue, task_result_t* result);
 void free_task_result(task_result_t* result);
-void get_result(task_result_queue_t* task_result_queue, task_result_t* result);
+int get_result(task_result_queue_t* task_result_queue, task_result_t* result);
 
 void stop_result_logger(task_result_queue_t* task_result_queue, int thread_count, double* best_res);
 
