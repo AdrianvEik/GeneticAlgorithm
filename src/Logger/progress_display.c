@@ -2,7 +2,9 @@
 #include "progress_display.h"
 
 // Function to display progress bar
-void display_progress(progress_t* ga_progress, int message_list_size) {
+void display_progress(progress_t* ga_progress, int message_list_size, int enabled) {
+    if (!enabled) return;
+
     static int initialized = 0;
     //static int saved_cursor = 0;
     int bar_width = 40; // Adjust as needed
@@ -55,7 +57,8 @@ void display_progress(progress_t* ga_progress, int message_list_size) {
 
 }
 
-void display_console_message(char* message, int position){
+void display_console_message(char* message, int position, int enabled){
+    if (!enabled) return;
     printf("\033[%d;1H%s", position + 9, message); // Update messages
     printf("\033[%d;1H\033[2K", position + 10); // clear line below
 

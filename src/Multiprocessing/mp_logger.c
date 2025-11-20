@@ -15,8 +15,10 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
 	task_result_queue->progress.optim_mode = 0;
 	task_result_queue->progress.average_result = 0;
 	task_result_queue->progress.result_standard_deviation = 0;
+	task_result_queue->progress.max_tasks = runtime_param.task_count;
 
     task_result_queue->console_queue = console_queue;
+
 
 	task_result_queue->first_task_id = 0;
 	task_result_queue->next_task_id = 0;
@@ -53,9 +55,9 @@ void stop_result_logger(task_result_queue_t* task_result_queue, int thread_count
 		add_result(task_result_queue, &result);
 	}
 
-    *best_res = task_result_queue->progress.best_result;
-
 	pthread_join(task_result_queue->thread_id, NULL);
+
+	*best_res = task_result_queue->progress.best_result;
 }
 
 

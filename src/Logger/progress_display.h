@@ -9,6 +9,6 @@
 #include "../Multiprocessing/mp_progress_disp.h"
 #include "../Multiprocessing/mp_logger.h"
 
-void display_progress(progress_t* ga_progress, int message_list_size);
-void display_console_message(char* message, int position);
+void display_progress(progress_t* ga_progress, int message_list_size, int enabled);
+void display_console_message(char* message, int position, int enabled);
 #endif // !_PROGRESS_DISPLAY_H_

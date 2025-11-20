@@ -100,6 +100,7 @@ struct logging_param_s {
     int export_interval; // DEFAULT = 0 (last only)
     int include_config; // DEFAULT = 0 
     int write_csv; // DEFAULT = 1 JSON dump
+    int write_bin; // DEFAULT = 0
     int config_int_count; // DEFAULT = 1
     int config_double_count; // DEFAULT = 2
     int queue_size; // DEFAULT = 128

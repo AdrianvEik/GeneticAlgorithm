@@ -87,11 +87,3 @@ void con_printf(console_queue_t* console_queue, const char* format, ...) {
     // Forward the formatted string to the buffer
     add_to_console_queue(console_queue, formatted_str, strlen(formatted_str), 0);
 }
-
-void con_kill(console_queue_t* console_queue) {
-    if (console_queue == NULL) return;
-
-    add_to_console_queue(console_queue, "", 0, 255);
-
-    pthread_join(console_queue->thread_id, NULL);
-}
