@@ -57,6 +57,7 @@ void process_fx(gene_pool_t* gene_pool, fx_param_t* fx_param, double* lower, dou
 		fx_param->fx_optim_mode = -1;
 		for (int i = 0; i < gene_pool->individuals; i++) {
 			gene_pool->pop_result_set[i] = fx_param->fx_optim_mode * Styblinski_Tang_fx(gene_pool->pop_param_double[i], gene_pool->genes);
+            //printf("fx res: Individual %d: Fitness = %f\n", i, gene_pool->pop_result_set[i]);
 		}
 	}
 	else if (fx_param->fx_method == fx_method_Wheelers_Ridge) {
@@ -65,7 +66,11 @@ void process_fx(gene_pool_t* gene_pool, fx_param_t* fx_param, double* lower, dou
 			gene_pool->pop_result_set[i] = fx_param->fx_optim_mode * wheelers_ridge_fx(gene_pool->pop_param_double[i], gene_pool->genes);
 		}
 	}
-    else if (fx_param->fx_function != NULL) {
+    else if (fx_param->fx_method == fx_method_pointer) {
+        if (fx_param->fx_function == NULL) {
+			EXIT_WITH_ERROR("Function pointer is NULL", 255);
+        }
+
 		void** param_ptr_array = NULL;
 
 		if (fx_param->fx_data_type == fx_data_type_double) {
@@ -90,4 +95,5 @@ void process_fx(gene_pool_t* gene_pool, fx_param_t* fx_param, double* lower, dou
 	else {
 		EXIT_WITH_ERROR("Unkown fitness function", 255);
 	}
+
 }

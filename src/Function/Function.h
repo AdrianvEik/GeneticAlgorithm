@@ -11,8 +11,7 @@
 
 #include "../Multiprocessing/mp_thread_locals.h"
 
-static const int fx_method_pointer_int = -2;
-static const int fx_method_pointer_double = -1;
+static const int fx_method_pointer = -1;
 static const int fx_method_Styblinski_Tang = 0;
 static const int fx_method_Wheelers_Ridge = 1;
 
