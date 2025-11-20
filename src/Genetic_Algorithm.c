@@ -146,8 +146,8 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
 	//task_result.task_id = task->task_id;
 	//task_result.iterations = iterations_required;
 	//task_result.result = best_res;
-
-    while (1) {
+    int done = 0;
+    while (!done) {
         while(get_result(task_result_queue, &task_result)) {
 			if (task_result.task_type == TERMINATE_THREAD) {
 				write_file_buffer(task_result_queue, &best_result);
@@ -156,9 +156,14 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
 				task_result_queue->progress.elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
 
 				// update the progress one last time
-				display_progress(&task_result_queue->progress, task_result_queue->console_queue->message_list_size);
+				display_progress(
+					&task_result_queue->progress,
+					task_result_queue->console_queue->message_list_size,
+					task_result_queue->runtime_param.logging_param.console_enabled
+				);
 				
 				free_task_result(&best_result);
+                done = 1;
 				break;
 			}
 
@@ -182,24 +187,30 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
 
 			free_task_result(&task_result);
 		}
-
+		
 		current = clock(); // Update every second
 		task_result_queue->progress.elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
 
 		while (get_from_console_queue(task_result_queue->console_queue, &print_str)) {
 			//printf("%s", print_str.str);
 
-			display_console_message(print_str.str, last_message);
+			display_console_message(
+				print_str.str,
+				last_message,
+				task_result_queue->runtime_param.logging_param.console_enabled
+			);
 			last_message = (last_message + 1) % task_result_queue->console_queue->message_list_size;
 
 		}
 
-		display_progress(&task_result_queue->progress, task_result_queue->console_queue->message_list_size);
-
+		display_progress(
+			&task_result_queue->progress,
+			task_result_queue->console_queue->message_list_size,
+			task_result_queue->runtime_param.logging_param.console_enabled
+		);
 		Sleep(500);
     }
 	free(log_file);
-
 }
 
 static void process_task_thread(thread_param_t* thread_param) {
@@ -279,7 +290,7 @@ static void start_threads(task_queue_t* task_queue, runtime_param_t runtime_para
 	}
 }
 
-double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
+double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param, progress_t* end_result) {
 	verify_input_parameters(config_ga, runtime_param);
     if (runtime_param.logging_param.write_config == 1) {
 		write_config(runtime_param, config_ga);
@@ -290,10 +301,9 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 	//int convergence_counter = 0;
 	console_queue_t* console_queue = NULL;
 
-	if (runtime_param.logging_param.console_enabled) {
-		console_queue = init_console_queue();
-		console_queue->message_count = runtime_param.zone_enable ? compute_task_count(&runtime_param) : runtime_param.task_count;
-	}
+	console_queue = init_console_queue();
+	console_queue->message_count = runtime_param.zone_enable ? compute_task_count(&runtime_param) : runtime_param.task_count;
+	
 
 	task_result_queue_t task_result_queue;
 	init_task_result_queue(&task_result_queue, runtime_param, console_queue);
@@ -307,12 +317,17 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param) {
 	make_task_list(&runtime_param, config_ga, &task_queue);
 
 	stop_solver_threads(&task_queue, runtime_param.thread_count);
+
     stop_result_logger(&task_result_queue, runtime_param.thread_count, &best_res);
-    con_kill(console_queue);
+
+	if (end_result != NULL){
+		memcpy_s(end_result, sizeof(progress_t), &task_result_queue.progress, sizeof(progress_t));
+	}
 
 	close_file(&task_result_queue);
 	free_task_queue(&task_queue);
 	free_console_queue(console_queue);
+
     return best_res;
 }
 
@@ -322,20 +337,74 @@ static void free_config_ga(config_ga_t* config_ga) {
     free(config_ga->population_param.upper);
 }
 
+inline uint16_t scaler(uint16_t min, uint16_t max, uint16_t param){
+    return min + param / (UINT16_MAX / (max - min));
+}
+
+double optimize_fx_ga(int* paramset, int n_params) {
+	runtime_param_t runtime_param = default_runtime_param();
+	runtime_param.zone_enable = 0;
+	runtime_param.task_count = 1;
+	runtime_param.individuals = 32;
+	runtime_param.genes = 8;
+	runtime_param.thread_count = 1;
+
+
+	runtime_param.logging_param.include_config = 0;
+	//runtime_param.logging_param.write_config = 1; // JSON dump
+	runtime_param.logging_param.write_csv = 0;
+	runtime_param.logging_param.write_bin = 0;
+	runtime_param.logging_param.export_interval = 10;
+	runtime_param.logging_param.top_n_export = 1;
+	runtime_param.logging_param.console_enabled = 0;
+
+
+	config_ga_t config_ga = default_config(runtime_param);
+	config_ga.selection_param.selection_method = selection_method_roulette;
+	config_ga.population_param.reseed_bottom_N = 1;
+	config_ga.crossover_param.crossover_method = crossover_method_two_point;
+
+	uint16_t* paramset_u16 = (uint16_t*)paramset;
+	// int 100 < x < 10000
+    config_ga.optimizer_param.convergence_window = scaler(100, 10000, paramset_u16[0]);
+    // int 10 < x < 1000
+    config_ga.optimizer_param.convergence_moving_window_size = scaler(10, 1000, paramset_u16[1]);
+    // int 1000 < x < 50000
+    config_ga.optimizer_param.max_iterations = scaler(100, 1000, paramset_u16[2]);
+    // int 10 < x < 1000
+    config_ga.optimizer_param.max_mutations = scaler(10, 1000, paramset_u16[3]);
+    // int 1 < x < 100
+    config_ga.optimizer_param.min_mutations = scaler(1, 100, paramset_u16[4]);
+    // double 0.0 < x < 1.0
+    config_ga.mutation_param.mutation_slope = (double)paramset_u16[5] / (double) UINT16_MAX;
+
+	config_ga.fx_param.fx_method = fx_method_Styblinski_Tang;
+
+	for (int i = 0; i < n_params; i++) {
+		config_ga.population_param.lower[i] = -5.0;
+		config_ga.population_param.upper[i] = 5.0;
+	}
+
+	double result = Genetic_Algorithm(config_ga, runtime_param, NULL);
+	free_config_ga(&config_ga);
+    return result;
+}
+
 int main() {
 	int repeats = 1;
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 0;
 	runtime_param.task_count = 1;
-	runtime_param.individuals = 256;
-	runtime_param.genes = 32;
-	runtime_param.thread_count = 8;
+	runtime_param.individuals = 4;
+	runtime_param.genes = 3;
+	runtime_param.thread_count = 1;
 
 
 	runtime_param.logging_param.include_config = 1;
     //runtime_param.logging_param.write_config = 1; // JSON dump
     runtime_param.logging_param.write_csv = 1;
-    runtime_param.logging_param.export_interval = 10;
+    runtime_param.logging_param.write_bin = 0;
+    runtime_param.logging_param.export_interval = 1;
 	runtime_param.logging_param.top_n_export = 1;
 	runtime_param.logging_param.console_enabled = 1;
 
@@ -346,15 +415,18 @@ int main() {
     config_ga.crossover_param.crossover_method = crossover_method_two_point;
 
 	config_ga.optimizer_param.convergence_window = 1000;
-	config_ga.optimizer_param.convergence_moving_window_size = 100;
-	config_ga.optimizer_param.max_iterations = 10000;
-	config_ga.optimizer_param.max_mutations = 300;
+	config_ga.optimizer_param.convergence_moving_window_size = 3;
+	config_ga.optimizer_param.max_iterations = 10;
+	config_ga.optimizer_param.max_mutations = 10;
     config_ga.optimizer_param.min_mutations = 1;
 	config_ga.mutation_param.mutation_slope = 1.0;
+
+    config_ga.fx_param.fx_method = fx_method_pointer;
+    config_ga.fx_param.fx_function = &optimize_fx_ga;
+	config_ga.fx_param.fx_data_type = fx_data_type_int;
+
     //config_ga.mutation_param.mutation_alpha = 10;
     //config_ga.mutation_param.mutation_beta = 0.1;
-
-
 
 	for (int i = 0; i < repeats; i++) {
 		//printf("\n Run number: %d\n", i);
@@ -364,7 +436,7 @@ int main() {
 		//printf("%d\n", strlen(runtime_param.fully_qualified_basename));
 		//Genetic_Algorithm(config_ga, runtime_param);
 
-        Genetic_Algorithm(config_ga, runtime_param);
+        Genetic_Algorithm(config_ga, runtime_param, NULL);
 	}
     free_config_ga(&config_ga);
 
