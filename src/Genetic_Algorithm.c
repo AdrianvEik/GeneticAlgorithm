@@ -341,7 +341,7 @@ inline uint16_t scaler(uint16_t min, uint16_t max, uint16_t param){
     return min + param / (UINT16_MAX / (max - min));
 }
 
-double optimize_fx_ga(int* paramset, int n_params) {
+double optimize_fx_ga(void* paramset, int n_params) {
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 0;
 	runtime_param.task_count = 1;
