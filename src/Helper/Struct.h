@@ -7,7 +7,6 @@
 #include <string.h>
 
 
-
 struct gene_pool_s {
 	char* gene_pool_memory_ptr;
 	unsigned int** pop_param_bin;
@@ -27,6 +26,10 @@ struct gene_pool_s {
     int individual_mem_size; // bytes
 };
 
+
+static const int pop_uniform = 0;
+static const int pop_normal = 1;
+
 struct population_param_s {
 	int sampling_type; // DEFAULT =0
 	int sigma; // DEFAULT = 1
@@ -34,6 +37,12 @@ struct population_param_s {
 	double* upper; // DEFAULT = 0
     int reseed_bottom_N; // DEFAULT = 2
 };
+
+static const int selection_method_roulette = 0;
+static const int selection_method_rank_tournament = 1;
+static const int selection_method_rank = 2;
+static const int selection_method_rank_space = 3;
+static const int selection_method_boltzmann = 4;
 
 struct selection_param_s {
 	int selection_method; // DEFAULT = 0
@@ -44,11 +53,24 @@ struct selection_param_s {
     int selection_rank_distr; // DEFAULT = 0
 };
 
+static const int flatten_method_linear = 0;
+static const int flatten_method_exponential = 1;
+static const int flatten_method_logarithmic = 2;
+static const int flatten_method_normalized = 3;
+static const int flatten_method_sigmoid = 4;
+static const int flatten_method_none = 5;
+
 struct flatten_param_s {
 	int flatten_method; // DEFAULT = 5
 	double flatten_alpha; // DEFAULT = 1 (> 0)
 	double flatten_beta; // DEFAULT = 0
 };
+
+static const int crossover_method_single_point = 0;
+static const int crossover_method_two_point = 1;
+static const int crossover_method_uniform = 2;
+static const int crossover_method_complete = 3;
+
 
 struct crossover_param_s {
 	int crossover_method; // DEFAULT = 0
@@ -64,6 +86,13 @@ struct mutation_param_s {
     //double mutation_alpha; // DEFAULT = 1
     //double mutation_beta; // DEFAULT = 0
 };
+
+static const int fx_method_pointer = -1;
+static const int fx_method_Styblinski_Tang = 0;
+static const int fx_method_Wheelers_Ridge = 1;
+
+static const int fx_data_type_double = 1;
+static const int fx_data_type_int = 2;
 
 typedef double (*fx_ptr_generic)(void*, int);
 

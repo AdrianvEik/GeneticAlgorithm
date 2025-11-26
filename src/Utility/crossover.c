@@ -317,7 +317,7 @@ static void crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, ui
 		complete_crossover(parent1, parent2, child1, child2, genes);
     }
 	else {
-		printf("Invalid crossover method\n");
+        EXIT_WITH_ERROR("Invalid crossover method\n", 1);
 	}
 
 }

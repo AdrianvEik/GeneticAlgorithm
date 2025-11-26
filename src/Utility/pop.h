@@ -15,8 +15,7 @@
 #include "../Helper/Struct.h"
 #include "../Helper/rng.h"
 
-#define pop_uniform 0
-#define pop_normal 1
+
 //#define pop_cauchy 2
 
 void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param);

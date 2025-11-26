@@ -20,6 +20,8 @@ struct task_param_s {
 	int task_id;
 	double* lower;
 	double* upper;
+	int* zone_mask;
+	int* zone_id;
 	//double* paramset;
 	config_ga_t config_ga;
 };

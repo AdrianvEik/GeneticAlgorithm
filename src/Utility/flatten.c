@@ -138,19 +138,6 @@ void process_flatten(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 	:param pop: matrix of fitness values or
 
 	*/
-	// // copy the 
-
-	// if(gene_pool->fx_param->fx_optim_mode == 0){
-	//         for(int i = 0; i< gene_pool->individuals; i++){
-	//                 pop_result_set[i] = -pop_result_set[i];
-	//         }
-
-	// }
-	// else{
-	//         printf("Error: mode is not 0 or 1\n");
-	//         exit(1);
-	// }
-
 
 	if (flatten_param->flatten_method == flatten_method_linear) {
 		lin_flattening(gene_pool, flatten_param);
@@ -171,7 +158,7 @@ void process_flatten(gene_pool_t* gene_pool, flatten_param_t* flatten_param) {
 		no_flattening(gene_pool, flatten_param);
 	}
 	else {
-		printf("Error: flatten_method is not 0, 1, 2, 3, 4 or 5\n");
+        EXIT_WITH_ERROR("Error: flatten_method is not 0, 1, 2, 3, 4 or 5\n", 0x1);
 	}
 
 }

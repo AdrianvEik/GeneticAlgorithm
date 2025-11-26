@@ -20,13 +20,13 @@ void display_progress(progress_t* ga_progress, int message_list_size, int enable
         // Initialize display layout
         //printf("\033[2J");            // Clear the screen
         printf("\033[H");             // Move cursor to the top-left corner
-        printf("|<%.*s>|\n", bar_width, "........................................");
-        printf("| Current best:                            |\n");
-        printf("| Average best:                            |\n");
-        printf("| Time:                                    |\n");
-        printf("| Progress:                                |\n");
-        printf("| Time per task:                           |\n");
-        printf("|------------------------------------------|\n");
+        printf("\033[1;1H|<%.*s>|\n", bar_width, "........................................");
+        printf("\033[2;1H| Current best:                            |\n");
+        printf("\033[3;1H| Average best:                            |\n");
+        printf("\033[4;1H| Time:                                    |\n");
+        printf("\033[5;1H| Progress:                                |\n");
+        printf("\033[6;1H| Time per task:                           |\n");
+        printf("\033[7;1H|------------------------------------------|\n");
         for (int i = 0; i < message_list_size +2; ++i) {
             printf("\n");
         }

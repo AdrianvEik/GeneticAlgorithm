@@ -33,9 +33,12 @@ void free_task_queue(task_queue_t* task_queue) {
 
 void init_task(runtime_param_t runtime_param, config_ga_t config_ga, task_param_t* task) {
     task->task_type = GA_TASK;
-    task->lower = (double*)malloc(sizeof(double) * runtime_param.genes);
-    task->upper = (double*)malloc(sizeof(double) * runtime_param.genes);
+    task->lower = malloc(sizeof(double) * runtime_param.genes);
+    task->upper = malloc(sizeof(double) * runtime_param.genes);
     if (task->lower == NULL || task->upper == NULL) EXIT_MEM_ERROR();
+    task->zone_mask = malloc(runtime_param.genes * sizeof(int));
+    task->zone_id = malloc(runtime_param.genes * sizeof(int));
+    if (task->zone_mask == NULL || task->zone_id == NULL) EXIT_MEM_ERROR();
 
     task->config_ga = config_ga;
 }
@@ -75,6 +78,8 @@ void get_task(task_queue_t* task_queue, task_param_t* task) {
 void free_task(task_param_t* task) {
     free(task->lower);
     free(task->upper);
+    free(task->zone_mask);
+    free(task->zone_id);   
 }
 
 void stop_solver_threads(task_queue_t* task_queue, int thread_count) {

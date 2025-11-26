@@ -126,5 +126,6 @@ void verify_input_parameters(config_ga_t config_ga, runtime_param_t runtime_para
 	if (runtime_param.elitism > runtime_param.individuals) EXIT_WITH_ERROR("Elitism cannot be greater than the number of individuals creation", 250);
 	if (runtime_param.individuals < 3) EXIT_WITH_ERROR("The number of individuals must be greater than three", 250);
 	if (runtime_param.genes < 1) EXIT_WITH_ERROR("The number of genes must be greater than zero", 250);
+	if (config_ga.fx_param.fx_data_type != fx_data_type_int && config_ga.fx_param.fx_data_type != fx_data_type_double) EXIT_WITH_ERROR("fx data type needs to be either int or double", 250);
 }
 

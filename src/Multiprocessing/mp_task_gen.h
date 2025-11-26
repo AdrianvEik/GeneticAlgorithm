@@ -8,6 +8,7 @@
 #include "mp_solver_th.h"
 #include "../Helper/Struct.h"
 #include "../Helper/error_handling.h"
+#include "../Function/Function.h"
 
 
 //// Forward declarations of structs from other headers

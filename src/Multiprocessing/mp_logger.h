@@ -54,6 +54,7 @@ struct task_result_queue_s {
     FILE* fileptr;
     FILE* fileptrcsv;
     runtime_param_t runtime_param;
+    fx_param_t fx_param;
     console_queue_t* console_queue; // TODO: check: shared in thread_param and here?
     progress_t progress;
     int first_task_id;
@@ -65,7 +66,7 @@ struct task_result_queue_s {
 
 typedef struct task_result_queue_s task_result_queue_t;
 
-void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_param_t runtime_param, console_queue_t* console_queue);
+void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_param_t runtime_param, console_queue_t* console_queue, fx_param_t fx_param);
 void free_task_result_queue(task_result_queue_t* task_result_queue);
 
 void init_task_result(task_result_queue_t* task_result_queue, task_result_t* task_result, int entry_count);

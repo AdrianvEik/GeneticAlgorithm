@@ -1079,7 +1079,7 @@ void process_pop(gene_pool_t* gene_pool, task_param_t* task) {
 	// TODO: check individual even nr 
 	// TODO: refractor individuals and genes to _count
 
-	process_fx(gene_pool, &(task->config_ga.fx_param), task->lower, task->upper); // pop, individuals, genes -> ?
+	process_fx(gene_pool, task); // pop, individuals, genes -> ?
 
 	// worst-best scaling according to fitness and fit function (lin, exp, log, sig, norm)
 	process_flatten(gene_pool, &(task->config_ga.flatten_param));

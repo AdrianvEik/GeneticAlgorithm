@@ -3,20 +3,13 @@
 
 static inline void copy_to_bin_buffer(task_result_t* task_result, void* data, int size) {
 	if (task_result->bin_single_entry_length < size + task_result->bin_position) {
-		printf("Buffer overflow\n");
+		//printf("Buffer overflow\n");
+        EXIT_WITH_ERROR("Binary buffer overflow", 1);
 	}
 	if (memcpy_s(task_result->bin_buffer + task_result->bin_position, size ,data, size)) EXIT_MEM_ERROR();
 	
 	task_result->bin_position += size;
 }
-
-//static inline void copy_to_csv_buffer(task_result_t* task_result, void* data, int size) {
-//	if (task_result->csv_single_entry_length < size + task_result->csv_position) {
-//		printf("Buffer overflow\n");
-//	}
-//	memcpy(task_result->csv_buffer + task_result->csv_position, data, size);
-//	task_result->bin_position += size;
-//}
 
 void copy_task_result(task_result_t* task_result, task_result_t* source) {
     if (memcpy_s(task_result->bin_buffer, source->bin_position, source->bin_buffer, source->bin_position)) EXIT_MEM_ERROR();
@@ -84,10 +77,14 @@ void open_file(task_result_queue_t* task_result_queue)
 		fprintf_s(task_result_queue->fileptrcsv, "iteration;task_id;individual_id;position;result;");
 		for (int i = 0; i < task_result_queue->runtime_param.genes; i++)
 		{
-			fprintf_s(task_result_queue->fileptrcsv, "lower%d;", i);
-			fprintf_s(task_result_queue->fileptrcsv, "upper%d;", i);
+			if (task_result_queue->fx_param.fx_data_type == fx_data_type_double) {
+				fprintf_s(task_result_queue->fileptrcsv, "lower%d;", i);
+				fprintf_s(task_result_queue->fileptrcsv, "upper%d;", i);
+			}
 			fprintf_s(task_result_queue->fileptrcsv, "gene%d;", i);
 		}
+		
+		
 		if (task_result_queue->runtime_param.logging_param.include_config == 1) {
 			for (int i = 0; i < task_result_queue->runtime_param.logging_param.config_int_count; i++)
 			{
@@ -161,14 +158,24 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 			);
 			for (int i = 0; i < thread_param->runtime_param.genes; i++)
 			{
-				task_result.csv_position += snprintf(
-					task_result.csv_buffer + task_result.csv_position,
-					(uint64_t)task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
-					"%e;%e;%e;",
-					task->lower[i],
-					task->upper[i],
-					gene_pool->pop_param_double[individual_id][i]
+				if (task->config_ga.fx_param.fx_data_type == fx_data_type_double) {
+					task_result.csv_position += snprintf(
+						task_result.csv_buffer + task_result.csv_position,
+						(uint64_t)task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
+						"%e;%e;%e;",
+						task->lower[i],
+						task->upper[i],
+						gene_pool->pop_param_double[individual_id][i]
 					);
+				}
+				else if (task->config_ga.fx_param.fx_data_type == fx_data_type_int) {
+					task_result.csv_position += snprintf(
+						task_result.csv_buffer + task_result.csv_position,
+						(uint64_t)task_queue->task_result_queue->csv_single_entry_length - task_result.csv_position,
+						"%u;",
+						gene_pool->pop_param_bin[individual_id][i]
+					);
+				}
 			}
 		}
 		if (thread_param->runtime_param.logging_param.include_config == 1) {

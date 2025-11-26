@@ -293,6 +293,6 @@ void process_selection(gene_pool_t* gene_pool, selection_param_t* selection_para
 		boltzmann_selection(gene_pool, selection_param);
 	}
 	else {
-		printf("Error: selection_method is not 0, 1, 2, 3 or 4\n");
+        EXIT_WITH_ERROR("Error: selection_method is not 0, 1, 2, 3 or 4\n", 0x1);
 	}
 }

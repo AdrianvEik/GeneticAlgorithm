@@ -38,8 +38,6 @@
 #include <pthread.h>
 
 static void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t* gene_pool) {
-	//printf("Thread %d, Task %d\n", thread_param->thread_id, thread_param->task_id);
-
 	fill_pop(gene_pool, task->config_ga.population_param);
 
     adaptive_memory_t adaptive_memory;
@@ -71,43 +69,6 @@ static void process_task(thread_param_t* thread_param, task_param_t* task, gene_
 
 	thread_param->status = 2; // Completed
 }
-//
-//static void process_progress_display_thread(console_queue_t* console_queue) {
-//	clock_t start, current;
-//	start = clock();
-//
-//    console_message_t print_str;
-//
-//	printf("\n\n\n\n\n\n"); // set the cursor below the progress, TODO: make nice 
-//
-//    int last_message = 0;
-//
-//    while (1) {
-//        current = clock(); // Update every second
-//		console_queue->task_result_queue->progress.elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
-//
-//		while (get_from_console_queue(console_queue, &print_str)) {
-//			if (print_str.task_type == 255) {
-//				current = clock(); // Update every second
-//				console_queue->task_result_queue->progress.elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
-//
-//                // update the progress one last time
-//				display_progress(console_queue);
-//				return;
-//			}
-//			//printf("%s", print_str.str);
-//
-//            display_console_message(print_str.str, last_message);
-//            last_message = (last_message + 1) % console_queue->message_list_size;
-//
-//		}
-//
-//		display_progress(console_queue);
-//
-//		Sleep(500);
-//	}
-//}
-
 
 static void process_log_thread(task_result_queue_t* task_result_queue) {
 	task_result_t task_result;
@@ -140,7 +101,7 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
 
 	console_message_t print_str;
 
-	printf("\n\n\n\n\n\n"); // set the cursor below the progress, TODO: make nice 
+	//printf("\n\n\n\n\n\n"); // set the cursor below the progress, TODO: make nice 
 
 	int last_message = 0;
 	//task_result.task_id = task->task_id;
@@ -192,7 +153,6 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
 		task_result_queue->progress.elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
 
 		while (get_from_console_queue(task_result_queue->console_queue, &print_str)) {
-			//printf("%s", print_str.str);
 
 			display_console_message(
 				print_str.str,
@@ -217,8 +177,6 @@ static void process_task_thread(thread_param_t* thread_param) {
 	seed_rand_threadlocal(0); // todo fix thread local storage
 
 	gene_pool_t gene_pool;
-	//printf("cfgbin2int, %f", thread_param->config_ga.fx_param.lower[0]);
-	//printf("cfgtoursize, %d", thread_param->config_ga.selection_param.selection_tournament_size);
 
 	init_gene_pool(&gene_pool, &(thread_param->runtime_param));
     init_pre_compute(&gene_pool);
@@ -306,7 +264,7 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param, p
 	
 
 	task_result_queue_t task_result_queue;
-	init_task_result_queue(&task_result_queue, runtime_param, console_queue);
+	init_task_result_queue(&task_result_queue, runtime_param, console_queue, config_ga.fx_param);
 
 	task_queue_t task_queue;
 	init_task_queue(&task_queue, runtime_param.thread_count * 4, &task_result_queue, runtime_param.thread_count);
@@ -346,7 +304,7 @@ double optimize_fx_ga(int* paramset, int n_params) {
 	runtime_param.zone_enable = 0;
 	runtime_param.task_count = 1;
 	runtime_param.individuals = 32;
-	runtime_param.genes = 8;
+	runtime_param.genes = 32;
 	runtime_param.thread_count = 1;
 
 
@@ -370,7 +328,7 @@ double optimize_fx_ga(int* paramset, int n_params) {
     // int 10 < x < 1000
     config_ga.optimizer_param.convergence_moving_window_size = scaler(10, 1000, paramset_u16[1]);
     // int 1000 < x < 50000
-    config_ga.optimizer_param.max_iterations = scaler(100, 1000, paramset_u16[2]);
+    config_ga.optimizer_param.max_iterations = scaler(1000, 10000, paramset_u16[2]);
     // int 10 < x < 1000
     config_ga.optimizer_param.max_mutations = scaler(10, 1000, paramset_u16[3]);
     // int 1 < x < 100
@@ -393,11 +351,11 @@ double optimize_fx_ga(int* paramset, int n_params) {
 int main() {
 	int repeats = 1;
 	runtime_param_t runtime_param = default_runtime_param();
-	runtime_param.zone_enable = 0;
-	runtime_param.task_count = 1;
+	runtime_param.zone_enable = 1;
+	runtime_param.task_count = 8;
 	runtime_param.individuals = 4;
 	runtime_param.genes = 3;
-	runtime_param.thread_count = 1;
+	runtime_param.thread_count = 8;
 
 
 	runtime_param.logging_param.include_config = 1;
@@ -429,13 +387,6 @@ int main() {
     //config_ga.mutation_param.mutation_beta = 0.1;
 
 	for (int i = 0; i < repeats; i++) {
-		//printf("\n Run number: %d\n", i);
-
-		//strcpy_s(runtime_param.fully_qualified_basename, 255, "C:/temp/GA\0");
-		//printf("%s\n", runtime_param.fully_qualified_basename);
-		//printf("%d\n", strlen(runtime_param.fully_qualified_basename));
-		//Genetic_Algorithm(config_ga, runtime_param);
-
         Genetic_Algorithm(config_ga, runtime_param, NULL);
 	}
     free_config_ga(&config_ga);

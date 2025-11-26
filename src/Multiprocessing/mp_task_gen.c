@@ -28,7 +28,8 @@ int compute_task_count(runtime_param_t* runtime_param) {
 }
 
 //void generate_task(task_param_t* task_list, int* task_id, runtime_param_t runtime_param, config_ga_t config_ga, int current_gene, int* tasks_per_gene, int* position) {
-void generate_task_per_gene(task_queue_t* task_queue, runtime_param_t runtime_param, config_ga_t config_ga, int current_gene, int* tasks_per_gene, int* position) {
+void generate_task_per_gene(task_queue_t* task_queue, runtime_param_t runtime_param, config_ga_t config_ga, uint32_t current_gene, uint32_t* tasks_per_gene, int* position) {
+	uint32_t bit_position = 0;
 
 	for (int i = 0; i < tasks_per_gene[current_gene]; i++) {
 		position[current_gene] = i;
@@ -39,15 +40,23 @@ void generate_task_per_gene(task_queue_t* task_queue, runtime_param_t runtime_pa
 		else {
 			task_param_t task;
 			init_task(runtime_param, config_ga, &task);
-			for (int j = 0; j < runtime_param.genes; j++) {
-				task.lower[j] = config_ga.population_param.lower[j] + (config_ga.population_param.upper[j] - config_ga.population_param.lower[j]) / tasks_per_gene[j] * (position[j]);
-				task.upper[j] = config_ga.population_param.upper[j] - (config_ga.population_param.upper[j] - config_ga.population_param.lower[j]) / tasks_per_gene[j] * (tasks_per_gene[j] - position[j] - 1);
+			if (config_ga.fx_param.fx_data_type == fx_data_type_int) {
+				for (int j = 0; j < runtime_param.genes; j++) {
+                    // mask over the last N-bits where N corresponds to the tasks per gene
+					_BitScanReverse(&bit_position, tasks_per_gene[j]);
+					task.zone_id[j] = position[j] << (32 - bit_position);
+					task.zone_mask[j] = UINT32_MAX >> bit_position;
+				}
 			}
-
+			else {
+				for (int j = 0; j < runtime_param.genes; j++) {
+					task.lower[j] = config_ga.population_param.lower[j] + (config_ga.population_param.upper[j] - config_ga.population_param.lower[j]) / tasks_per_gene[j] * (position[j]);
+					task.upper[j] = config_ga.population_param.upper[j] - (config_ga.population_param.upper[j] - config_ga.population_param.lower[j]) / tasks_per_gene[j] * (tasks_per_gene[j] - position[j] - 1);
+				}
+			}
 			add_task(task_queue, &task);
 		}
 	}
-
 }
 
 void make_task_list(runtime_param_t* runtime_param, config_ga_t config_ga, task_queue_t* task_queue) {
@@ -58,13 +67,17 @@ void make_task_list(runtime_param_t* runtime_param, config_ga_t config_ga, task_
 		int remaining_tasks = task_count;
 
 		//int generated_task_count = 1;
-		int minimum_tasks_per_gene = 2;
+		uint32_t minimum_tasks_per_gene = 2;
 
-		int* tasks_per_gene = (int*)malloc(sizeof(int) * runtime_param->genes);
+		uint32_t* tasks_per_gene = (int*)malloc(sizeof(int) * runtime_param->genes);
 		if (tasks_per_gene == NULL) EXIT_MEM_ERROR();
 
 		int* position = (int*)malloc(sizeof(int) * runtime_param->genes);
 		if (position == NULL) EXIT_MEM_ERROR();
+
+		if (config_ga.fx_param.fx_data_type == fx_data_type_int) {
+			minimum_tasks_per_gene = 1 << ((uint32_t)ceilf(log2f((float)minimum_tasks_per_gene)) - 1);
+        }
 
 		for (int i = 0; i < runtime_param->genes; i++) {
 			if (remaining_tasks == 1) {
@@ -75,15 +88,21 @@ void make_task_list(runtime_param_t* runtime_param, config_ga_t config_ga, task_
 					tasks_per_gene[i] = minimum_tasks_per_gene;
 				}
 				else {
-					tasks_per_gene[i] = (int)nearbyint(pow(remaining_tasks, 1.0 / (runtime_param->genes - i)));
-
+					if (config_ga.fx_param.fx_data_type == fx_data_type_int) {
+						//float result = (((log2f(powf((float)remaining_tasks, 1.0f / (float)(runtime_param->genes - i))))));
+						//printf("%f, %u", result, ((uint32_t)ceilf(log2f(powf((float)remaining_tasks, 1.0f / (float)(runtime_param->genes - i))))));
+						tasks_per_gene[i] = (1u << ((uint32_t)ceilf(log2f(powf((float)remaining_tasks, 1.0f / (float)(runtime_param->genes - i))))));
+					}
+					else {
+						tasks_per_gene[i] = (uint32_t)nearbyint(pow(remaining_tasks, 1.0f / (runtime_param->genes - i)));
+					}
 				}
 			}
 			remaining_tasks /= tasks_per_gene[i];
 			//generated_task_count *= tasks_per_gene[i];
 		}
 
-		generate_task_per_gene(task_queue, *runtime_param, config_ga, 0, tasks_per_gene, position);
+		generate_task_per_gene(task_queue, *runtime_param, config_ga, 0u, tasks_per_gene, position);
 
 		free(position);
 		free(tasks_per_gene);
@@ -99,5 +118,4 @@ void make_task_list(runtime_param_t* runtime_param, config_ga_t config_ga, task_
             add_task(task_queue, &task);
         }
     }
-
 }

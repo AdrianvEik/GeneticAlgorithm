@@ -2,7 +2,7 @@
 #include "mp_logger.h"
 
 
-void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_param_t runtime_param, console_queue_t* console_queue) {
+void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_param_t runtime_param, console_queue_t* console_queue, fx_param_t fx_param) {
 	task_result_queue->result_list = (task_result_t*)malloc(sizeof(task_result_t) * runtime_param.logging_param.queue_size);
 	if (task_result_queue->result_list == NULL) EXIT_MEM_ERROR();
 
@@ -17,8 +17,9 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
 	task_result_queue->progress.result_standard_deviation = 0;
 	task_result_queue->progress.max_tasks = runtime_param.task_count;
 
-    task_result_queue->console_queue = console_queue;
+	task_result_queue->fx_param = fx_param;
 
+    task_result_queue->console_queue = console_queue;
 
 	task_result_queue->first_task_id = 0;
 	task_result_queue->next_task_id = 0;
