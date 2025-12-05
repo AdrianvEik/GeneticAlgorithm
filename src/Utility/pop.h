@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <math.h>
 #include <immintrin.h>
+#include <float.h>
 
 #include "../Helper/error_handling.h"
 #include "../Helper/compile_flags.h"

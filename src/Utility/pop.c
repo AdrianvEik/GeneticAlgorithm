@@ -268,13 +268,17 @@ inline void fill_individual_uniform(gene_pool_t* gene_pool, int individual) {
 #endif
 }
 
-void fill_pop(gene_pool_t* gene_pool, population_param_t pop_param) {
+void fill_pop(gene_pool_t* gene_pool, population_param_t pop_param, fx_param_t fx_param) {
 	if (pop_param.sampling_type == pop_uniform)
 		for (int i = 0; i < gene_pool->individuals; i++) {
 			fill_individual_uniform(gene_pool, i);
 		}
 	else if (pop_param.sampling_type == pop_normal) {
 		populate_normal_box_muller(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes);
+	}
+
+	for (int i = 0; i < gene_pool->individuals; i++) {
+        gene_pool->pop_result_set[i] =  fx_param.fx_optim_mode == fx_optim_mode_minimize ? DBL_MAX : -DBL_MAX;
 	}
 	//else if (pop_param.sampling_type == pop_cauchy) {
 	//	populate_cauchy(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes, pop_param);
