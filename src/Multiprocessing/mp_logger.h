@@ -30,8 +30,8 @@ struct task_result_s {
     unsigned char* bin_buffer;
     int bin_position;
     double result;
-    int bin_single_entry_length; // DEBUG
-    int csv_single_entry_length;
+    int bin_buffer_length; // DEBUG
+    int csv_buffer_length;
 };
 
 typedef struct task_result_s task_result_t;
