@@ -46,14 +46,14 @@ void process_fx(gene_pool_t* gene_pool, task_param_t* task) {
 
 	// convert the gene pool bin to double
 	if (task->config_ga.fx_param.fx_data_type == fx_data_type_double) {
-		for (int i = 0; i < gene_pool->individuals; i++) {
+		for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
 			for (int j = 0; j < gene_pool->genes; j++) {
 				gene_pool->pop_param_double[i][j] = (double)(gene_pool->pop_param_bin[i][j] * (task->upper[j] - task->lower[j])) / UINT32_MAX + task->lower[j];
 			}
 		}
 	}
 	else if (task->config_ga.fx_param.fx_data_type == fx_data_type_int) {
-		for (int i = 0; i < gene_pool->individuals; i++) {
+		for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
 			for (int j = 0; j < gene_pool->genes; j++) {
 				gene_pool->pop_param_bin[i][j] = (gene_pool->pop_param_bin[i][j] & task->zone_mask[j]) | task->zone_id[j];
 			}
@@ -62,13 +62,13 @@ void process_fx(gene_pool_t* gene_pool, task_param_t* task) {
 
 	if (task->config_ga.fx_param.fx_method == fx_method_Styblinski_Tang) {
 		task->config_ga.fx_param.fx_optim_mode = -1;
-		for (int i = 0; i < gene_pool->individuals; i++) {
+		for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
 			gene_pool->pop_result_set[i] = task->config_ga.fx_param.fx_optim_mode * Styblinski_Tang_fx(gene_pool->pop_param_double[i], gene_pool->genes);
 		}
 	}
 	else if (task->config_ga.fx_param.fx_method == fx_method_Wheelers_Ridge) {
 		task->config_ga.fx_param.fx_optim_mode = -1;
-		for (int i = 0; i < gene_pool->individuals; i++) {
+		for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
 			gene_pool->pop_result_set[i] = task->config_ga.fx_param.fx_optim_mode * wheelers_ridge_fx(gene_pool->pop_param_double[i], gene_pool->genes);
 		}
 	}
@@ -93,7 +93,7 @@ void process_fx(gene_pool_t* gene_pool, task_param_t* task) {
 			EXIT_WITH_ERROR("Param ptr is NULL", 255);
 		}
 
-		for (int i = 0; i < gene_pool->individuals; i++) {
+		for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
 			gene_pool->pop_result_set[i] = task->config_ga.fx_param.fx_optim_mode *
 				task->config_ga.fx_param.fx_function(param_ptr_array[i], gene_pool->genes);
 		}
