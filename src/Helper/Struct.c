@@ -22,8 +22,8 @@ logging_param_t default_logging_param() {
 	logging_param.export_interval = 0;
 	logging_param.include_config = 0;
 	logging_param.write_csv = 1;
-	logging_param.config_int_count = 1;
-	logging_param.config_double_count = 2;
+	logging_param.config_int_count = 0;
+	logging_param.config_double_count = 3;
 	logging_param.queue_size = 128;
     logging_param.write_config = 0;
     logging_param.console_enabled = 1;

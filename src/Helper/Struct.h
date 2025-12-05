@@ -94,11 +94,14 @@ static const int fx_method_Wheelers_Ridge = 1;
 static const int fx_data_type_double = 1;
 static const int fx_data_type_int = 2;
 
+static const int fx_optim_mode_minimize = -1;
+static const int fx_optim_mode_maximize = 1;
+
 typedef double (*fx_ptr_generic)(void*, int);
 
 struct fx_param_s {
 	int fx_method; // DEFAULT = 0
-	int fx_optim_mode; // DEFAULT = 0
+	int fx_optim_mode; // DEFAULT = 1
     int fx_data_type; // DEFAULT = 0
 	fx_ptr_generic fx_function;
 };
