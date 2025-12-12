@@ -38,7 +38,7 @@
 #include <pthread.h>
 
 static void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t* gene_pool) {
-	fill_pop(gene_pool, task->config_ga.population_param);
+	fill_pop(gene_pool, task->config_ga.population_param, task->config_ga.fx_param);
 
     adaptive_memory_t adaptive_memory;
     new_adaptive_memory(&adaptive_memory);
@@ -46,7 +46,7 @@ static void process_task(thread_param_t* thread_param, task_param_t* task, gene_
 	while (1) {
 
 		// Process Population
-		process_pop(gene_pool, task);
+		process_pop(gene_pool, task, thread_param->fx_task_queue);
 
 		adapt_param(task, gene_pool, &adaptive_memory);
 
@@ -195,56 +195,43 @@ static void process_task_thread(thread_param_t* thread_param) {
 	return;
 }
 
-static void start_threads(task_queue_t* task_queue, runtime_param_t runtime_param, config_ga_t config_ga, thread_param_t* thread_param) {
-	const int parallel = 1;
-
-
-	if (parallel == 0) {
-		//init_thread_rng(1);
-
-		//thread_param_t thread_param;
-		//thread_param.task_queue = task_queue;
-		//thread_param.runtime_param = runtime_param;
-		//thread_param.config_ga = config_ga;
-
-		//seed_rand_threadlocal(0, NULL);
-
-		//double best_result = 0.0f;
-		//process_thread(&thread_param);
-
-	}
-	else {
-		int NTHREADS = runtime_param.thread_count;
-
-		int i;
-
-		thread_param = (thread_param_t *) malloc(sizeof(thread_param_t) * NTHREADS);
-
-		if (thread_param == NULL) EXIT_MEM_ERROR();
-
-		int retid = 0;
-		retid = pthread_create(&(task_queue->task_result_queue->thread_id), NULL, (void*)process_log_thread, (void*)task_queue->task_result_queue);
-
-        if (retid) EXIT_WITH_ERROR("Thread creation", 1);
-
-		//if (task_queue->console_queue) {
-		//	int retid_console = pthread_create(&(task_queue->console_queue->thread_id), NULL, (void*)process_progress_display_thread, (void*)task_queue->console_queue);
-		//	if (retid_console) EXIT_WITH_ERROR("Thread creation", 1);
-		//}
-
-		for (i = 0; i < NTHREADS; i++)
-		{
-            thread_param[i].task_queue = malloc(sizeof(task_queue_t));
-            if (thread_param[i].task_queue == NULL) EXIT_MEM_ERROR();
-
-			thread_param[i].task_queue = task_queue;
-			thread_param[i].runtime_param = runtime_param;
-			
-			//thread_param[i].task_id = i;
-			retid = pthread_create(&(task_queue->thread_id[i]), NULL, (void *) process_task_thread, (void *) & thread_param[i]);
-
-			if(retid) EXIT_WITH_ERROR("Thread creation", 1);
+static void process_fx_task_thread(fx_task_queue_t* fx_task_queue) {
+	fx_task_param_t fx_task;
+	while (1) {
+		get_fx_task(fx_task_queue, &fx_task);
+		if (fx_task.task_type == TERMINATE_THREAD) {
+			break;
 		}
+
+		process_fx_set(fx_task.gene_pool, fx_task.task_param, fx_task.individual_min, fx_task.individual_max);
+	}
+}
+
+static void start_threads(task_queue_t* task_queue, fx_task_queue_t* fx_task_queue, runtime_param_t runtime_param, config_ga_t config_ga, thread_param_t* thread_param) {
+
+	thread_param = (thread_param_t *) malloc(sizeof(thread_param_t) * runtime_param.thread_count_solver);
+
+	if (thread_param == NULL) EXIT_MEM_ERROR();
+
+	int retid = 0;
+	retid = pthread_create(&(task_queue->task_result_queue->thread_id), NULL, (void*)process_log_thread, (void*)task_queue->task_result_queue);
+    if (retid) EXIT_WITH_ERROR("Thread creation", 1);
+
+	for (int i = 0; i < runtime_param.thread_count_fx; i++) {
+		retid = pthread_create(&(fx_task_queue->thread_id[i]), NULL, (void*)process_fx_task_thread, (void*)fx_task_queue);
+		if (retid) EXIT_WITH_ERROR("Thread creation", 1);
+	}
+
+	for (int i = 0; i < runtime_param.thread_count_solver; i++)
+	{
+		thread_param[i].task_queue = task_queue;
+		thread_param[i].runtime_param = runtime_param;
+		thread_param[i].fx_task_queue = fx_task_queue;
+			
+		//thread_param[i].task_id = i;
+		retid = pthread_create(&(task_queue->thread_id[i]), NULL, (void *) process_task_thread, (void *) & thread_param[i]);
+
+		if(retid) EXIT_WITH_ERROR("Thread creation", 1);
 	}
 }
 
@@ -260,23 +247,29 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param, p
 	console_queue_t* console_queue = NULL;
 
 	console_queue = init_console_queue();
-	console_queue->message_count = runtime_param.zone_enable ? compute_task_count(&runtime_param) : runtime_param.task_count;
+	console_queue->message_count = runtime_param.zone_enable ? compute_task_count(&runtime_param) : runtime_param.task_count_solver;
 	
 
 	task_result_queue_t task_result_queue;
 	init_task_result_queue(&task_result_queue, runtime_param, console_queue, config_ga.fx_param);
 
 	task_queue_t task_queue;
-	init_task_queue(&task_queue, runtime_param.thread_count * 4, &task_result_queue, runtime_param.thread_count);
+	init_task_queue(&task_queue, runtime_param.thread_count_solver * 4, &task_result_queue, runtime_param.thread_count_solver);
+	
+	fx_task_queue_t fx_task_queue;
+	init_fx_task_queue(&fx_task_queue, runtime_param.thread_count_fx * 4, runtime_param.thread_count_fx, runtime_param.task_size_fx);
+	
 	thread_param_t thread_param;
 
-	start_threads(&task_queue, runtime_param, config_ga, &thread_param);
+	start_threads(&task_queue, &fx_task_queue, runtime_param, config_ga, &thread_param);
 
 	make_task_list(&runtime_param, config_ga, &task_queue);
 
-	stop_solver_threads(&task_queue, runtime_param.thread_count);
+	stop_task_solver_threads(&task_queue, runtime_param.thread_count_solver);
 
-    stop_result_logger(&task_result_queue, runtime_param.thread_count, &best_res);
+	stop_fx_task_threads(&fx_task_queue, runtime_param.thread_count_fx);
+
+    stop_result_logger(&task_result_queue, runtime_param.thread_count_solver, &best_res);
 
 	if (end_result != NULL){
 		memcpy_s(end_result, sizeof(progress_t), &task_result_queue.progress, sizeof(progress_t));
@@ -284,6 +277,7 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param, p
 
 	close_file(&task_result_queue);
 	free_task_queue(&task_queue);
+	free_fx_task_queue(&fx_task_queue);
 	free_console_queue(console_queue);
 
     return best_res;
@@ -302,12 +296,13 @@ inline uint16_t scaler(uint16_t min, uint16_t max, uint16_t param){
 double optimize_fx_ga(int* paramset, int n_params) {
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 0;
-	runtime_param.task_count = 1;
+	runtime_param.task_count_solver = 1;
 	runtime_param.individuals = 32;
 	runtime_param.genes = 32;
-	runtime_param.thread_count = 1;
+	runtime_param.thread_count_solver = 1;
 	runtime_param.elitism = 3;
-
+	runtime_param.thread_count_fx = 1;
+	runtime_param.task_size_fx = 0;
 
 	runtime_param.logging_param.include_config = 0;
 	//runtime_param.logging_param.write_config = 1; // JSON dump
@@ -324,14 +319,14 @@ double optimize_fx_ga(int* paramset, int n_params) {
 	config_ga.crossover_param.crossover_method = crossover_method_two_point;
 
 	uint16_t* paramset_u16 = (uint16_t*)paramset;
-	// int 100 < x < 10000
-    config_ga.optimizer_param.convergence_window = scaler(100, 10000, paramset_u16[0]);
-    // int 10 < x < 1000
-    config_ga.optimizer_param.convergence_moving_window_size = scaler(10, 1000, paramset_u16[1]);
     // int 1000 < x < 50000
-    config_ga.optimizer_param.max_iterations = scaler(1000, 10000, paramset_u16[2]);
-    // int 10 < x < 1000
-    config_ga.optimizer_param.max_mutations = scaler(10, 1000, paramset_u16[3]);
+    config_ga.optimizer_param.max_iterations = scaler(1000, 10000, paramset_u16[0]);
+	// int 100 < x < 10000
+	config_ga.optimizer_param.convergence_window = scaler(100, config_ga.optimizer_param.max_iterations, paramset_u16[1]);
+	// int 10 < x < 1000
+	config_ga.optimizer_param.convergence_moving_window_size = scaler(10, config_ga.optimizer_param.convergence_window, paramset_u16[2]);
+	// int 10 < x < 1000
+	config_ga.optimizer_param.max_mutations = scaler(10, 1000, paramset_u16[3]);
     // int 1 < x < 100
     config_ga.optimizer_param.min_mutations = scaler(1, 100, paramset_u16[4]);
     // double 0.0 < x < 1.0
@@ -353,11 +348,11 @@ int main() {
 	int repeats = 1;
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 1;
-	runtime_param.task_count = 8;
-	runtime_param.individuals = 8;
+	runtime_param.task_count_solver = 1;
+	runtime_param.individuals = 32;
 	runtime_param.genes = 3;
-	runtime_param.thread_count = 8;
-	runtime_param.elitism = 1;
+	runtime_param.thread_count_solver = 1;
+	runtime_param.elitism = 3;
 
 
 	runtime_param.logging_param.include_config = 1;
@@ -365,8 +360,10 @@ int main() {
     runtime_param.logging_param.write_csv = 1;
     runtime_param.logging_param.write_bin = 0;
     runtime_param.logging_param.export_interval = 1;
-	runtime_param.logging_param.top_n_export = 8;
+	runtime_param.logging_param.top_n_export = 32;
 	runtime_param.logging_param.console_enabled = 1;
+	runtime_param.task_size_fx = 1;
+	runtime_param.thread_count_fx = 16;
 
 	
 	config_ga_t config_ga = default_config(runtime_param);
@@ -376,7 +373,7 @@ int main() {
 
 	config_ga.optimizer_param.convergence_window = 1000;
 	config_ga.optimizer_param.convergence_moving_window_size = 3;
-	config_ga.optimizer_param.max_iterations = 10;
+	config_ga.optimizer_param.max_iterations = 20;
 	config_ga.optimizer_param.max_mutations = 10;
     config_ga.optimizer_param.min_mutations = 1;
 	config_ga.mutation_param.mutation_slope = 1.0;

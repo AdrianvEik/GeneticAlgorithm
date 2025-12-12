@@ -15,7 +15,7 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
 	task_result_queue->progress.optim_mode = 0;
 	task_result_queue->progress.average_result = 0;
 	task_result_queue->progress.result_standard_deviation = 0;
-	task_result_queue->progress.max_tasks = runtime_param.task_count;
+	task_result_queue->progress.max_tasks = runtime_param.task_count_solver;
 
 	task_result_queue->fx_param = fx_param;
 

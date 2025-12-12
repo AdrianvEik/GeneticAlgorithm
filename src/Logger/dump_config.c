@@ -25,8 +25,8 @@ void write_config(
 
     // Write runtime parameters
     fprintf_s(fileptrconfig, "\"runtime_param\": {\n");
-    fprintf_s(fileptrconfig, "    \"task_count\": %d,\n", runtime_param.task_count);
-    fprintf_s(fileptrconfig, "    \"thread_count\": %d,\n", runtime_param.thread_count);
+    fprintf_s(fileptrconfig, "    \"task_count\": %d,\n", runtime_param.task_count_solver);
+    fprintf_s(fileptrconfig, "    \"thread_count\": %d,\n", runtime_param.thread_count_solver);
     fprintf_s(fileptrconfig, "    \"zone_enable\": %d\n", runtime_param.zone_enable);
     fprintf_s(fileptrconfig, "},\n");
 

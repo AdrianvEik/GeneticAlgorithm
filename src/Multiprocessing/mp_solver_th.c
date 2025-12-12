@@ -41,6 +41,7 @@ void init_task(runtime_param_t runtime_param, config_ga_t config_ga, task_param_
     if (task->zone_mask == NULL || task->zone_id == NULL) EXIT_MEM_ERROR();
 
     task->config_ga = config_ga;
+
 }
 
 void add_task(task_queue_t* task_queue, task_param_t* task) {
@@ -82,11 +83,79 @@ void free_task(task_param_t* task) {
     free(task->zone_id);   
 }
 
-void stop_solver_threads(task_queue_t* task_queue, int thread_count) {
+void stop_task_solver_threads(task_queue_t* task_queue, int thread_count) {
     for (int i = 0; i < thread_count; i++) {
         task_param_t task;
         task.task_type = TERMINATE_THREAD;
         add_task(task_queue, &task);
+    }
+    for (int j = 0; j < thread_count; j++) {
+        pthread_join(task_queue->thread_id[j], NULL);
+    }
+}
+
+void init_fx_task_queue(fx_task_queue_t* fx_task_queue, int queue_size, int thread_count, int task_size_fx) {
+    fx_task_param_t* fx_task_list = (fx_task_param_t*)malloc(sizeof(fx_task_param_t) * queue_size);
+    if (fx_task_list == NULL) EXIT_MEM_ERROR();
+
+    pthread_t* thread_id;
+    thread_id = (pthread_t*)malloc(sizeof(pthread_t) * thread_count);
+    if (thread_id == NULL) EXIT_MEM_ERROR();
+
+    fx_task_queue->lock = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t));
+    if (fx_task_queue->lock == NULL) EXIT_MEM_ERROR();
+
+    fx_task_queue->thread_id = thread_id;
+    fx_task_queue->fx_task_list = fx_task_list;
+    fx_task_queue->queue_size = queue_size;
+    fx_task_queue->first_task_id = 0;
+    fx_task_queue->next_task_id = 0;
+    fx_task_queue->task_size_fx = task_size_fx;
+    pthread_mutex_init(fx_task_queue->lock, NULL);
+}
+
+void free_fx_task_queue(fx_task_queue_t* fx_task_queue) {
+    pthread_mutex_destroy(fx_task_queue->lock);
+    free(fx_task_queue->fx_task_list);
+
+    free(fx_task_queue->thread_id);
+}
+
+void add_fx_task(fx_task_queue_t* fx_task_queue, fx_task_param_t fx_task) {
+    while (1) {
+        pthread_mutex_lock(fx_task_queue->lock);
+        if (fx_task_queue->first_task_id == (fx_task_queue->next_task_id + 1) % fx_task_queue->queue_size) {
+            pthread_mutex_unlock(fx_task_queue->lock);
+            Sleep(1000);
+            continue;
+        }
+        fx_task_queue->fx_task_list[fx_task_queue->next_task_id] = fx_task;
+        fx_task_queue->next_task_id = (fx_task_queue->next_task_id + 1) % fx_task_queue->queue_size;
+        pthread_mutex_unlock(fx_task_queue->lock);
+        break;
+    }
+}
+
+void get_fx_task(fx_task_queue_t* fx_task_queue, fx_task_param_t* fx_task) {
+    while (1) {
+        pthread_mutex_lock(fx_task_queue->lock);
+        if (fx_task_queue->first_task_id == fx_task_queue->next_task_id) {
+            pthread_mutex_unlock(fx_task_queue->lock);
+            Sleep(1000);
+            continue;
+        }
+        *fx_task = fx_task_queue->fx_task_list[fx_task_queue->first_task_id];
+        fx_task_queue->first_task_id = (fx_task_queue->first_task_id + 1) % fx_task_queue->queue_size;
+        pthread_mutex_unlock(fx_task_queue->lock);
+        break;
+    }
+}
+
+void stop_fx_task_threads(fx_task_queue_t* task_queue, int thread_count) {
+    for (int i = 0; i < thread_count; i++) {
+        fx_task_param_t task;
+        task.task_type = TERMINATE_THREAD;
+        add_fx_task(task_queue, task);
     }
     for (int j = 0; j < thread_count; j++) {
         pthread_join(task_queue->thread_id[j], NULL);

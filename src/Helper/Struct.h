@@ -18,6 +18,7 @@ struct gene_pool_s {
 	int* selected_indexes;
 	int* sorted_indexes;
     int* sorted_indexes_temp;
+	int* fx_ready;
 	int genes;
 	int individuals;
 	int elitism;
@@ -144,8 +145,10 @@ struct runtime_param_s {
 	int genes; // DEFAULT = 2
 	int individuals; // DEFAULT = 32
 	int elitism; // DEFAULT = 2
-	int task_count; // DEFAULT = 32
-	int thread_count; // DEFAULT = 4
+	int task_count_solver; // DEFAULT = 32
+	int thread_count_solver; // DEFAULT = 4
+	int task_size_fx; // DEFAULT = 32
+    int thread_count_fx; // DEFAULT = 4
     int zone_enable; // DEFAULT = 1
     int gene_mem_size; // DEFAULT = 32
     struct logging_param_s logging_param;

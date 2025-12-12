@@ -6,7 +6,7 @@
 int compute_task_count(runtime_param_t* runtime_param) {
     int generated_task_count = 1;
     int tasks_per_gene = 1;
-    int remaining_tasks = runtime_param->task_count;
+    int remaining_tasks = runtime_param->task_count_solver;
 
     for (int i = 0; i < runtime_param->genes; i++) {
 		if (remaining_tasks == 1) {
@@ -61,7 +61,7 @@ void generate_task_per_gene(task_queue_t* task_queue, runtime_param_t runtime_pa
 
 void make_task_list(runtime_param_t* runtime_param, config_ga_t config_ga, task_queue_t* task_queue) {
 	//int task_id = 0;
-	int task_count = runtime_param->task_count; // power of 2
+	int task_count = runtime_param->task_count_solver; // power of 2
 
 	if (runtime_param->zone_enable) {
 		int remaining_tasks = task_count;

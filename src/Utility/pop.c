@@ -177,6 +177,7 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
     total_memsize += gene_pool->individuals * sizeof(int); // selected_indexes
     total_memsize += gene_pool->individuals * sizeof(int); // sorted_indexes
 	total_memsize += gene_pool->individuals * sizeof(int); // sorted_indexes_temp
+	total_memsize += gene_pool->individuals * sizeof(int); // fx_ready
 
 
 #if defined __AVX512VL__
@@ -221,6 +222,9 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
 
     gene_pool->sorted_indexes_temp = (int*)current_mem_ptr;
     current_mem_ptr += gene_pool->individuals * sizeof(int);
+
+	gene_pool->fx_ready = (int*)current_mem_ptr;
+	current_mem_ptr += gene_pool->individuals * sizeof(int);
 
 	uint64_t alligned_mem_ptr = (uint64_t)gene_pool->gene_pool_memory_ptr;
     // pointers to data
@@ -279,6 +283,7 @@ void fill_pop(gene_pool_t* gene_pool, population_param_t pop_param, fx_param_t f
 
 	for (int i = 0; i < gene_pool->individuals; i++) {
         gene_pool->pop_result_set[i] =  fx_param.fx_optim_mode == fx_optim_mode_minimize ? DBL_MAX : -DBL_MAX;
+        gene_pool->sorted_indexes[i] = i;
 	}
 	//else if (pop_param.sampling_type == pop_cauchy) {
 	//	populate_cauchy(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes, pop_param);
