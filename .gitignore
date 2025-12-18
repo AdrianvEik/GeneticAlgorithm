@@ -27,6 +27,9 @@ bld/
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
+Genetic Algrotihm.vcxproj
+Genetic Algrotihm.vcxproj.filters
+Genetic Algrotihm.vcxproj.user
 .idea
 
 # python
