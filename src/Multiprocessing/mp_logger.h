@@ -24,14 +24,14 @@
 //typedef struct console_queue_t; // From "mp_progress_disp.h"
 
 struct task_result_s {
-    int task_type; // 0: log, 1: best result, 255: kill
     char* csv_buffer;
-    int csv_position;
     unsigned char* bin_buffer;
-    int bin_position;
     double result;
-    int bin_buffer_length; // DEBUG
-    int csv_buffer_length;
+    uint32_t bin_position;
+    uint32_t csv_position;
+    uint32_t bin_buffer_length; // DEBUG
+    uint32_t csv_buffer_length;
+    int task_type; // 0: log, 1: best result, 255: kill
 };
 
 typedef struct task_result_s task_result_t;
@@ -41,8 +41,8 @@ struct progress_s {
     double best_result;
     double average_result;
     double result_standard_deviation;
-    int tasks_completed;
-    int max_tasks;
+    uint32_t tasks_completed;
+    uint32_t max_tasks;
     int optim_mode;
 };
 
@@ -57,10 +57,10 @@ struct task_result_queue_s {
     fx_param_t fx_param;
     console_queue_t* console_queue; // TODO: check: shared in thread_param and here?
     progress_t progress;
-    int first_task_id;
-    int next_task_id;
-    int bin_single_entry_length;
-    int csv_single_entry_length;
+    uint32_t first_task_id;
+    uint32_t next_task_id;
+    uint32_t bin_single_entry_length;
+    uint32_t csv_single_entry_length;
     pthread_mutex_t* lock;
 };
 
@@ -69,12 +69,12 @@ typedef struct task_result_queue_s task_result_queue_t;
 void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_param_t runtime_param, console_queue_t* console_queue, fx_param_t fx_param);
 void free_task_result_queue(task_result_queue_t* task_result_queue);
 
-void init_task_result(task_result_queue_t* task_result_queue, task_result_t* task_result, int entry_count);
+void init_task_result(task_result_queue_t* task_result_queue, task_result_t* task_result, uint32_t entry_count);
 void add_result(task_result_queue_t* task_result_queue, task_result_t* result);
 void free_task_result(task_result_t* result);
 int get_result(task_result_queue_t* task_result_queue, task_result_t* result);
 
-void stop_result_logger(task_result_queue_t* task_result_queue, int thread_count, double* best_res);
+void stop_result_logger(task_result_queue_t* task_result_queue, uint32_t thread_count, double* best_res);
 
 
 #endif // MP_LOGGER_H

@@ -9,22 +9,22 @@
 
 struct gene_pool_s {
 	char* gene_pool_memory_ptr;
-	unsigned int** pop_param_bin;
-	unsigned int** pop_param_bin_cross_buffer;
+	uint32_t** pop_param_bin;
+	uint32_t** pop_param_bin_cross_buffer;
 	double** pop_param_double;
 	double* pop_result_set;
 	double* flatten_result_set;
 	double* selection_temp;
-	int* selected_indexes;
-	int* sorted_indexes;
-    int* sorted_indexes_temp;
-	int* fx_ready;
-	int genes;
-	int individuals;
-	int elitism;
-	int iteration_number;
-	int gene_mem_size; // bits
-    int individual_mem_size; // bytes
+	uint32_t* selected_indexes;
+	uint32_t* sorted_indexes;
+    uint32_t* sorted_indexes_temp;
+	uint32_t* fx_ready;
+	uint32_t genes;
+	uint32_t individuals;
+	uint32_t elitism;
+	uint32_t iteration_number;
+	uint32_t gene_mem_size; // bits
+    uint32_t individual_mem_size; // bytes
 };
 
 
@@ -32,11 +32,11 @@ static const int pop_uniform = 0;
 static const int pop_normal = 1;
 
 struct population_param_s {
-	int sampling_type; // DEFAULT =0
-	int sigma; // DEFAULT = 1
+	uint32_t sampling_type; // DEFAULT =0
+	uint32_t sigma; // DEFAULT = 1
 	double* lower; // DEFAULT = 5
 	double* upper; // DEFAULT = 0
-    int reseed_bottom_N; // DEFAULT = 2
+	uint32_t reseed_bottom_N; // DEFAULT = 2
 };
 
 static const int selection_method_roulette = 0;
@@ -50,8 +50,8 @@ struct selection_param_s {
 	double selection_div_param; // DEFAULT = 0.5
 	double selection_prob_param; // DEFAULT = 0.5
 	double selection_temp_param; // DEFAULT = 10
-	int selection_tournament_size; // DEFAULT = 2
-    int selection_rank_distr; // DEFAULT = 0
+	uint32_t selection_tournament_size; // DEFAULT = 2
+    uint32_t selection_rank_distr; // DEFAULT = 0
 };
 
 static const int flatten_method_linear = 0;
@@ -98,7 +98,7 @@ static const int fx_data_type_int = 2;
 static const int fx_optim_mode_minimize = -1;
 static const int fx_optim_mode_maximize = 1;
 
-typedef double (*fx_ptr_generic)(void*, int);
+typedef double (*fx_ptr_generic)(void*, uint32_t);
 
 struct fx_param_s {
 	int fx_method; // DEFAULT = 0
@@ -108,13 +108,13 @@ struct fx_param_s {
 };
 
 struct optimizer_param_s {
-	int convergence_moving_window_size; // DEFAULT = 10
 	double min_mutations; // DEFAULT = 1
 	double max_mutations; // DEFAULT = 10
 	double mutation_factor; // DEFAULT = 0.1
-	int max_iterations; // DEFAULT = 1000
 	double convergence_threshold; // DEFAULT = 1e-8
-	int convergence_window; // DEFAULT = 100
+	uint32_t convergence_moving_window_size; // DEFAULT = 10
+	uint32_t max_iterations; // DEFAULT = 1000
+	uint32_t convergence_window; // DEFAULT = 100
 };
 
 struct config_ga_s {
@@ -129,28 +129,29 @@ struct config_ga_s {
 
 struct logging_param_s {
 	char* fully_qualified_basename;
-    int top_n_export; // DEFAULT = 1
-    int export_interval; // DEFAULT = 0 (last only)
+    uint32_t top_n_export; // DEFAULT = 1
+    uint32_t export_interval; // DEFAULT = 0 (last only)
     int include_config; // DEFAULT = 0 
     int write_csv; // DEFAULT = 1 JSON dump
     int write_bin; // DEFAULT = 0
-    int config_int_count; // DEFAULT = 1
-    int config_double_count; // DEFAULT = 2
-    int queue_size; // DEFAULT = 128
+    uint32_t config_int_count; // DEFAULT = 1
+    uint32_t config_double_count; // DEFAULT = 2
+    uint32_t queue_size; // DEFAULT = 128
     int write_config; // DEFAULT = 0
     int console_enabled; // DEFAULT = 1
 };
 
 struct runtime_param_s {
-	int genes; // DEFAULT = 2
-	int individuals; // DEFAULT = 32
-	int elitism; // DEFAULT = 2
-	int task_count_solver; // DEFAULT = 32
-	int thread_count_solver; // DEFAULT = 4
-	int task_size_fx; // DEFAULT = 32
-    int thread_count_fx; // DEFAULT = 4
+	uint32_t genes; // DEFAULT = 2
+	uint32_t individuals; // DEFAULT = 32
+	uint32_t elitism; // DEFAULT = 2
+	uint32_t task_count_solver; // DEFAULT = 32
+	uint32_t thread_count_solver; // DEFAULT = 4
+	uint32_t task_size_fx; // DEFAULT = 32
+    uint32_t thread_count_fx; // DEFAULT = 4
     int zone_enable; // DEFAULT = 1
-    int gene_mem_size; // DEFAULT = 32
+    uint32_t gene_mem_size; // DEFAULT = 32
+    uint32_t random_seed; // DEFAULT = 0
     struct logging_param_s logging_param;
 };	
 

@@ -47,7 +47,7 @@ void open_file(task_result_queue_t* task_result_queue)
 	strcat_s(filename_bin, fully_qualified_basename_size+4, ".bin");
 
 	if (task_result_queue->runtime_param.logging_param.write_bin == 1) {
-		if (fopen_s(&(task_result_queue->fileptr), filename_bin, "wb")) {
+		if (fopen_s(&(task_result_queue->fileptr), filename_bin, "wb+")) {
 			free(filename_csv);
             free(filename_bin);
             EXIT_WITH_ERROR("Cannot open file!", 1);
@@ -55,7 +55,7 @@ void open_file(task_result_queue_t* task_result_queue)
     }
 
 	if (task_result_queue->runtime_param.logging_param.write_csv == 1) {
-		if (fopen_s(&(task_result_queue->fileptrcsv), filename_csv, "w")) {
+		if (fopen_s(&(task_result_queue->fileptrcsv), filename_csv, "w+")) {
 			free(filename_csv);
 			free(filename_bin);
 			EXIT_WITH_ERROR("Cannot open file!", 1);
@@ -75,7 +75,7 @@ void open_file(task_result_queue_t* task_result_queue)
 		//	double* config_double;
 		//};
 		fprintf_s(task_result_queue->fileptrcsv, "iteration;task_id;individual_id;position;result;");
-		for (int i = 0; i < task_result_queue->runtime_param.genes; i++)
+		for (uint32_t i = 0; i < task_result_queue->runtime_param.genes; i++)
 		{
 			if (task_result_queue->fx_param.fx_data_type == fx_data_type_double) {
 				fprintf_s(task_result_queue->fileptrcsv, "lower%d;", i);
@@ -86,11 +86,11 @@ void open_file(task_result_queue_t* task_result_queue)
 		
 		
 		if (task_result_queue->runtime_param.logging_param.include_config == 1) {
-			for (int i = 0; i < task_result_queue->runtime_param.logging_param.config_int_count; i++)
+			for (uint32_t i = 0; i < task_result_queue->runtime_param.logging_param.config_int_count; i++)
 			{
 				fprintf_s(task_result_queue->fileptrcsv, "config_int%d;", i);
 			}
-			for (int i = 0; i < task_result_queue->runtime_param.logging_param.config_double_count; i++)
+			for (uint32_t i = 0; i < task_result_queue->runtime_param.logging_param.config_double_count; i++)
 			{
 				fprintf_s(task_result_queue->fileptrcsv, "config_double%d;", i);
 			}
@@ -116,7 +116,7 @@ void close_file(task_result_queue_t* task_result_queue)
 
 void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t* adaptive_memory, thread_param_t* thread_param, gene_pool_t* gene_pool, int best_result) {
 	task_result_t task_result = {0};
-	int log_top_n;
+	uint32_t log_top_n;
 
 	if (best_result == 1) {
 		task_result.task_type = BEST_RESULT_TASK;
@@ -131,7 +131,7 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 	init_task_result(task_queue->task_result_queue, &task_result, log_top_n);
 
 
-	for (int position = 0; position < log_top_n; position++) {
+	for (uint32_t position = 0; position < log_top_n; position++) {
 
         // invert the index to get best individuals (highest idx) first and lowest last
 		int individual_id = gene_pool->sorted_indexes[gene_pool->individuals - position - 1];
@@ -157,7 +157,7 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
                 position, // position
                 result 
 			);
-			for (int i = 0; i < thread_param->runtime_param.genes; i++)
+			for (uint32_t i = 0; i < thread_param->runtime_param.genes; i++)
 			{
 				if (task->config_ga.fx_param.fx_data_type == fx_data_type_double) {
 					task_result.csv_position += snprintf(

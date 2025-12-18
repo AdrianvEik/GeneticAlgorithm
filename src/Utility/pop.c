@@ -3,7 +3,7 @@
 
 #define PI   3.14159265358979323846264338327950288419716939937510f
 
-static void populate_uniform(int genes, int* result) {
+static void populate_uniform(uint32_t genes, uint32_t* result) {
 
 	/*
 	Fill a vector with uniformly distributed random bits.
@@ -18,7 +18,7 @@ static void populate_uniform(int genes, int* result) {
 
 	*/
 
-	for (int j = 0; j < genes; j++) {
+	for (uint32_t j = 0; j < genes; j++) {
 		result[j] = gen_mt_rand();
 	}
 
@@ -37,7 +37,7 @@ static inline uint32_t double2int(double val, double lower, double upper) {
 	return (uint32_t)(((val - lower) / (upper - lower)) * UINT32_MAX);
 }
 
-static void populate_normal_box_muller(int** result, int individuals, int genes) {
+static void populate_normal_box_muller(uint32_t** result, uint32_t individuals, uint32_t genes) {
 	/*
 	Fill a matrix with bits according to a normal distribution.
 	using the following probability density function:
@@ -69,8 +69,8 @@ static void populate_normal_box_muller(int** result, int individuals, int genes)
 	double z1, z2;
 
 	// Error currently seems to be located in the latter half of the genes
-	for (int i = 0; i < individuals; i++) {
-		for (int j = 0; j < genes; j += 2) { 
+	for (uint32_t i = 0; i < individuals; i++) {
+		for (uint32_t j = 0; j < genes; j += 2) { 
             U1 = ((double) gen_mt_rand() / UINT32_MAX);
             U2 = ((double) gen_mt_rand() / UINT32_MAX);
 
@@ -136,8 +136,8 @@ static void populate_normal_box_muller(int** result, int individuals, int genes)
 //	double cauchydouble;
 //	double scaledcauchy;
 //
-//	for (int i = 0; i < individuals; i++) {
-//		for (int j = 0; j < genes; j++) {
+//	for (uint32_t i = 0; i < individuals; i++) {
+//		for (uint32_t j = 0; j < genes; j++) {
 //			scale = 1 / pop_param.sigma * (pop_param.upper[i] - pop_param.lower[i]) / 2;
 //			loc = (pop_param.upper[i] + pop_param.lower[i]) / 2;
 //			
@@ -169,15 +169,15 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
 
     // Calculate the total memory size needed
     total_memsize += gene_pool->individuals * sizeof(double); // flatten result set
-    total_memsize += gene_pool->individuals * sizeof(int*); // pop_param_bin
-    total_memsize += gene_pool->individuals * sizeof(int*); // pop_param_bin_cross_buffer
+    total_memsize += gene_pool->individuals * sizeof(uint32_t*); // pop_param_bin
+    total_memsize += gene_pool->individuals * sizeof(uint32_t*); // pop_param_bin_cross_buffer
 	total_memsize += gene_pool->individuals * sizeof(double*); // pop_param_double
     total_memsize += gene_pool->individuals * sizeof(double); // pop_result_set
     total_memsize += gene_pool->individuals * sizeof(double); // selection_temp
-    total_memsize += gene_pool->individuals * sizeof(int); // selected_indexes
-    total_memsize += gene_pool->individuals * sizeof(int); // sorted_indexes
-	total_memsize += gene_pool->individuals * sizeof(int); // sorted_indexes_temp
-	total_memsize += gene_pool->individuals * sizeof(int); // fx_ready
+    total_memsize += gene_pool->individuals * sizeof(uint32_t); // selected_indexes
+    total_memsize += gene_pool->individuals * sizeof(uint32_t); // sorted_indexes
+	total_memsize += gene_pool->individuals * sizeof(uint32_t); // sorted_indexes_temp
+	total_memsize += gene_pool->individuals * sizeof(uint32_t); // fx_ready
 
 
 #if defined __AVX512VL__
@@ -199,11 +199,11 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
     gene_pool->flatten_result_set = (double*) current_mem_ptr;
 	current_mem_ptr += gene_pool->individuals * sizeof(double);
 
-    gene_pool->pop_param_bin = (int**)current_mem_ptr ;
+    gene_pool->pop_param_bin = (uint32_t**)current_mem_ptr ;
     current_mem_ptr += gene_pool->individuals * sizeof(int*);
 
-    gene_pool->pop_param_bin_cross_buffer = (int**)current_mem_ptr;
-    current_mem_ptr += gene_pool->individuals * sizeof(int*);
+    gene_pool->pop_param_bin_cross_buffer = (uint32_t**)current_mem_ptr;
+    current_mem_ptr += gene_pool->individuals * sizeof(uint32_t*);
 
     gene_pool->pop_param_double = (double**)current_mem_ptr;
     current_mem_ptr += gene_pool->individuals * sizeof(double*);
@@ -214,25 +214,25 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
     gene_pool->selection_temp = (double*)current_mem_ptr;
     current_mem_ptr += gene_pool->individuals * sizeof(double);
 
-    gene_pool->selected_indexes = (int*)current_mem_ptr;
-    current_mem_ptr += gene_pool->individuals * sizeof(int);
+    gene_pool->selected_indexes = (uint32_t*)current_mem_ptr;
+    current_mem_ptr += gene_pool->individuals * sizeof(uint32_t);
 
-    gene_pool->sorted_indexes = (int*)current_mem_ptr;
-    current_mem_ptr += gene_pool->individuals * sizeof(int);
+    gene_pool->sorted_indexes = (uint32_t*)current_mem_ptr;
+    current_mem_ptr += gene_pool->individuals * sizeof(uint32_t);
 
-    gene_pool->sorted_indexes_temp = (int*)current_mem_ptr;
-    current_mem_ptr += gene_pool->individuals * sizeof(int);
+    gene_pool->sorted_indexes_temp = (uint32_t*)current_mem_ptr;
+    current_mem_ptr += gene_pool->individuals * sizeof(uint32_t);
 
-	gene_pool->fx_ready = (int*)current_mem_ptr;
-	current_mem_ptr += gene_pool->individuals * sizeof(int);
+	gene_pool->fx_ready = (uint32_t*)current_mem_ptr;
+	current_mem_ptr += gene_pool->individuals * sizeof(uint32_t);
 
 	uint64_t alligned_mem_ptr = (uint64_t)gene_pool->gene_pool_memory_ptr;
     // pointers to data
-    for (int i = 0; i < gene_pool->individuals; i++) {
-        gene_pool->pop_param_bin[i] = (int*)alligned_mem_ptr;
+    for (uint32_t i = 0; i < gene_pool->individuals; i++) {
+        gene_pool->pop_param_bin[i] = (uint32_t*)alligned_mem_ptr;
 		alligned_mem_ptr += gene_pool->individual_mem_size;
 
-        gene_pool->pop_param_bin_cross_buffer[i] = (int*)alligned_mem_ptr;
+        gene_pool->pop_param_bin_cross_buffer[i] = (uint32_t*)alligned_mem_ptr;
 		alligned_mem_ptr += gene_pool->individual_mem_size;
 
 		gene_pool->pop_param_double[i] = (double*)current_mem_ptr;
@@ -247,7 +247,7 @@ void free_gene_pool(gene_pool_t* gene_pool) {
 	_aligned_free(gene_pool->gene_pool_memory_ptr);
 }
 
-inline void fill_individual_uniform(gene_pool_t* gene_pool, int individual) {
+inline void fill_individual_uniform(gene_pool_t* gene_pool, uint32_t individual) {
 	//populate_uniform(gene_pool->genes, gene_pool->pop_param_bin[individual]);
 #ifdef __AVX512VL__
 	uint32_t memory_blocks = gene_pool->individual_mem_size / sizeof(__m512i);
@@ -274,14 +274,14 @@ inline void fill_individual_uniform(gene_pool_t* gene_pool, int individual) {
 
 void fill_pop(gene_pool_t* gene_pool, population_param_t pop_param, fx_param_t fx_param) {
 	if (pop_param.sampling_type == pop_uniform)
-		for (int i = 0; i < gene_pool->individuals; i++) {
+		for (uint32_t i = 0; i < gene_pool->individuals; i++) {
 			fill_individual_uniform(gene_pool, i);
 		}
 	else if (pop_param.sampling_type == pop_normal) {
 		populate_normal_box_muller(gene_pool->pop_param_bin, gene_pool->individuals, gene_pool->genes);
 	}
 
-	for (int i = 0; i < gene_pool->individuals; i++) {
+	for (uint32_t i = 0; i < gene_pool->individuals; i++) {
         gene_pool->pop_result_set[i] =  fx_param.fx_optim_mode == fx_optim_mode_minimize ? DBL_MAX : -DBL_MAX;
         gene_pool->sorted_indexes[i] = i;
 	}

@@ -42,8 +42,8 @@ void process_mutation(gene_pool_t* gene_pool, mutation_param_t* mutation_param) 
 	//uint32_t memblock_rng_bits_left = 32;
 	double mutation_factor = (2.0 / (double)memory_blocks) / (double)INT32_MAX;
 
-	for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
-		//for (int j = 0; j < mutation_param->mutation_rate[i]; j++) {
+	for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
+		//for (uint32_t j = 0; j < mutation_param->mutation_rate[i]; j++) {
 		//	mutation_per_memoryblock[gen_mt_rand() % memory_blocks]++;
 		//}
 		for (uint32_t memory_block = 0; memory_block < memory_blocks; memory_block++) {

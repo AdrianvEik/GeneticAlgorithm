@@ -174,7 +174,7 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
 }
 
 static void process_task_thread(thread_param_t* thread_param) {
-	seed_rand_threadlocal(0); // todo fix thread local storage
+	seed_rand_threadlocal(thread_param->runtime_param.random_seed); // todo fix thread local storage
 
 	gene_pool_t gene_pool;
 
@@ -217,12 +217,12 @@ static void start_threads(task_queue_t* task_queue, fx_task_queue_t* fx_task_que
 	retid = pthread_create(&(task_queue->task_result_queue->thread_id), NULL, (void*)process_log_thread, (void*)task_queue->task_result_queue);
     if (retid) EXIT_WITH_ERROR("Thread creation", 1);
 
-	for (int i = 0; i < runtime_param.thread_count_fx; i++) {
+	for (uint32_t i = 0; i < runtime_param.thread_count_fx; i++) {
 		retid = pthread_create(&(fx_task_queue->thread_id[i]), NULL, (void*)process_fx_task_thread, (void*)fx_task_queue);
 		if (retid) EXIT_WITH_ERROR("Thread creation", 1);
 	}
 
-	for (int i = 0; i < runtime_param.thread_count_solver; i++)
+	for (uint32_t i = 0; i < runtime_param.thread_count_solver; i++)
 	{
 		thread_param[i].task_queue = task_queue;
 		thread_param[i].runtime_param = runtime_param;
@@ -289,11 +289,11 @@ static void free_config_ga(config_ga_t* config_ga) {
     free(config_ga->population_param.upper);
 }
 
-inline uint16_t scaler(uint16_t min, uint16_t max, uint16_t param){
+static inline uint16_t scaler(uint16_t min, uint16_t max, uint16_t param){
     return min + param / (UINT16_MAX / (max - min));
 }
 
-double optimize_fx_ga(int* paramset, int n_params) {
+static double optimize_fx_ga(uint32_t* paramset, uint32_t n_params) {
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 0;
 	runtime_param.task_count_solver = 1;
@@ -303,6 +303,7 @@ double optimize_fx_ga(int* paramset, int n_params) {
 	runtime_param.elitism = 3;
 	runtime_param.thread_count_fx = 1;
 	runtime_param.task_size_fx = 0;
+	runtime_param.random_seed = 0xAbAe;
 
 	runtime_param.logging_param.include_config = 0;
 	//runtime_param.logging_param.write_config = 1; // JSON dump
@@ -334,7 +335,7 @@ double optimize_fx_ga(int* paramset, int n_params) {
 
 	config_ga.fx_param.fx_method = fx_method_Styblinski_Tang;
 
-	for (int i = 0; i < n_params; i++) {
+	for (uint32_t i = 0; i < n_params; i++) {
 		config_ga.population_param.lower[i] = -5.0;
 		config_ga.population_param.upper[i] = 5.0;
 	}
@@ -345,7 +346,7 @@ double optimize_fx_ga(int* paramset, int n_params) {
 }
 
 int main() {
-	int repeats = 1;
+	uint32_t repeats = 1;
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 1;
 	runtime_param.task_count_solver = 1;
@@ -363,7 +364,7 @@ int main() {
 	runtime_param.logging_param.top_n_export = 32;
 	runtime_param.logging_param.console_enabled = 1;
 	runtime_param.task_size_fx = 1;
-	runtime_param.thread_count_fx = 16;
+	runtime_param.thread_count_fx = 8;
 
 	
 	config_ga_t config_ga = default_config(runtime_param);
@@ -371,7 +372,7 @@ int main() {
 	config_ga.population_param.reseed_bottom_N = 0;
     config_ga.crossover_param.crossover_method = crossover_method_two_point;
 
-	config_ga.optimizer_param.convergence_window = 1000;
+	config_ga.optimizer_param.convergence_window = 5;
 	config_ga.optimizer_param.convergence_moving_window_size = 3;
 	config_ga.optimizer_param.max_iterations = 20;
 	config_ga.optimizer_param.max_mutations = 10;
@@ -386,7 +387,7 @@ int main() {
     //config_ga.mutation_param.mutation_alpha = 10;
     //config_ga.mutation_param.mutation_beta = 0.1;
 
-	for (int i = 0; i < repeats; i++) {
+	for (uint32_t i = 0; i < repeats; i++) {
         Genetic_Algorithm(config_ga, runtime_param, NULL);
 	}
     free_config_ga(&config_ga);

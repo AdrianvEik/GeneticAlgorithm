@@ -3,7 +3,7 @@
 
 
 
-void init_task_queue(task_queue_t* task_queue, int queue_size, task_result_queue_t* task_result_queue, int thread_count) {
+void init_task_queue(task_queue_t* task_queue, uint32_t queue_size, task_result_queue_t* task_result_queue, uint32_t thread_count) {
     task_param_t* task_list = (task_param_t*)malloc(sizeof(task_param_t) * queue_size);
     if (task_list == NULL) EXIT_MEM_ERROR();
 
@@ -83,18 +83,18 @@ void free_task(task_param_t* task) {
     free(task->zone_id);   
 }
 
-void stop_task_solver_threads(task_queue_t* task_queue, int thread_count) {
-    for (int i = 0; i < thread_count; i++) {
+void stop_task_solver_threads(task_queue_t* task_queue, uint32_t thread_count) {
+    for (uint32_t i = 0; i < thread_count; i++) {
         task_param_t task;
         task.task_type = TERMINATE_THREAD;
         add_task(task_queue, &task);
     }
-    for (int j = 0; j < thread_count; j++) {
+    for (uint32_t j = 0; j < thread_count; j++) {
         pthread_join(task_queue->thread_id[j], NULL);
     }
 }
 
-void init_fx_task_queue(fx_task_queue_t* fx_task_queue, int queue_size, int thread_count, int task_size_fx) {
+void init_fx_task_queue(fx_task_queue_t* fx_task_queue, uint32_t queue_size, uint32_t thread_count, uint32_t task_size_fx) {
     fx_task_param_t* fx_task_list = (fx_task_param_t*)malloc(sizeof(fx_task_param_t) * queue_size);
     if (fx_task_list == NULL) EXIT_MEM_ERROR();
 
@@ -151,13 +151,13 @@ void get_fx_task(fx_task_queue_t* fx_task_queue, fx_task_param_t* fx_task) {
     }
 }
 
-void stop_fx_task_threads(fx_task_queue_t* task_queue, int thread_count) {
-    for (int i = 0; i < thread_count; i++) {
+void stop_fx_task_threads(fx_task_queue_t* task_queue, uint32_t thread_count) {
+    for (uint32_t i = 0; i < thread_count; i++) {
         fx_task_param_t task;
         task.task_type = TERMINATE_THREAD;
         add_fx_task(task_queue, task);
     }
-    for (int j = 0; j < thread_count; j++) {
+    for (uint32_t j = 0; j < thread_count; j++) {
         pthread_join(task_queue->thread_id[j], NULL);
     }
 }

@@ -13,7 +13,7 @@
 #include "../Function/Function.h"
 
 
-logging_param_t default_logging_param() {
+static logging_param_t default_logging_param() {
 	// Setups default logging parameters
 	logging_param_t logging_param;
 
@@ -41,6 +41,7 @@ runtime_param_t default_runtime_param() {
 	runtime_param.task_count_solver = 32;
 	runtime_param.thread_count_solver = 4;
 	runtime_param.zone_enable = 1;
+    runtime_param.random_seed = 0; // Re-seed before every GA run
 	runtime_param.logging_param = default_logging_param();
 
 	return runtime_param;
@@ -64,7 +65,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
     
 	if (mutation_param.mutation_rate == NULL) EXIT_MEM_ERROR();
 
-	for (int i = 0; i < runtime_param.individuals; i++) {
+	for (uint32_t i = 0; i < runtime_param.individuals; i++) {
         mutation_param.mutation_rate[i] = 6.0;
 	}
 
@@ -86,7 +87,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 
     if (pop_param.lower == NULL || pop_param.upper == NULL) EXIT_MEM_ERROR();
 
-    for (int i = 0; i < runtime_param.genes; i++) {
+    for (uint32_t i = 0; i < runtime_param.genes; i++) {
         pop_param.lower[i] = -5.0;
         pop_param.upper[i] = 5.0;
     }

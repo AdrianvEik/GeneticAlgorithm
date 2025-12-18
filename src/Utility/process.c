@@ -1,12 +1,12 @@
 #include "process.h"
 
-void indexed_bubble_sort(double* arr, int* indices, int size) {
-	int swapped = 1;
-	int temp_idx;
+static void indexed_bubble_sort(double* arr, uint32_t* indices, uint32_t size) {
+	uint32_t swapped = 1;
+	uint32_t temp_idx;
 
-	for (int i = 0; i < size && swapped; i++) {
+	for (uint32_t i = 0; i < size && swapped; i++) {
 		swapped = 0;
-		for (int j = 0; j < size - i - 1; j++) {
+		for (uint32_t j = 0; j < size - i - 1; j++) {
 			if (arr[indices[j]] > arr[indices[j + 1]]) {
 				temp_idx = indices[j];
 				indices[j] = indices[j + 1];
@@ -64,7 +64,7 @@ void indexed_bubble_sort(double* arr, int* indices, int size) {
 //}
 //
 
-static inline void bitonic_sort_1v(__m512d* input, __m256i* index) { // todo update int to uint for index
+static inline void bitonic_sort_1v(__m512d* input, __m256i* index) { // todo update uint32_t to uuint32_t for index
 	//__m256i index = _mm256_loadu_epi32(indices);
     //__m512d input = _mm512_load_pd(arr);
     __m512d work;
@@ -242,7 +242,7 @@ static inline void bitonic_sort_8v(
     post_sort_1v(h, index_h);
 }
 
-void bitonic_sort_16v(
+static void bitonic_sort_16v(
 	__m512d* a,
 	__m512d* b,
 	__m512d* c,
@@ -348,16 +348,16 @@ void bitonic_sort_16v(
     post_sort_1v(p, index_p);
 }
 
-void bottom_up_merge(double* arr, int* indices, int* temp_workspace, int lo, int hi, int size) {
-    // merge blocks of size 8 to 16 , 16 to 32, 32 to 64, etc
+//static void bottom_up_merge(double* arr, uint32_t* indices, uint32_t* temp_workspace, uint32_t lo, uint32_t hi, uint32_t size) {
+//    // merge blocks of size 8 to 16 , 16 to 32, 32 to 64, etc
+//
+//
+//}
 
 
-}
+static void indexed_bitonic_sort_1v(double* arr, uint32_t* indices, uint32_t* temp_workspace, uint32_t size) {
 
-
-void indexed_bitonic_sort_1v(double* arr, uint32_t* indices, int* temp_workspace, int size) {
-
-	for (int i = 0; i < size / 8; i++) {
+	for (uint32_t i = 0; i < size / 8; i++) {
 		__m256i index_a = _mm256_loadu_epi32(&indices[i * 8]);
 		__m512d input_a = _mm512_loadu_pd(&arr[i * 8]);
 
@@ -366,13 +366,13 @@ void indexed_bitonic_sort_1v(double* arr, uint32_t* indices, int* temp_workspace
 	}
 
 	// remainder
-	int remaining = size & 0x07;
+	uint32_t remaining = size & 0x07;
 
 	if (remaining) {
-		int start = size & 0xFFF8;
+		uint32_t start = size & 0xFFF8;
 		double temp_arr[8] = { DBL_MAX };
 		uint32_t temp_idx[8] = { UINT32_MAX };
-		for (int i = 0; i < remaining; i++) {
+		for (uint32_t i = 0; i < remaining; i++) {
 			temp_arr[i] = arr[start + i];
 			temp_idx[i] = indices[start + i];
 		}
@@ -381,7 +381,7 @@ void indexed_bitonic_sort_1v(double* arr, uint32_t* indices, int* temp_workspace
 		bitonic_sort_1v(&input, &index);
 		_mm256_storeu_epi32(temp_idx, index);
 		uint32_t skip_idx = 0;
-		for (int i = 0; i < remaining; i++) {
+		for (uint32_t i = 0; i < remaining; i++) {
 			if (temp_idx[i] == UINT32_MAX) {
 				skip_idx++;
 				continue;
@@ -390,7 +390,7 @@ void indexed_bitonic_sort_1v(double* arr, uint32_t* indices, int* temp_workspace
 		}
 	}
 
-	int i, mid, j, lo, hi, k, iter = 0;
+	uint32_t i, mid, j, lo, hi, k, iter = 0;
 
 	for (iter = 8; iter < size; iter *= 2) {
 		for (lo = 0; lo < size - iter; lo += iter * 2) {
@@ -413,7 +413,7 @@ void indexed_bitonic_sort_1v(double* arr, uint32_t* indices, int* temp_workspace
 			while (j < hi) {
 				temp_workspace[k++] = indices[j++];
 			}
-			for (int m = lo; m < hi; m++) {
+			for (uint32_t m = lo; m < hi; m++) {
 				indices[m] = temp_workspace[m];
 			}
 		}
@@ -426,9 +426,9 @@ void indexed_bitonic_sort_1v(double* arr, uint32_t* indices, int* temp_workspace
 
 }
 
-void indexed_bitonic_sort_2v(double* arr, uint32_t* indices, int* temp_workspace, int size ) {
+static void indexed_bitonic_sort_2v(double* arr, uint32_t* indices, uint32_t* temp_workspace, uint32_t size ) {
 
-	for (int i = 0; i < size; i+=16) {
+	for (uint32_t i = 0; i < size; i+=16) {
 		__m256i index_a = _mm256_loadu_epi32(&indices[i]);
 		__m512d input_a = _mm512_loadu_pd(&arr[i]);
 
@@ -441,11 +441,11 @@ void indexed_bitonic_sort_2v(double* arr, uint32_t* indices, int* temp_workspace
 	}
 
 	// remainder
-	int remaining = size & 0x0F;
+	uint32_t remaining = size & 0x0F;
 
 	if (remaining >= 7) {
 
-        int i = size & 0xFFF0;
+        uint32_t i = size & 0xFFF0;
 		__m256i index = _mm256_loadu_epi32(&indices[i]);
 		__m512d input = _mm512_loadu_pd(&arr[i]);
 
@@ -456,10 +456,10 @@ void indexed_bitonic_sort_2v(double* arr, uint32_t* indices, int* temp_workspace
 	}
 
 	if (remaining) {
-		int start = size & 0xFFF8;
+		uint32_t start = size & 0xFFF8;
 		double temp_arr[8] = { DBL_MAX };
 		uint32_t temp_idx[8] = { UINT32_MAX };
-		for (int i = 0; i < remaining; i++) {
+		for (uint32_t i = 0; i < remaining; i++) {
 			temp_arr[i] = arr[start + i];
 			temp_idx[i] = indices[start + i];
 		}
@@ -468,7 +468,7 @@ void indexed_bitonic_sort_2v(double* arr, uint32_t* indices, int* temp_workspace
 		bitonic_sort_1v(&input, &index);
 		_mm256_storeu_epi32(temp_idx, index);
 		uint32_t skip_idx = 0;
-		for (int i = 0; i < remaining; i++) {
+		for (uint32_t i = 0; i < remaining; i++) {
             if (temp_idx[i] == UINT32_MAX) {
                 skip_idx++;
 				continue;
@@ -477,7 +477,7 @@ void indexed_bitonic_sort_2v(double* arr, uint32_t* indices, int* temp_workspace
 		}
     }
 
-	int i, mid, j, lo, hi, k, iter = 0;
+	uint32_t i, mid, j, lo, hi, k, iter = 0;
 
 	for (iter = 8; iter < size; iter *= 2) {
 		for (lo = 0; lo < size - iter; lo += iter * 2) {
@@ -500,7 +500,7 @@ void indexed_bitonic_sort_2v(double* arr, uint32_t* indices, int* temp_workspace
 			while (j < hi) {
 				temp_workspace[k++] = indices[j++];
 			}
-			for (int m = lo; m < hi; m++) {
+			for (uint32_t m = lo; m < hi; m++) {
 				indices[m] = temp_workspace[m];
 			}
         }
@@ -514,9 +514,9 @@ void indexed_bitonic_sort_2v(double* arr, uint32_t* indices, int* temp_workspace
 }
 
 
-void indexed_bitonic_sort_4v(double* arr, uint32_t* indices, int* temp_workspace, int size) {
+static void indexed_bitonic_sort_4v(double* arr, uint32_t* indices, uint32_t* temp_workspace, uint32_t size) {
 
-	for (int i = 0; i < size; i+=32) {
+	for (uint32_t i = 0; i < size; i+=32) {
 		__m256i index_a = _mm256_loadu_epi32(&indices[i]);
 		__m512d input_a = _mm512_loadu_pd(&arr[i]);
 
@@ -540,11 +540,11 @@ void indexed_bitonic_sort_4v(double* arr, uint32_t* indices, int* temp_workspace
 	}
 
 	// remainder
-	int remaining = size & 0x1F;
+	uint32_t remaining = size & 0x1F;
 
 	if (remaining >= 15) {
 
-		int i = size & 0xFFE0;
+		uint32_t i = size & 0xFFE0;
 		__m256i index_a = _mm256_loadu_epi32(&indices[i]);
 		__m512d input_a = _mm512_loadu_pd(&arr[i]);
 
@@ -560,7 +560,7 @@ void indexed_bitonic_sort_4v(double* arr, uint32_t* indices, int* temp_workspace
 
 	if (remaining >= 7) {
 
-		int i = size & 0xFFF0;
+		uint32_t i = size & 0xFFF0;
 		__m256i index = _mm256_loadu_epi32(&indices[i]);
 		__m512d input = _mm512_loadu_pd(&arr[i]);
 
@@ -571,10 +571,10 @@ void indexed_bitonic_sort_4v(double* arr, uint32_t* indices, int* temp_workspace
 	}
 
 	if (remaining) {
-		int start = size & 0xFFF8;
+		uint32_t start = size & 0xFFF8;
 		double temp_arr[8] = { DBL_MAX };
 		uint32_t temp_idx[8] = { UINT32_MAX };
-		for (int i = 0; i < remaining; i++) {
+		for (uint32_t i = 0; i < remaining; i++) {
 			temp_arr[i] = arr[start + i];
 			temp_idx[i] = indices[start + i];
 		}
@@ -583,7 +583,7 @@ void indexed_bitonic_sort_4v(double* arr, uint32_t* indices, int* temp_workspace
 		bitonic_sort_1v(&input, &index);
 		_mm256_storeu_epi32(temp_idx, index);
 		uint32_t skip_idx = 0;
-		for (int i = 0; i < remaining; i++) {
+		for (uint32_t i = 0; i < remaining; i++) {
 			if (temp_idx[i] == UINT32_MAX) {
 				skip_idx++;
 				continue;
@@ -592,7 +592,7 @@ void indexed_bitonic_sort_4v(double* arr, uint32_t* indices, int* temp_workspace
 		}
 	}
 
-	int i, mid, j, lo, hi, k, iter = 0;
+	uint32_t i, mid, j, lo, hi, k, iter = 0;
 
 	for (iter = 8; iter < size; iter *= 2) {
 		for (lo = 0; lo < size - iter; lo += iter * 2) {
@@ -615,7 +615,7 @@ void indexed_bitonic_sort_4v(double* arr, uint32_t* indices, int* temp_workspace
 			while (j < hi) {
 				temp_workspace[k++] = indices[j++];
 			}
-			for (int m = lo; m < hi; m++) {
+			for (uint32_t m = lo; m < hi; m++) {
 				indices[m] = temp_workspace[m];
 			}
 		}
@@ -623,9 +623,9 @@ void indexed_bitonic_sort_4v(double* arr, uint32_t* indices, int* temp_workspace
 
 }
 
-void indexed_bitonic_sort_8v(double* arr, uint32_t* indices, int* temp_workspace, int size) {
+static void indexed_bitonic_sort_8v(double* arr, uint32_t* indices, uint32_t* temp_workspace, uint32_t size) {
 	
-	for (int i = 0; i < size; i+=64) {
+	for (uint32_t i = 0; i < size; i+=64) {
 		__m256i index_a = _mm256_loadu_epi32(&indices[i]);
 		__m512d input_a = _mm512_loadu_pd(&arr[i]);
 
@@ -669,11 +669,11 @@ void indexed_bitonic_sort_8v(double* arr, uint32_t* indices, int* temp_workspace
 	}
 
 	// remainder
-	int remaining = size & 0x3F;
+	uint32_t remaining = size & 0x3F;
 
 	if (remaining >= 31) {
 
-		int i = size & 0xFFC0;
+		uint32_t i = size & 0xFFC0;
 		__m256i index_a = _mm256_loadu_epi32(&indices[i]);
 		__m512d input_a = _mm512_loadu_pd(&arr[i]);
 
@@ -702,7 +702,7 @@ void indexed_bitonic_sort_8v(double* arr, uint32_t* indices, int* temp_workspace
 
 	if (remaining >= 15) {
 
-		int i = size & 0xFFE0;
+		uint32_t i = size & 0xFFE0;
 		__m256i index_a = _mm256_loadu_epi32(&indices[i]);
 		__m512d input_a = _mm512_loadu_pd(&arr[i]);
 
@@ -718,7 +718,7 @@ void indexed_bitonic_sort_8v(double* arr, uint32_t* indices, int* temp_workspace
 
 	if (remaining >= 7) {
 
-		int i = size & 0xFFF0;
+		uint32_t i = size & 0xFFF0;
 		__m256i index = _mm256_loadu_epi32(&indices[i]);
 		__m512d input = _mm512_loadu_pd(&arr[i]);
 
@@ -729,10 +729,10 @@ void indexed_bitonic_sort_8v(double* arr, uint32_t* indices, int* temp_workspace
 	}
 
 	if (remaining) {
-		int start = size & 0xFFF8;
+		uint32_t start = size & 0xFFF8;
 		double temp_arr[8] = { DBL_MAX };
 		uint32_t temp_idx[8] = { UINT32_MAX };
-		for (int i = 0; i < remaining; i++) {
+		for (uint32_t i = 0; i < remaining; i++) {
 			temp_arr[i] = arr[start + i];
 			temp_idx[i] = indices[start + i];
 		}
@@ -741,7 +741,7 @@ void indexed_bitonic_sort_8v(double* arr, uint32_t* indices, int* temp_workspace
 		bitonic_sort_1v(&input, &index);
 		_mm256_storeu_epi32(temp_idx, index);
 		uint32_t skip_idx = 0;
-		for (int i = 0; i < remaining; i++) {
+		for (uint32_t i = 0; i < remaining; i++) {
 			if (temp_idx[i] == UINT32_MAX) {
 				skip_idx++;
 				continue;
@@ -750,7 +750,7 @@ void indexed_bitonic_sort_8v(double* arr, uint32_t* indices, int* temp_workspace
 		}
 	}
 
-	int i, mid, j, lo, hi, k, iter = 0;
+	uint32_t i, mid, j, lo, hi, k, iter = 0;
 
 	for (iter = 8; iter < size; iter *= 2) {
 		for (lo = 0; lo < size - iter; lo += iter * 2) {
@@ -773,7 +773,7 @@ void indexed_bitonic_sort_8v(double* arr, uint32_t* indices, int* temp_workspace
 			while (j < hi) {
 				temp_workspace[k++] = indices[j++];
 			}
-			for (int m = lo; m < hi; m++) {
+			for (uint32_t m = lo; m < hi; m++) {
 				indices[m] = temp_workspace[m];
 			}
 		}
@@ -781,9 +781,9 @@ void indexed_bitonic_sort_8v(double* arr, uint32_t* indices, int* temp_workspace
 
 }
 
-void indexed_bitonic_sort_16v(double* arr, uint32_t* indices, int* temp_workspace, int size) {
+static void indexed_bitonic_sort_16v(double* arr, uint32_t* indices, uint32_t* temp_workspace, uint32_t size) {
 
-	for (int i = 0; i < size; i += 128) {
+	for (uint32_t i = 0; i < size; i += 128) {
 		__m256i index_a = _mm256_loadu_epi32(&indices[i]);
 		__m512d input_a = _mm512_loadu_pd(&arr[i]);
 
@@ -863,10 +863,10 @@ void indexed_bitonic_sort_16v(double* arr, uint32_t* indices, int* temp_workspac
 	}
 
 	// remainder
-	int remaining = size & 0x7F;
+	uint32_t remaining = size & 0x7F;
 
 	if (remaining >= 63) {
-		int i = size & 0xFFC0;
+		uint32_t i = size & 0xFFC0;
 		__m256i index_a = _mm256_loadu_epi32(&indices[i]);
 		__m512d input_a = _mm512_loadu_pd(&arr[i]);
 		__m256i index_b = _mm256_loadu_epi32(&indices[i + 8]);
@@ -902,7 +902,7 @@ void indexed_bitonic_sort_16v(double* arr, uint32_t* indices, int* temp_workspac
 
 	if (remaining >= 31) {
 
-		int i = size & 0xFFC0;
+		uint32_t i = size & 0xFFC0;
 		__m256i index_a = _mm256_loadu_epi32(&indices[i]);
 		__m512d input_a = _mm512_loadu_pd(&arr[i]);
 
@@ -931,7 +931,7 @@ void indexed_bitonic_sort_16v(double* arr, uint32_t* indices, int* temp_workspac
 
 	if (remaining >= 15) {
 
-		int i = size & 0xFFE0;
+		uint32_t i = size & 0xFFE0;
 		__m256i index_a = _mm256_loadu_epi32(&indices[i]);
 		__m512d input_a = _mm512_loadu_pd(&arr[i]);
 
@@ -947,7 +947,7 @@ void indexed_bitonic_sort_16v(double* arr, uint32_t* indices, int* temp_workspac
 
 	if (remaining >= 7) {
 
-		int i = size & 0xFFF0;
+		uint32_t i = size & 0xFFF0;
 		__m256i index = _mm256_loadu_epi32(&indices[i]);
 		__m512d input = _mm512_loadu_pd(&arr[i]);
 
@@ -958,10 +958,10 @@ void indexed_bitonic_sort_16v(double* arr, uint32_t* indices, int* temp_workspac
 	}
 
 	if (remaining) {
-		int start = size & 0xFFF8;
+		uint32_t start = size & 0xFFF8;
 		double temp_arr[8] = { DBL_MAX };
 		uint32_t temp_idx[8] = { UINT32_MAX };
-		for (int i = 0; i < remaining; i++) {
+		for (uint32_t i = 0; i < remaining; i++) {
 			temp_arr[i] = arr[start + i];
 			temp_idx[i] = indices[start + i];
 		}
@@ -970,7 +970,7 @@ void indexed_bitonic_sort_16v(double* arr, uint32_t* indices, int* temp_workspac
 		bitonic_sort_1v(&input, &index);
 		_mm256_storeu_epi32(temp_idx, index);
 		uint32_t skip_idx = 0;
-		for (int i = 0; i < remaining; i++) {
+		for (uint32_t i = 0; i < remaining; i++) {
 			if (temp_idx[i] == UINT32_MAX) {
 				skip_idx++;
 				continue;
@@ -979,7 +979,7 @@ void indexed_bitonic_sort_16v(double* arr, uint32_t* indices, int* temp_workspac
 		}
 	}
 
-	int i, mid, j, lo, hi, k, iter = 0;
+	uint32_t i, mid, j, lo, hi, k, iter = 0;
 
 	for (iter = 8; iter < size; iter *= 2) {
 		for (lo = 0; lo < size - iter; lo += iter * 2) {
@@ -1002,7 +1002,7 @@ void indexed_bitonic_sort_16v(double* arr, uint32_t* indices, int* temp_workspac
 			while (j < hi) {
 				temp_workspace[k++] = indices[j++];
 			}
-			for (int m = lo; m < hi; m++) {
+			for (uint32_t m = lo; m < hi; m++) {
 				indices[m] = temp_workspace[m];
 			}
 		}
@@ -1010,23 +1010,23 @@ void indexed_bitonic_sort_16v(double* arr, uint32_t* indices, int* temp_workspac
 
 }
 
-void indexed_merge_sort(double* arr, int* indices, int* temp_workspace, int lo, int hi, int size) {
+static void indexed_merge_sort(double* arr, uint32_t* indices, uint32_t* temp_workspace, uint32_t lo, uint32_t hi, uint32_t size) {
     if (hi - lo < 2) return; // no need to merge
 	if (hi - lo == 2) {
 		if (arr[indices[lo]] > arr[indices[lo + 1]]) {
-			int temp = indices[lo];
+			uint32_t temp = indices[lo];
 			indices[lo] = indices[lo + 1];
 			indices[lo + 1] = temp;
 		}
 		return;
 	}
-	int mid = (hi + lo) >> 1;
+	uint32_t mid = (hi + lo) >> 1;
 	indexed_merge_sort(arr, indices, temp_workspace, lo, mid, size);
 	indexed_merge_sort(arr, indices, temp_workspace, mid, hi, size);
 	// Merge the two halves
-	int i = lo;
-	int j = mid;
-	int k = lo;
+	uint32_t i = lo;
+	uint32_t j = mid;
+	uint32_t k = lo;
 	while (i < mid && j < hi) {
 		if (arr[indices[i]] <= arr[indices[j]]) {
 			temp_workspace[k++] = indices[i++];
@@ -1040,7 +1040,7 @@ void indexed_merge_sort(double* arr, int* indices, int* temp_workspace, int lo, 
 	while (j < hi) {
 		temp_workspace[k++] = indices[j++];
 	}
-	for (int m = lo; m < hi; m++) {
+	for (uint32_t m = lo; m < hi; m++) {
 		indices[m] = temp_workspace[m];
     }
 	return;
@@ -1054,10 +1054,10 @@ void indexed_merge_sort(double* arr, int* indices, int* temp_workspace, int lo, 
 static void post_process_population(gene_pool_t* gene_pool, population_param_t* pop_param) {
 	int unique = 1;
 	// eliminate duplicates
-	for (int i = pop_param->reseed_bottom_N; i < gene_pool->individuals - 1; i++) {
+	for (uint32_t i = pop_param->reseed_bottom_N; i < gene_pool->individuals - 1; i++) {
 		unique = 1;
 		if (gene_pool->pop_result_set[gene_pool->sorted_indexes[i]] == gene_pool->pop_result_set[gene_pool->sorted_indexes[i + 1]]) {
-			for (int k = 0; k < gene_pool->genes; k++) {
+			for (uint32_t k = 0; k < gene_pool->genes; k++) {
 				if (gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]][k] == gene_pool->pop_param_bin[gene_pool->sorted_indexes[i + 1]][k]) {
 					unique = 0;
 					break;
@@ -1070,7 +1070,7 @@ static void post_process_population(gene_pool_t* gene_pool, population_param_t* 
 		}
 	}
     // reseed bottom N
-    for (int i = 0; i < pop_param->reseed_bottom_N; i++) {
+    for (uint32_t i = 0; i < pop_param->reseed_bottom_N; i++) {
 		fill_individual_uniform(gene_pool, gene_pool->sorted_indexes[i]);
     }
 }
@@ -1084,7 +1084,7 @@ void process_pop(gene_pool_t* gene_pool, task_param_t* task, fx_task_queue_t* fx
 	// worst-best scaling according to fitness and fit function (lin, exp, log, sig, norm)
 	process_flatten(gene_pool, &(task->config_ga.flatten_param));
 
-	for (int i = 0; i < gene_pool->individuals; i++) {
+	for (uint32_t i = 0; i < gene_pool->individuals; i++) {
 		gene_pool->sorted_indexes[i] = i;
 	}
 
@@ -1092,7 +1092,7 @@ void process_pop(gene_pool_t* gene_pool, task_param_t* task, fx_task_queue_t* fx
 	indexed_bitonic_sort_1v(gene_pool->flatten_result_set, gene_pool->sorted_indexes, gene_pool->sorted_indexes_temp, gene_pool->individuals);
 
 	// copy sorted to selected
-	for (int i = 0; i < gene_pool->individuals; i++) {
+	for (uint32_t i = 0; i < gene_pool->individuals; i++) {
 		gene_pool->selected_indexes[i] = gene_pool->sorted_indexes[i];
 	}
 

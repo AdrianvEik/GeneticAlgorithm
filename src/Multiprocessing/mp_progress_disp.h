@@ -25,14 +25,14 @@ struct console_message_s {
 typedef struct console_message_s console_message_t;
 
 struct console_queue_s {
-    int queue_size;
-    int current_message_id;
+    uint32_t queue_size;
+    uint32_t current_message_id;
     pthread_t thread_id;
     console_message_t* message_queue;
-    int message_list_size;
-    int message_count;
-    int first_message_id;
-    int next_message_id;
+    uint32_t message_list_size;
+    uint32_t message_count;
+    uint32_t first_message_id;
+    uint32_t next_message_id;
     pthread_mutex_t* lock;
 };
 
@@ -45,6 +45,6 @@ void free_console_queue(console_queue_t* console_queue);
 int get_from_console_queue(console_queue_t* console_queue, console_message_t* str);
 
 void con_printf(console_queue_t* console_queue, const char* format, ...);
-void con_kill(console_queue_t* console_queue);
+//void con_kill(console_queue_t* console_queue);
 
 #endif // MP_PROGRESS_DISP_H

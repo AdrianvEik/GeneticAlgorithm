@@ -23,6 +23,6 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param);
 void free_gene_pool(gene_pool_t* gene_pool);
 
 void fill_pop(gene_pool_t* gene_pool, population_param_t pop_param, fx_param_t fx_param);
-void fill_individual_uniform(gene_pool_t* gene_pool, int individual);
+void fill_individual_uniform(gene_pool_t* gene_pool, uint32_t individual);
 
 #endif // _POP_H

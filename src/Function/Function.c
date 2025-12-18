@@ -2,9 +2,9 @@
 
 #include "Function.h"
 
-double Styblinski_Tang_fx(double* parameter_set, int genes) {
+static double Styblinski_Tang_fx(double* parameter_set, uint32_t genes) {
 	double result = 0;
-	for (int i = 0; i < genes; i++) {
+	for (uint32_t i = 0; i < genes; i++) {
 		result += (pow(parameter_set[i], 4)) - (16 * pow(parameter_set[i], 2)) + (5 * parameter_set[i]);
 	}
 	return result / 2;
@@ -22,7 +22,7 @@ double Styblinski_Tang_fx(double* parameter_set, int genes) {
 //     x1, x2 = x
 //     return -np.exp(-(x1 * x2 - a) ** 2 - (x2 - a) ** 2)
 
-double wheelers_ridge_fx(double* parameter_set, int genes) {
+static double wheelers_ridge_fx(double* parameter_set, uint32_t genes) {
 	double a = 1.5;
 
 	// check if genes = 2
@@ -33,7 +33,7 @@ double wheelers_ridge_fx(double* parameter_set, int genes) {
 	return -1 * exp(-1 * pow(x1 * x2 - a, 2) - pow(x2 - a, 2));
 }
 
-void process_fx_set(gene_pool_t* gene_pool, task_param_t* task, int individual_min, int individual_max) {
+void process_fx_set(gene_pool_t* gene_pool, task_param_t* task, uint32_t individual_min, uint32_t individual_max) {
 	/*
 
 	:param pop: matrix of individuals as double (individuals x genes)
@@ -43,17 +43,17 @@ void process_fx_set(gene_pool_t* gene_pool, task_param_t* task, int individual_m
 	:param result: matrix of fitness values (individuals x 1)
 
 	*/
-	for (int individual = individual_min; individual <= individual_max; individual++) {
-		int i = gene_pool->sorted_indexes[individual];
+	for (uint32_t individual = individual_min; individual <= individual_max; individual++) {
+		uint32_t i = gene_pool->sorted_indexes[individual];
 
 		// convert the gene pool bin to double
 		if (task->config_ga.fx_param.fx_data_type == fx_data_type_double) {
-			for (int j = 0; j < gene_pool->genes; j++) {
+			for (uint32_t j = 0; j < gene_pool->genes; j++) {
 				gene_pool->pop_param_double[i][j] = (double)(gene_pool->pop_param_bin[i][j] * (task->upper[j] - task->lower[j])) / UINT32_MAX + task->lower[j];
 			}
 		}
 		else if (task->config_ga.fx_param.fx_data_type == fx_data_type_int) {
-			for (int j = 0; j < gene_pool->genes; j++) {
+			for (uint32_t j = 0; j < gene_pool->genes; j++) {
 				gene_pool->pop_param_bin[i][j] = (gene_pool->pop_param_bin[i][j] & task->zone_mask[j]) | task->zone_id[j];
 			}
 		}
@@ -95,18 +95,37 @@ void process_fx_set(gene_pool_t* gene_pool, task_param_t* task, int individual_m
 		else {
 			EXIT_WITH_ERROR("Unkown fitness function", 255);
 		}
+
+        gene_pool->fx_ready[individual] = 1;
 	}
 }
+
+static void wait_fx_tasks_finish(gene_pool_t* gene_pool) {
+	while (1) {
+		int all_done = 1;
+		for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
+			if (gene_pool->fx_ready[i] == 0) {
+				all_done = 0;
+				break;
+			}
+		}
+		if (all_done) {
+			break;
+		}
+		Sleep(10);
+    }
+}
+
 
 void process_fx(gene_pool_t* gene_pool, task_param_t* task, fx_task_queue_t* fx_task_queue) {
 
 	if (fx_task_queue->task_size_fx == 0) {
-		for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
+		for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
 			process_fx_set(gene_pool, task, i, i);
 		}
 	}
 	else {
-		int i = 0;
+		uint32_t i = 0;
 
 		while (i < gene_pool->individuals - gene_pool->elitism) {
 			fx_task_param_t fx_task;
@@ -119,8 +138,12 @@ void process_fx(gene_pool_t* gene_pool, task_param_t* task, fx_task_queue_t* fx_
 			fx_task.task_param = task;
 			fx_task.task_type = FX_TASK;
 
+            gene_pool->fx_ready[i] = 0;
+
 			add_fx_task(fx_task_queue, fx_task);
 			i += fx_task_queue->task_size_fx;
 		}
+
+        wait_fx_tasks_finish(gene_pool);
 	}
 }
