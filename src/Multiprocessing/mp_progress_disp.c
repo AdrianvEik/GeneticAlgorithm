@@ -3,6 +3,7 @@
 
 console_queue_t* init_console_queue() {
     console_queue_t* console_queue = (console_queue_t*)malloc(sizeof(console_queue_t));
+    if (console_queue == NULL) EXIT_MEM_ERROR();
     console_queue->queue_size = 100;
     console_queue->message_queue = (console_message_t*)malloc(sizeof(console_message_t) * console_queue->queue_size);
     if (console_queue->message_queue == NULL) EXIT_MEM_ERROR();
@@ -29,7 +30,7 @@ void free_console_queue(console_queue_t* console_queue) {
     free(console_queue);
 }
 
-void add_to_console_queue(console_queue_t* console_queue, char* str, uint64_t len, int task_type) {
+static void add_to_console_queue(console_queue_t* console_queue, char* str, uint64_t len, int task_type) {
     while (1) {
         pthread_mutex_lock(console_queue->lock);
         if (console_queue->first_message_id == (console_queue->next_message_id + 1) % console_queue->queue_size) {

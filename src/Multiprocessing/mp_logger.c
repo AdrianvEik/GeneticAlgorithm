@@ -2,7 +2,7 @@
 #include "mp_logger.h"
 
 
-void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_param_t runtime_param, console_queue_t* console_queue) {
+void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_param_t runtime_param, console_queue_t* console_queue, fx_param_t fx_param) {
 	task_result_queue->result_list = (task_result_t*)malloc(sizeof(task_result_t) * runtime_param.logging_param.queue_size);
 	if (task_result_queue->result_list == NULL) EXIT_MEM_ERROR();
 
@@ -15,10 +15,11 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
 	task_result_queue->progress.optim_mode = 0;
 	task_result_queue->progress.average_result = 0;
 	task_result_queue->progress.result_standard_deviation = 0;
-	task_result_queue->progress.max_tasks = runtime_param.task_count;
+	task_result_queue->progress.max_tasks = runtime_param.task_count_solver;
+
+	task_result_queue->fx_param = fx_param;
 
     task_result_queue->console_queue = console_queue;
-
 
 	task_result_queue->first_task_id = 0;
 	task_result_queue->next_task_id = 0;
@@ -31,9 +32,17 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
 
 
 	if (runtime_param.logging_param.write_csv == 1) {
-		const int len_of_engineering_double = 15; // -1.123456e+123;
-		const int len_of_formatted_int = 12; // -12345678901;
-		task_result_queue->csv_single_entry_length = 4 * len_of_formatted_int + 1 * len_of_engineering_double + runtime_param.genes * len_of_engineering_double * 3;
+		const uint32_t len_of_engineering_double = 15; // -1.123456e+123;
+		const uint32_t len_of_formatted_int = 12; // -12345678901;
+		if (fx_param.fx_data_type == fx_data_type_double) {
+			task_result_queue->csv_single_entry_length = 4 * len_of_formatted_int + 1 * len_of_engineering_double + runtime_param.genes * len_of_engineering_double * 3;
+		}
+		else if(fx_param.fx_data_type == fx_data_type_int) {
+			task_result_queue->csv_single_entry_length = 4 * len_of_formatted_int + 1 * len_of_formatted_int + runtime_param.genes * len_of_formatted_int;
+		}
+		else {
+			EXIT_WITH_ERROR("Unknown fx_data_type in init_task_result_queue\n", 1);
+        }
 		if (runtime_param.logging_param.include_config == 1) {
 			task_result_queue->csv_single_entry_length += runtime_param.logging_param.config_int_count * len_of_formatted_int + runtime_param.logging_param.config_double_count * len_of_engineering_double;
 		}
@@ -48,8 +57,8 @@ void free_task_result_queue(task_result_queue_t* task_result_queue) {
     free(task_result_queue->lock);
 }
 
-void stop_result_logger(task_result_queue_t* task_result_queue, int thread_count, double* best_res) {
-	for (int i = 0; i < thread_count; i++) {
+void stop_result_logger(task_result_queue_t* task_result_queue, uint32_t thread_count, double* best_res) {
+	for (uint32_t i = 0; i < thread_count; i++) {
 		task_result_t result;
 		result.task_type = TERMINATE_THREAD;
 		add_result(task_result_queue, &result);
@@ -61,7 +70,7 @@ void stop_result_logger(task_result_queue_t* task_result_queue, int thread_count
 }
 
 
-void init_task_result(task_result_queue_t* task_result_queue, task_result_t* task_result, int entry_count) {
+void init_task_result(task_result_queue_t* task_result_queue, task_result_t* task_result, uint32_t entry_count) {
 	if (entry_count == 0) {
 		return;
 	}
@@ -81,8 +90,8 @@ void init_task_result(task_result_queue_t* task_result_queue, task_result_t* tas
 	task_result->bin_position = 0;
 	task_result->csv_position = 0;
 	//DEBUG
-	task_result->bin_single_entry_length = task_result_queue->bin_single_entry_length * entry_count;
-	task_result->csv_single_entry_length = task_result_queue->csv_single_entry_length * entry_count;
+	task_result->bin_buffer_length = task_result_queue->bin_single_entry_length * entry_count;
+	task_result->csv_buffer_length = task_result_queue->csv_single_entry_length * entry_count;
 }
 
 void add_result(task_result_queue_t* task_result_queue, task_result_t* result) {

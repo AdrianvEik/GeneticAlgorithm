@@ -2,12 +2,12 @@
 #include "progress_display.h"
 
 // Function to display progress bar
-void display_progress(progress_t* ga_progress, int message_list_size, int enabled) {
+void display_progress(progress_t* ga_progress, uint32_t message_list_size, int enabled) {
     if (!enabled) return;
 
     static int initialized = 0;
     //static int saved_cursor = 0;
-    int bar_width = 40; // Adjust as needed
+    uint32_t bar_width = 40; // Adjust as needed
 
     double progress = (double) ga_progress->tasks_completed / ga_progress->max_tasks;
     double average_result = ga_progress->average_result / ga_progress->tasks_completed;
@@ -20,14 +20,14 @@ void display_progress(progress_t* ga_progress, int message_list_size, int enable
         // Initialize display layout
         //printf("\033[2J");            // Clear the screen
         printf("\033[H");             // Move cursor to the top-left corner
-        printf("|<%.*s>|\n", bar_width, "........................................");
-        printf("| Current best:                            |\n");
-        printf("| Average best:                            |\n");
-        printf("| Time:                                    |\n");
-        printf("| Progress:                                |\n");
-        printf("| Time per task:                           |\n");
-        printf("|------------------------------------------|\n");
-        for (int i = 0; i < message_list_size +2; ++i) {
+        printf("\033[1;1H|<%.*s>|\n", bar_width, "........................................");
+        printf("\033[2;1H| Current best:                            |\n");
+        printf("\033[3;1H| Average best:                            |\n");
+        printf("\033[4;1H| Time:                                    |\n");
+        printf("\033[5;1H| Progress:                                |\n");
+        printf("\033[6;1H| Time per task:                           |\n");
+        printf("\033[7;1H|------------------------------------------|\n");
+        for (uint32_t i = 0; i < message_list_size +2; ++i) {
             printf("\n");
         }
         fflush(stdout);
@@ -37,8 +37,8 @@ void display_progress(progress_t* ga_progress, int message_list_size, int enable
 
     // Update only the necessary parts
     printf("\033[1;3H"); // Move to the first line, 3rd character
-    int pos = (int)(bar_width * progress);
-    for (int i = 0; i < bar_width; ++i) {
+    uint32_t pos = (uint32_t)(bar_width * progress);
+    for (uint32_t i = 0; i < bar_width; ++i) {
         if (i < pos)
             printf("#");
         else
@@ -57,7 +57,7 @@ void display_progress(progress_t* ga_progress, int message_list_size, int enable
 
 }
 
-void display_console_message(char* message, int position, int enabled){
+void display_console_message(char* message, uint32_t position, int enabled){
     if (!enabled) return;
     printf("\033[%d;1H%s", position + 9, message); // Update messages
     printf("\033[%d;1H\033[2K", position + 10); // clear line below

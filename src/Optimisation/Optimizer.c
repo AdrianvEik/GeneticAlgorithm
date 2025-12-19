@@ -27,14 +27,12 @@ static void check_convergence(task_param_t* task, adaptive_memory_t* adaptive_me
     adaptive_memory->iteration_counter++;
     if (adaptive_memory->iteration_counter > task->config_ga.optimizer_param.max_iterations) {
         adaptive_memory->convergence_reached = 1;
-        //printf("Max iterations reached: %d\n", adaptive_memory->iteration_counter);
     }
 
     if (fabs(best_result - adaptive_memory->previous_best_result) < task->config_ga.optimizer_param.convergence_threshold) {
         adaptive_memory->convergence_counter++;
         if (adaptive_memory->convergence_counter > task->config_ga.optimizer_param.convergence_window) {
             adaptive_memory->convergence_reached = 1;
-            //printf("Converged at iteration: %d\n", adaptive_memory->iteration_counter);
         }
     }
     else {
@@ -45,7 +43,7 @@ static void check_convergence(task_param_t* task, adaptive_memory_t* adaptive_me
     adaptive_memory->previous_best_result = best_result;
 }
 
-static void compute_mutation_rate(task_param_t* task, adaptive_memory_t* adaptive_memory, double best_result, int individuals) {
+static void compute_mutation_rate(task_param_t* task, adaptive_memory_t* adaptive_memory, double best_result, uint32_t individuals) {
     double computed_mutation = 0.0;
     double computed_mutation_sloped = 0.0;
     adaptive_memory->computed_mutation = task->config_ga.optimizer_param.convergence_threshold / (best_result - adaptive_memory->convergence_moving_window);
@@ -71,7 +69,7 @@ static void compute_mutation_rate(task_param_t* task, adaptive_memory_t* adaptiv
     // cleanup
     adaptive_memory->computed_mutation = computed_mutation;
 
-    for (int i = 0; i < individuals; i++) {
+    for (uint32_t i = 0; i < individuals; i++) {
         if (adaptive_memory->convergence_moving_window == 0) {
             if (task->config_ga.mutation_param.mutation_rate[i] < task->config_ga.optimizer_param.max_mutations) {
                 task->config_ga.mutation_param.mutation_rate[i]++;

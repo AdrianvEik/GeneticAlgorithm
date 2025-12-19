@@ -2,9 +2,9 @@
 
 #include "Function.h"
 
-double Styblinski_Tang_fx(double* parameter_set, int genes) {
+static double Styblinski_Tang_fx(double* parameter_set, uint32_t genes) {
 	double result = 0;
-	for (int i = 0; i < genes; i++) {
+	for (uint32_t i = 0; i < genes; i++) {
 		result += (pow(parameter_set[i], 4)) - (16 * pow(parameter_set[i], 2)) + (5 * parameter_set[i]);
 	}
 	return result / 2;
@@ -22,7 +22,7 @@ double Styblinski_Tang_fx(double* parameter_set, int genes) {
 //     x1, x2 = x
 //     return -np.exp(-(x1 * x2 - a) ** 2 - (x2 - a) ** 2)
 
-double wheelers_ridge_fx(double* parameter_set, int genes) {
+static double wheelers_ridge_fx(double* parameter_set, uint32_t genes) {
 	double a = 1.5;
 
 	// check if genes = 2
@@ -33,7 +33,7 @@ double wheelers_ridge_fx(double* parameter_set, int genes) {
 	return -1 * exp(-1 * pow(x1 * x2 - a, 2) - pow(x2 - a, 2));
 }
 
-void process_fx(gene_pool_t* gene_pool, fx_param_t* fx_param, double* lower, double* upper) {
+void process_fx_set(gene_pool_t* gene_pool, task_param_t* task, uint32_t individual_min, uint32_t individual_max) {
 	/*
 
 	:param pop: matrix of individuals as double (individuals x genes)
@@ -43,57 +43,107 @@ void process_fx(gene_pool_t* gene_pool, fx_param_t* fx_param, double* lower, dou
 	:param result: matrix of fitness values (individuals x 1)
 
 	*/
+	for (uint32_t individual = individual_min; individual <= individual_max; individual++) {
+		uint32_t i = gene_pool->sorted_indexes[individual];
 
-	// convert the gene pool bin to double
-	if (fx_param->fx_data_type == fx_data_type_double) {
-		for (int i = 0; i < gene_pool->individuals; i++) {
-			for (int j = 0; j < gene_pool->genes; j++) {
-				gene_pool->pop_param_double[i][j] = (double)(gene_pool->pop_param_bin[i][j] * (upper[j] - lower[j])) / UINT32_MAX + lower[j];
+		// convert the gene pool bin to double
+		if (task->config_ga.fx_param.fx_data_type == fx_data_type_double) {
+			for (uint32_t j = 0; j < gene_pool->genes; j++) {
+				gene_pool->pop_param_double[i][j] = (double)(gene_pool->pop_param_bin[i][j] * (task->upper[j] - task->lower[j])) / UINT32_MAX + task->lower[j];
 			}
 		}
-	}
-
-	if (fx_param->fx_method == fx_method_Styblinski_Tang) {
-		fx_param->fx_optim_mode = -1;
-		for (int i = 0; i < gene_pool->individuals; i++) {
-			gene_pool->pop_result_set[i] = fx_param->fx_optim_mode * Styblinski_Tang_fx(gene_pool->pop_param_double[i], gene_pool->genes);
-            //printf("fx res: Individual %d: Fitness = %f\n", i, gene_pool->pop_result_set[i]);
+		else if (task->config_ga.fx_param.fx_data_type == fx_data_type_int) {
+			for (uint32_t j = 0; j < gene_pool->genes; j++) {
+				gene_pool->pop_param_bin[i][j] = (gene_pool->pop_param_bin[i][j] & task->zone_mask[j]) | task->zone_id[j];
+			}
 		}
-	}
-	else if (fx_param->fx_method == fx_method_Wheelers_Ridge) {
-		fx_param->fx_optim_mode = -1;
-		for (int i = 0; i < gene_pool->individuals; i++) {
-			gene_pool->pop_result_set[i] = fx_param->fx_optim_mode * wheelers_ridge_fx(gene_pool->pop_param_double[i], gene_pool->genes);
-		}
-	}
-    else if (fx_param->fx_method == fx_method_pointer) {
-        if (fx_param->fx_function == NULL) {
-			EXIT_WITH_ERROR("Function pointer is NULL", 255);
-        }
 
-		void** param_ptr_array = NULL;
+		if (task->config_ga.fx_param.fx_method == fx_method_Styblinski_Tang) {
+			task->config_ga.fx_param.fx_optim_mode = -1;
+			gene_pool->pop_result_set[i] = task->config_ga.fx_param.fx_optim_mode * Styblinski_Tang_fx(gene_pool->pop_param_double[i], gene_pool->genes);
 
-		if (fx_param->fx_data_type == fx_data_type_double) {
-			param_ptr_array = (void**)gene_pool->pop_param_double;
 		}
-		else if (fx_param->fx_data_type == fx_data_type_int) {
-			param_ptr_array = (void**)gene_pool->pop_param_bin;
+		else if (task->config_ga.fx_param.fx_method == fx_method_Wheelers_Ridge) {
+			task->config_ga.fx_param.fx_optim_mode = -1;
+			gene_pool->pop_result_set[i] = task->config_ga.fx_param.fx_optim_mode * wheelers_ridge_fx(gene_pool->pop_param_double[i], gene_pool->genes);
+		}
+		else if (task->config_ga.fx_param.fx_method == fx_method_pointer) {
+			if (task->config_ga.fx_param.fx_function == NULL) {
+				EXIT_WITH_ERROR("Function pointer is NULL", 255);
+			}
+
+			void** param_ptr_array = NULL;
+
+			if (task->config_ga.fx_param.fx_data_type == fx_data_type_double) {
+				param_ptr_array = (void**)gene_pool->pop_param_double;
+			}
+			else if (task->config_ga.fx_param.fx_data_type == fx_data_type_int) {
+				param_ptr_array = (void**)gene_pool->pop_param_bin;
+			}
+			else {
+				EXIT_WITH_ERROR("Unknown data type", 255);
+			}
+
+			if (param_ptr_array == NULL) {
+				EXIT_WITH_ERROR("Param ptr is NULL", 255);
+			}
+
+			gene_pool->pop_result_set[i] = task->config_ga.fx_param.fx_optim_mode *
+				task->config_ga.fx_param.fx_function(param_ptr_array[i], gene_pool->genes);
+
 		}
 		else {
-            EXIT_WITH_ERROR("Unknown data type", 255);
+			EXIT_WITH_ERROR("Unkown fitness function", 255);
 		}
 
-        if (param_ptr_array == NULL) {
-			EXIT_WITH_ERROR("Param ptr is NULL", 255);
-		}
+        gene_pool->fx_ready[individual] = 1;
+	}
+}
 
-		for (int i = 0; i < gene_pool->individuals; i++) {
-			gene_pool->pop_result_set[i] = fx_param->fx_optim_mode *
-				fx_param->fx_function(param_ptr_array[i], gene_pool->genes);
+static void wait_fx_tasks_finish(gene_pool_t* gene_pool) {
+	while (1) {
+		int all_done = 1;
+		for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
+			if (gene_pool->fx_ready[i] == 0) {
+				all_done = 0;
+				break;
+			}
+		}
+		if (all_done) {
+			break;
+		}
+		Sleep(10);
+    }
+}
+
+
+void process_fx(gene_pool_t* gene_pool, task_param_t* task, fx_task_queue_t* fx_task_queue) {
+
+	if (fx_task_queue->task_size_fx == 0) {
+		for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
+			process_fx_set(gene_pool, task, i, i);
 		}
 	}
 	else {
-		EXIT_WITH_ERROR("Unkown fitness function", 255);
-	}
+		uint32_t i = 0;
 
+		while (i < gene_pool->individuals - gene_pool->elitism) {
+			fx_task_param_t fx_task;
+			fx_task.gene_pool = gene_pool;
+			fx_task.individual_min = i;
+			fx_task.individual_max = i + fx_task_queue->task_size_fx - 1;
+			if (fx_task.individual_max > (gene_pool->individuals - gene_pool->elitism)) {
+				fx_task.individual_max = gene_pool->individuals - gene_pool->elitism;
+			}
+			fx_task.task_param = task;
+			fx_task.task_type = FX_TASK;
+
+            gene_pool->fx_ready[i] = 0;
+
+			add_fx_task(fx_task_queue, fx_task);
+			i += fx_task_queue->task_size_fx;
+		}
+
+        wait_fx_tasks_finish(gene_pool);
+	}
 }
