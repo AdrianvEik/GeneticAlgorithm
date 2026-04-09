@@ -123,6 +123,12 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 	return config_ga;
 }
 
+void free_config_ga(config_ga_t* config_ga) {
+	free(config_ga->mutation_param.mutation_rate);
+	free(config_ga->population_param.lower);
+	free(config_ga->population_param.upper);
+}
+
 void verify_input_parameters(config_ga_t config_ga, runtime_param_t runtime_param) {
 	if (runtime_param.elitism > runtime_param.individuals) EXIT_WITH_ERROR("Elitism cannot be greater than the number of individuals creation", 250);
 	if (runtime_param.individuals < 3) EXIT_WITH_ERROR("The number of individuals must be greater than three", 250);

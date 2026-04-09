@@ -120,6 +120,7 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 
 	if (best_result == 1) {
 		task_result.task_type = BEST_RESULT_TASK;
+        task_result.iteration = gene_pool->iteration_number;
         log_top_n = 1;
 		task_result.result = gene_pool->pop_result_set[gene_pool->sorted_indexes[gene_pool->individuals - 1]];
     }
@@ -137,7 +138,7 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 		int individual_id = gene_pool->sorted_indexes[gene_pool->individuals - position - 1];
 		double result = gene_pool->pop_result_set[individual_id]; // result and invert if optim mode is minimisation
 		
-		copy_to_bin_buffer(&task_result, &adaptive_memory->iteration_counter, sizeof(int));
+		copy_to_bin_buffer(&task_result, &gene_pool->iteration_number, sizeof(int));
 		copy_to_bin_buffer(&task_result, &task->task_id, sizeof(int));
 		copy_to_bin_buffer(&task_result, &individual_id, sizeof(int));
 		copy_to_bin_buffer(&task_result, &position, sizeof(int)); // position
@@ -151,7 +152,7 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 				task_result.csv_buffer + task_result.csv_position,
 				(uint64_t) task_result.csv_buffer_length - task_result.csv_position,
 				"%d;%d;%d;%d;%e;",
-				adaptive_memory->iteration_counter,
+				gene_pool->iteration_number,
 				task->task_id,
 				individual_id,
                 position, // position

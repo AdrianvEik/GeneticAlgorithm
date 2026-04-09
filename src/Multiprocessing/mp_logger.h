@@ -27,6 +27,7 @@ struct task_result_s {
     char* csv_buffer;
     unsigned char* bin_buffer;
     double result;
+    uint32_t iteration;
     uint32_t bin_position;
     uint32_t csv_position;
     uint32_t bin_buffer_length; // DEBUG
@@ -43,6 +44,7 @@ struct progress_s {
     double result_standard_deviation;
     uint32_t tasks_completed;
     uint32_t max_tasks;
+    uint32_t best_result_iteration;
     int optim_mode;
 };
 

@@ -71,38 +71,65 @@ static inline void bitonic_sort_1v(__m512d* input, __m256i* index) { // todo upd
 	__m256i work_idx;
 	__mmask8 cmp_res;
 
+
 	work = _mm512_permutexvar_pd(_mm512_set_epi64(6, 7, 4, 5, 2, 3, 0, 1), *input);
-    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xAA);
+    //cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xAA);
+    cmp_res = _kor_mask8(
+		_mm512_mask_cmp_pd_mask(0x55, work, *input, _CMP_LT_OQ),
+		_mm512_mask_cmp_pd_mask(0xAA, work, *input, _CMP_NLE_UQ)
+	);
+
     *input = _mm512_mask_mov_pd(*input, cmp_res, work);
 	work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(6, 7, 4, 5, 2, 3, 0, 1), *index));
     *index = work_idx;
 
     work = _mm512_permutexvar_pd(_mm512_set_epi64(4, 5, 6, 7, 0, 1, 2, 3), *input);
-    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xCC);
+    //cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xCC);
+	cmp_res = _kor_mask8(
+		_mm512_mask_cmp_pd_mask(0x33, work, *input, _CMP_LT_OQ),
+		_mm512_mask_cmp_pd_mask(0xCC, work, *input, _CMP_NLE_UQ)
+	);
+
     *input = _mm512_mask_mov_pd(*input, cmp_res, work);
     work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(4, 5, 6, 7, 0, 1, 2, 3), *index));
     *index = work_idx;
 
     work = _mm512_permutexvar_pd(_mm512_set_epi64(6, 7, 4, 5, 2, 3, 0, 1), *input);
-    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xAA);
-    *input = _mm512_mask_mov_pd(*input, cmp_res, work);
+    //cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xAA);
+	cmp_res = _kor_mask8(
+		_mm512_mask_cmp_pd_mask(0x55, work, *input, _CMP_LT_OQ),
+		_mm512_mask_cmp_pd_mask(0xAA, work, *input, _CMP_NLE_UQ)
+	);
+	*input = _mm512_mask_mov_pd(*input, cmp_res, work);
     work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(6, 7, 4, 5, 2, 3, 0, 1), *index));
     *index = work_idx;
 
     work = _mm512_permutexvar_pd(_mm512_set_epi64(0, 1, 2, 3, 4, 5, 6, 7), *input);
-    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xF0);
+    //cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xF0);
+	cmp_res = _kor_mask8(
+		_mm512_mask_cmp_pd_mask(0x0F, work, *input, _CMP_LT_OQ),
+		_mm512_mask_cmp_pd_mask(0xF0, work, *input, _CMP_NLE_UQ)
+	);
     *input = _mm512_mask_mov_pd(*input, cmp_res, work);
     work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(0, 1, 2, 3, 4, 5, 6, 7), *index));
     *index = work_idx;
 
     work = _mm512_permutexvar_pd(_mm512_set_epi64(5, 4, 7, 6, 1, 0, 3, 2), *input);
-    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xCC);
+    //cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xCC);
+	cmp_res = _kor_mask8(
+		_mm512_mask_cmp_pd_mask(0x33, work, *input, _CMP_LT_OQ),
+		_mm512_mask_cmp_pd_mask(0xCC, work, *input, _CMP_NLE_UQ)
+	);
     *input = _mm512_mask_mov_pd(*input, cmp_res, work);
     work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(5, 4, 7, 6, 1, 0, 3, 2), *index));
     *index = work_idx;
 
     work = _mm512_permutexvar_pd(_mm512_set_epi64(6, 7, 4, 5, 2, 3, 0, 1), *input);
-    cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xAA);
+    //cmp_res = _kxor_mask8(_mm512_cmplt_pd_mask(work, *input), 0xAA);
+	cmp_res = _kor_mask8(
+		_mm512_mask_cmp_pd_mask(0x55, work, *input, _CMP_LT_OQ),
+		_mm512_mask_cmp_pd_mask(0xAA, work, *input, _CMP_NLE_UQ)
+	);
     *input = _mm512_mask_mov_pd(*input, cmp_res, work);
     work_idx = _mm256_mask_mov_epi32(*index, cmp_res, _mm256_permutexvar_epi32(_mm256_set_epi32(6, 7, 4, 5, 2, 3, 0, 1), *index));
     *index = work_idx;
@@ -1087,6 +1114,7 @@ void process_pop(gene_pool_t* gene_pool, task_param_t* task, fx_task_queue_t* fx
 	for (uint32_t i = 0; i < gene_pool->individuals; i++) {
 		gene_pool->sorted_indexes[i] = i;
 	}
+
 
 	//indexed_merge_sort(gene_pool->flatten_result_set, gene_pool->sorted_indexes, gene_pool->sorted_indexes_temp, 0, gene_pool->individuals, gene_pool->individuals);
 	indexed_bitonic_sort_1v(gene_pool->flatten_result_set, gene_pool->sorted_indexes, gene_pool->sorted_indexes_temp, gene_pool->individuals);

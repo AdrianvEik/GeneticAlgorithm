@@ -26,7 +26,7 @@ struct adaptive_memory_s {
 	double computed_flatten_factor;
 	double computed_flatten_bias;
 
-	uint32_t iteration_counter;
+	//uint32_t iteration_counter;
 	uint32_t convergence_counter;
 	int convergence_reached;
 };

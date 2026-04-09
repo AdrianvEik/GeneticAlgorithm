@@ -91,6 +91,7 @@ struct mutation_param_s {
 static const int fx_method_pointer = -1;
 static const int fx_method_Styblinski_Tang = 0;
 static const int fx_method_Wheelers_Ridge = 1;
+static const int fx_method_Genetic_Algorithm = 2;
 
 static const int fx_data_type_double = 1;
 static const int fx_data_type_int = 2;
@@ -169,5 +170,6 @@ typedef struct logging_param_s logging_param_t;
 
 runtime_param_t default_runtime_param();
 config_ga_t default_config(runtime_param_t runtime_param);
+void free_config_ga(config_ga_t* config_ga);
 void verify_input_parameters(config_ga_t config_ga, runtime_param_t runtime_param);
 #endif // STRUCT_H

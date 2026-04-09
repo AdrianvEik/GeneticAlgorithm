@@ -34,6 +34,7 @@
 #include <string.h>
 #include <time.h>
 
+#include <locale.h>
 #include <Windows.h>
 #include <pthread.h>
 
@@ -52,11 +53,11 @@ static void process_task(thread_param_t* thread_param, task_param_t* task, gene_
 
 		if (adaptive_memory.convergence_reached == 1 ||
 			(thread_param->runtime_param.logging_param.export_interval != 0 &&
-				adaptive_memory.iteration_counter % thread_param->runtime_param.logging_param.export_interval == 0)
+				gene_pool->iteration_number % thread_param->runtime_param.logging_param.export_interval == 0)
 			) {
 			if (adaptive_memory.convergence_reached == 1) {
 				report_task(thread_param->task_queue, task, &adaptive_memory, thread_param, gene_pool, 1);
-                con_printf(thread_param->task_queue->task_result_queue->console_queue, "Convergence reached at iteration %d\n", adaptive_memory.iteration_counter);
+                con_printf(thread_param->task_queue->task_result_queue->console_queue, "Convergence reached at iteration %d\n", gene_pool->iteration_number);
 				break;
 			}
 			else {
@@ -64,6 +65,8 @@ static void process_task(thread_param_t* thread_param, task_param_t* task, gene_
 
 			}
 		}
+
+		gene_pool->iteration_number++;
 	}
     free_task(task);
 
@@ -101,7 +104,6 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
 
 	console_message_t print_str;
 
-	//printf("\n\n\n\n\n\n"); // set the cursor below the progress, TODO: make nice 
 
 	int last_message = 0;
 	//task_result.task_id = task->task_id;
@@ -141,6 +143,7 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
 				if (task_result.result > current_best_res) {
 					current_best_res = task_result.result;
 					task_result_queue->progress.best_result = current_best_res;
+                    task_result_queue->progress.best_result_iteration = task_result.iteration;
 					copy_task_result(&best_result, &task_result);
 				}
 			}
@@ -183,6 +186,8 @@ static void process_task_thread(thread_param_t* thread_param) {
 
 	task_param_t task;
 	while (1) {
+        gene_pool.iteration_number = 0; // reset iteration number for new task
+
 		get_task(thread_param->task_queue, &task);
         if (task.task_type == TERMINATE_THREAD) {
             break;
@@ -283,69 +288,12 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param, p
     return best_res;
 }
 
-static void free_config_ga(config_ga_t* config_ga) {
-    free(config_ga->mutation_param.mutation_rate);
-    free(config_ga->population_param.lower);
-    free(config_ga->population_param.upper);
-}
 
-static inline uint16_t scaler(uint16_t min, uint16_t max, uint16_t param){
-    return min + param / (UINT16_MAX / (max - min));
-}
-
-static double optimize_fx_ga(uint32_t* paramset, uint32_t n_params) {
-	runtime_param_t runtime_param = default_runtime_param();
-	runtime_param.zone_enable = 0;
-	runtime_param.task_count_solver = 1;
-	runtime_param.individuals = 32;
-	runtime_param.genes = 32;
-	runtime_param.thread_count_solver = 1;
-	runtime_param.elitism = 3;
-	runtime_param.thread_count_fx = 1;
-	runtime_param.task_size_fx = 0;
-	runtime_param.random_seed = 0xAbAe;
-
-	runtime_param.logging_param.include_config = 0;
-	//runtime_param.logging_param.write_config = 1; // JSON dump
-	runtime_param.logging_param.write_csv = 0;
-	runtime_param.logging_param.write_bin = 0;
-	runtime_param.logging_param.export_interval = 10;
-	runtime_param.logging_param.top_n_export = 1;
-	runtime_param.logging_param.console_enabled = 0;
-
-
-	config_ga_t config_ga = default_config(runtime_param);
-	config_ga.selection_param.selection_method = selection_method_roulette;
-	config_ga.population_param.reseed_bottom_N = 1;
-	config_ga.crossover_param.crossover_method = crossover_method_two_point;
-
-	uint16_t* paramset_u16 = (uint16_t*)paramset;
-    // int 1000 < x < 50000
-    config_ga.optimizer_param.max_iterations = scaler(1000, 10000, paramset_u16[0]);
-	// int 100 < x < 10000
-	config_ga.optimizer_param.convergence_window = scaler(100, config_ga.optimizer_param.max_iterations, paramset_u16[1]);
-	// int 10 < x < 1000
-	config_ga.optimizer_param.convergence_moving_window_size = scaler(10, config_ga.optimizer_param.convergence_window, paramset_u16[2]);
-	// int 10 < x < 1000
-	config_ga.optimizer_param.max_mutations = scaler(10, 1000, paramset_u16[3]);
-    // int 1 < x < 100
-    config_ga.optimizer_param.min_mutations = scaler(1, 100, paramset_u16[4]);
-    // double 0.0 < x < 1.0
-    config_ga.mutation_param.mutation_slope = (double)paramset_u16[5] / (double) UINT16_MAX;
-
-	config_ga.fx_param.fx_method = fx_method_Styblinski_Tang;
-
-	for (uint32_t i = 0; i < n_params; i++) {
-		config_ga.population_param.lower[i] = -5.0;
-		config_ga.population_param.upper[i] = 5.0;
-	}
-
-	double result = Genetic_Algorithm(config_ga, runtime_param, NULL);
-	free_config_ga(&config_ga);
-    return result;
-}
 
 int main() {
+	if (setlocale(LC_ALL, "") == NULL) EXIT_WITH_ERROR("Setting locale", 1);
+	
+
 	uint32_t repeats = 1;
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 1;
@@ -362,7 +310,7 @@ int main() {
     runtime_param.logging_param.write_bin = 0;
     runtime_param.logging_param.export_interval = 1;
 	runtime_param.logging_param.top_n_export = 32;
-	runtime_param.logging_param.console_enabled = 1;
+	runtime_param.logging_param.console_enabled = 0;
 	runtime_param.task_size_fx = 1;
 	runtime_param.thread_count_fx = 8;
 
@@ -379,10 +327,10 @@ int main() {
     config_ga.optimizer_param.min_mutations = 1;
 	config_ga.mutation_param.mutation_slope = 1.0;
 
-    config_ga.fx_param.fx_method = fx_method_pointer;
-    config_ga.fx_param.fx_function = &optimize_fx_ga;
+    config_ga.fx_param.fx_method = fx_method_Genetic_Algorithm;
+ //   config_ga.fx_param.fx_function = &optimize_fx_ga;
 	config_ga.fx_param.fx_data_type = fx_data_type_int;
-    config_ga.fx_param.fx_optim_mode = fx_optim_mode_maximize;
+    //config_ga.fx_param.fx_optim_mode = fx_optim_mode_maximize;
 
     //config_ga.mutation_param.mutation_alpha = 10;
     //config_ga.mutation_param.mutation_beta = 0.1;
