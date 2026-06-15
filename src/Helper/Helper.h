@@ -9,6 +9,4 @@
 #include <stdint.h>
 #include <time.h>
 
-#include "Helper.h"
-
 #endif

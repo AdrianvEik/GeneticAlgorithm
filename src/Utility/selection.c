@@ -31,7 +31,7 @@ static inline int find_tree(double* arr, int lo, int hi, double value) {
 }
 
 // Maybe we can use this in rng too?
-static void roulette_wheel(double* probabilities, double* selection_temp, int size, int ressize, int* result) {
+static void roulette_wheel(double* probabilities, double* selection_temp, uint32_t size, uint32_t ressize, uint32_t* result) {
 
     /*
     Roulette wheel selection of an index based on probabilities
@@ -53,18 +53,18 @@ static void roulette_wheel(double* probabilities, double* selection_temp, int si
     // calculate the cumulative sum of the probabilities
     selection_temp[0] = probabilities[0];
 
-    for (int i = 1; i < size; i++) {
+    for (uint32_t i = 1; i < size; i++) {
         selection_temp[i] = selection_temp[i - 1] + probabilities[i];
     }
 
     double normaliser = selection_temp[size - 1] / (double)0xffffffff;
 
     // generate random numbers and select the indices
-    for (int i = 0; i < ressize; i++) {
+    for (uint32_t i = 0; i < ressize; i++) {
         double randnum = ((double)gen_mt_rand()) * normaliser;
 
         result[i] = find_tree(selection_temp, 0, size, randnum); // TODO: tree search?
-        //for (int j = 0; j < size; j++) {
+        //for (uint32_t j = 0; j < size; j++) {
         //    if (randnum < selection_temp[j]) { // TODO: tree search?
         //        result[i] = j;
         //        break;
@@ -79,11 +79,11 @@ static void compute_distr(gene_pool_t* gene_pool, selection_param_t* selection_p
     */
     double sum = 0;
     current_prob_param = selection_param->selection_prob_param;
-    for (int i = 0; i < gene_pool->individuals; i++) {
+    for (uint32_t i = 0; i < gene_pool->individuals; i++) {
         prob_distr[i] = selection_param->selection_prob_param * pow((1 - selection_param->selection_prob_param), i - 1);
         sum += prob_distr[i];
     }
-    for (int i = 0; i < gene_pool->individuals; i++) {
+    for (uint32_t i = 0; i < gene_pool->individuals; i++) {
         prob_distr[i] /= sum;
     }
 }
@@ -93,11 +93,11 @@ static void compute_boltzmann_distr(gene_pool_t* gene_pool, selection_param_t* s
     */
     double sum = 0;
     current_temp_param = selection_param->selection_temp_param;
-    for (int i = 0; i < gene_pool->individuals; i++) {
-        boltzmann_distr[i] = exp(-i / selection_param->selection_temp_param);
+    for (uint32_t i = 0; i < gene_pool->individuals; i++) {
+        boltzmann_distr[i] = exp(-1*(double)i / selection_param->selection_temp_param);
         sum += boltzmann_distr[i];
     }
-    for (int i = 0; i < gene_pool->individuals; i++) {
+    for (uint32_t i = 0; i < gene_pool->individuals; i++) {
         boltzmann_distr[i] /= sum;
     }
 }
@@ -117,18 +117,18 @@ static inline void compute_distances(gene_pool_t* gene_pool) {
     }
 
 
-    for (int i = 0; i < gene_pool->genes; i++) {
+    for (uint32_t i = 0; i < gene_pool->genes; i++) {
         central_point[i] = 0;
-        for (int j = 0; j < gene_pool->individuals; j++) {
+        for (uint32_t j = 0; j < gene_pool->individuals; j++) {
             central_point[i] += gene_pool->pop_param_bin[gene_pool->selected_indexes[j]][i];
         }
         central_point[i] /= gene_pool->individuals;
     }
 
     // Compute the distance of each individual to the central point
-    for (int i = 0; i < gene_pool->individuals; i++) {
+    for (uint32_t i = 0; i < gene_pool->individuals; i++) {
         distances[i] = 0;
-        for (int j = 0; j < gene_pool->genes; j++) {
+        for (uint32_t j = 0; j < gene_pool->genes; j++) {
             int diff = gene_pool->pop_param_bin[gene_pool->selected_indexes[i]][j] - (int)central_point[j];
             distances[i] += diff * diff; // No sqrt for performance
         }
@@ -155,10 +155,10 @@ static void tournament_selection(gene_pool_t* gene_pool, selection_param_t* sele
 	/*
 	*/
     // We hold n tournaments and select the best individual from each tournament
-    for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
+    for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
         int best = -1;
         double best_fitness = -1;
-        for (int j = 0; j < selection_param->selection_tournament_size; j++) {
+        for (uint32_t j = 0; j < selection_param->selection_tournament_size; j++) {
             int index = gen_mt_rand() % (gene_pool->individuals);
             if (best == -1 || gene_pool->flatten_result_set[index] > best_fitness) {
                 best = index;
@@ -194,7 +194,7 @@ static void space_selection(gene_pool_t* gene_pool, selection_param_t* selection
     double* selection_prob = (double*)malloc(gene_pool->individuals * sizeof(double));
     if (selection_prob == NULL) EXIT_MEM_ERROR();
 
-    for (int i = 0; i < gene_pool->individuals; i++) {
+    for (uint32_t i = 0; i < gene_pool->individuals; i++) {
         // For now it is not "rank" maybe this should be a seperate function
         selection_prob[i] = gene_pool->flatten_result_set[gene_pool->selected_indexes[i]] + selection_param->selection_div_param * distances[i];
     }
@@ -215,7 +215,7 @@ static void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selec
 	*/
 
     // We hold n selection rounds
-    for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
+    for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
         // Select a main competitor at random
         int main_competitor = gen_mt_rand() % (gene_pool->individuals);
 
@@ -244,13 +244,13 @@ static void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selec
         double acceptance[2] = {0};
         acceptance[0] = exp((gene_pool->flatten_result_set[second_competitor] - gene_pool->flatten_result_set[third_competitor]) / selection_param->selection_temp_param);
         acceptance[1] = 1 - acceptance[0];
-        int winner_anti_acceptance;
+        int winner_anti_acceptance = 0;
         roulette_wheel(acceptance, gene_pool->selection_temp, 2, 1, &winner_anti_acceptance);
 
         // The winner of the anti acceptance competition competes against the main competitor
         acceptance[0] = exp((gene_pool->flatten_result_set[main_competitor] - gene_pool->flatten_result_set[winner_anti_acceptance == 0 ? second_competitor : third_competitor]) / selection_param->selection_temp_param);
         acceptance[1] = 1 - acceptance[0];
-        int winner_main_competitor;
+        int winner_main_competitor = 0;
         roulette_wheel(acceptance, gene_pool->selection_temp, 2, 1, &winner_main_competitor);
 
         // If the main competitor wins he goes through, if not it depends on the outcome of the first competition
@@ -293,6 +293,6 @@ void process_selection(gene_pool_t* gene_pool, selection_param_t* selection_para
 		boltzmann_selection(gene_pool, selection_param);
 	}
 	else {
-		printf("Error: selection_method is not 0, 1, 2, 3 or 4\n");
+        EXIT_WITH_ERROR("Error: selection_method is not 0, 1, 2, 3 or 4\n", 0x1);
 	}
 }

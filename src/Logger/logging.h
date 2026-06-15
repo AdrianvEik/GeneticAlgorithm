@@ -3,6 +3,7 @@
 #define LOGGING_H 
 
 #include <string.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 

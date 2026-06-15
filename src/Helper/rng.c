@@ -20,7 +20,7 @@ __declspec(thread) sfmt_t sfmt_thread;
 
 int rdrand_supported = -1;
 
-int is_RDRAND_supported()
+static int is_RDRAND_supported()
 {
 	int name[4] = { 0 };
 	__cpuid(name, 0);
@@ -43,7 +43,7 @@ int is_RDRAND_supported()
 	return 0;
 }
 
-int rdrand32_retry(unsigned int retries, uint32_t* rand)
+static int rdrand32_retry(unsigned int retries, uint32_t* rand)
 {
 	unsigned int count = 0;
 
@@ -67,7 +67,7 @@ int rdrand32_retry(unsigned int retries, uint32_t* rand)
 }
 
 
-unsigned int random_int32() {
+static unsigned int random_int32() {
 	srand((unsigned int)time(0));
 	return (rand() << 30) | (rand() << 15) | (rand());
 }

@@ -15,6 +15,8 @@ struct adaptive_memory_s {
 	double convergence_moving_window_beta;
 	double previous_best_result;
     double computed_mutation;
+	double computed_mutation_min_seen;
+    double computed_mutation_max_seen;
 
     // Flatten
 	double group_dispersion;
@@ -24,8 +26,8 @@ struct adaptive_memory_s {
 	double computed_flatten_factor;
 	double computed_flatten_bias;
 
-	int iteration_counter;
-	int convergence_counter;
+	//uint32_t iteration_counter;
+	uint32_t convergence_counter;
 	int convergence_reached;
 };
 

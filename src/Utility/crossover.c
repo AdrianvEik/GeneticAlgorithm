@@ -3,7 +3,7 @@
 
 // Path: Utility/crossover.c
 
-static void single_point_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, int genes, int individual_mem_size) {
+static void single_point_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, uint32_t genes, uint32_t individual_mem_size) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// The function should fill child1 and child2 with the crossed over values
 
@@ -26,8 +26,8 @@ static void single_point_crossover(uint32_t* parent1, uint32_t* parent2, uint32_
 	mask.i = AVX_setzero();
 	uint32_t b = ((crosspoint_rnd >> 5) & AVX_dwordpointer_mask);
 #ifdef __AVX512VL__
-	uint16_t set_mask = (uint16_t)0xffffu << (AVX_dwords - b);
-    _mm512_mask_set1_epi32(mask.i, set_mask, 0xffffffff);
+	uint16_t set_mask = (uint16_t)0xffffu >> (AVX_dwords - b);
+	mask.i = _mm512_mask_set1_epi32(mask.i, set_mask, 0xffffffff);
 #else 
 #ifdef __AVX2__
 	uint8_t set_mask = (uint8_t)0xffu << b;
@@ -38,7 +38,7 @@ static void single_point_crossover(uint32_t* parent1, uint32_t* parent2, uint32_
 	}
 #endif
 #endif
-	mask.c[b] = 0xffffffff << (crosspoint_rnd & 0x1f);
+	mask.c[b] = 0xffffffff << (32 - (crosspoint_rnd & 0x1f));
 
 	for (uint32_t i = 0; i < memory_blocks; i++) {
 		if (i < crosspoint_gene_AVX) {
@@ -53,7 +53,8 @@ static void single_point_crossover(uint32_t* parent1, uint32_t* parent2, uint32_
 			child1_ptr[i] = AVX_or(
 				AVX_and(
 					parent1_ptr[i],
-					mask.i),
+					mask.i
+				),
 				AVX_and(
 					parent2_ptr[i],
 					AVX_xor(mask.i, AVX_setone())
@@ -62,8 +63,7 @@ static void single_point_crossover(uint32_t* parent1, uint32_t* parent2, uint32_
 			child2_ptr[i] = AVX_or(
 				AVX_and(
 					parent1_ptr[i],
-					AVX_xor(mask.i, AVX_setone())
-				),
+					AVX_xor(mask.i, AVX_setone())),
 				AVX_and(
 					parent2_ptr[i],
 					mask.i
@@ -73,7 +73,7 @@ static void single_point_crossover(uint32_t* parent1, uint32_t* parent2, uint32_
 	}
 }
 
-static void two_point_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, int genes, int individual_mem_size) {
+static void two_point_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, uint32_t genes, uint32_t individual_mem_size) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// The function should fill child1 and child2 with the crossed over values
 
@@ -105,13 +105,13 @@ static void two_point_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* 
 		__mAVXi i;
 		uint32_t c[AVX_dwords];
 	};
-	union AVX_union_bytes mask_a;
+	union AVX_union_bytes mask_a = { 0 };
 
 	uint32_t crosspoint_memblock_a_AVX = (crosspoint_rnd_a >> AVX_bitpointer_bits);
 	mask_a.i = AVX_setzero();
 	uint32_t crossbyte_a = (crosspoint_rnd_a >> 5) & AVX_dwordpointer_mask;
 
-	union AVX_union_bytes mask_b;
+	union AVX_union_bytes mask_b = { 0 };
 	uint32_t crosspoint_memblock_b_AVX = (crosspoint_rnd_b >> AVX_bitpointer_bits);
 	mask_b.i = AVX_setzero();
 	uint32_t crossbyte_b = (crosspoint_rnd_b >> 5) & AVX_dwordpointer_mask;
@@ -145,7 +145,7 @@ static void two_point_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* 
 			child1_ptr[i] = parent1_ptr[i];
 			child2_ptr[i] = parent2_ptr[i];
 		}
-		else if (i > crosspoint_memblock_a_AVX || i < crosspoint_memblock_b_AVX) {
+		else if (i > crosspoint_memblock_a_AVX && i < crosspoint_memblock_b_AVX) {
 			child1_ptr[i] = parent2_ptr[i];
 			child2_ptr[i] = parent1_ptr[i];
 		}
@@ -232,7 +232,7 @@ static void two_point_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* 
 	}
 }
 
-static void uniform_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, int genes, int individual_mem_size) {
+static void uniform_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, uint32_t genes, uint32_t individual_mem_size) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// prob is the probability of a value being copied from the first parent
 	// The function should fill child1 and child2 with the crossed over values
@@ -250,9 +250,9 @@ static void uniform_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* ch
 
 	for (uint32_t i = 0; i < memory_blocks; i++) {
 		mask = gen_mt_rand512();
-
-		child1_ptr[i] = _mm512_or_epi64((_mm512_andnot_epi64(parent1_ptr[i], mask)), (_mm512_and_epi64(parent2_ptr[i], mask)));
-		child2_ptr[i] = _mm512_or_epi64((_mm512_and_epi64(parent1_ptr[i], mask)), (_mm512_andnot_epi64(parent2_ptr[i], mask)));
+        //mask = _mm512_set1_epi32((int)0);
+		child1_ptr[i] = _mm512_or_epi64((_mm512_andnot_epi64(mask, parent1_ptr[i])), (_mm512_and_epi64(mask, parent2_ptr[i])));
+		child2_ptr[i] = _mm512_or_epi64((_mm512_and_epi64(mask, parent1_ptr[i])), (_mm512_andnot_epi64(mask, parent2_ptr[i])));
 	}
 #else 
 #ifdef __AVX2__
@@ -264,7 +264,7 @@ static void uniform_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* ch
 	__m256i* child1_ptr = (__m256i*)child1;
 	__m256i* child2_ptr = (__m256i*)child2;
 
-	for (int i = 0; i < memory_blocks; i++) {
+	for (uint32_t i = 0; i < memory_blocks; i++) {
 		mask = gen_mt_rand256();
 
 		child1_ptr[i] = _mm256_or_epi64((_mm256_andnot_epi64(parent1_ptr[i], mask)), (_mm256_and_epi64(parent2_ptr[i], mask)));
@@ -273,7 +273,7 @@ static void uniform_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* ch
 #else
 	int mask;
 
-	for (int i = 0; i < genes; i++) {
+	for (uint32_t i = 0; i < genes; i++) {
 
 		mask = gen_mt_rand();
 
@@ -284,13 +284,13 @@ static void uniform_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* ch
 #endif
 }
 
-static void complete_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, int genes) {
+static void complete_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, uint32_t genes) {
 	// parent1 and parent2 are the parents to be crossed over and child1 and child2 are the children to be created all of size size
 	// The function should fill child1 and child2 with the crossed over values
 
 	// int mask = pow(2, point) - 1;
 
-	for (int i = 0; i < genes; i++) {
+	for (uint32_t i = 0; i < genes; i++) {
 		if (gen_mt_rand() % 2 == 0) {
 			child1[i] = parent1[i];
 			child2[i] = parent2[i];
@@ -302,7 +302,7 @@ static void complete_crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* c
 	}
 }
 
-static void crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, int genes, int individual_mem_size, crossover_param_t* crossover_param) {
+static void crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, uint32_t* child2, uint32_t genes, uint32_t individual_mem_size, crossover_param_t* crossover_param) {
 
 	if (crossover_param->crossover_method == crossover_method_single_point) {
 		single_point_crossover(parent1, parent2, child1, child2, genes, individual_mem_size);
@@ -317,16 +317,16 @@ static void crossover(uint32_t* parent1, uint32_t* parent2, uint32_t* child1, ui
 		complete_crossover(parent1, parent2, child1, child2, genes);
     }
 	else {
-		printf("Invalid crossover method\n");
+        EXIT_WITH_ERROR("Invalid crossover method\n", 1);
 	}
 
 }
 
 void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_param) {
 	//double** pop_parameter_bin, int individuals, int genes, uint32_t* selected, int skipped_pairs){
-	int next_even = (gene_pool->individuals - gene_pool->elitism) + ((gene_pool->individuals - gene_pool->elitism) % 2);
+	uint32_t next_even = (gene_pool->individuals - gene_pool->elitism) + ((gene_pool->individuals - gene_pool->elitism) % 2);
 
-	for (int i = 0; i < next_even; i += 2) {
+	for (uint32_t i = 0; i < next_even; i += 2) {
 		crossover(gene_pool->pop_param_bin[gene_pool->selected_indexes[i]],
 			gene_pool->pop_param_bin[gene_pool->selected_indexes[i + 1]],
 			gene_pool->pop_param_bin_cross_buffer[i],
@@ -338,7 +338,7 @@ void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_para
 	}
 
 	// copy the crossed over values back to the population
-	for (int i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
+	for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
         if(memcpy_s(gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]],
 			gene_pool->individual_mem_size,
 			gene_pool->pop_param_bin_cross_buffer[i],

@@ -9,16 +9,11 @@
 #include <stdlib.h>
 #include <math.h>
 #include <windows.h>
-#include <pthread.h>
 #include "../Multiprocessing/mp_thread_locals.h"
 #include "../Helper/error_handling.h"
 
 // Selection functions
-static const int selection_method_roulette = 0;
-static const int selection_method_rank_tournament = 1;
-static const int selection_method_rank = 2;
-static const int selection_method_rank_space = 3;
-static const int selection_method_boltzmann = 4;
+
 
 
 // gen purpose

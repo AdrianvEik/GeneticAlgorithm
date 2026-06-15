@@ -13,7 +13,7 @@
 #include "../Function/Function.h"
 
 
-logging_param_t default_logging_param() {
+static logging_param_t default_logging_param() {
 	// Setups default logging parameters
 	logging_param_t logging_param;
 
@@ -22,10 +22,11 @@ logging_param_t default_logging_param() {
 	logging_param.export_interval = 0;
 	logging_param.include_config = 0;
 	logging_param.write_csv = 1;
-	logging_param.config_int_count = 1;
-	logging_param.config_double_count = 2;
+	logging_param.config_int_count = 0;
+	logging_param.config_double_count = 3;
 	logging_param.queue_size = 128;
     logging_param.write_config = 0;
+    logging_param.console_enabled = 1;
 	return logging_param;
 }
 
@@ -37,9 +38,10 @@ runtime_param_t default_runtime_param() {
 	runtime_param.genes = 2;
 	runtime_param.elitism = 2;
 	runtime_param.gene_mem_size = 32;
-	runtime_param.task_count = 32;
-	runtime_param.thread_count = 4;
+	runtime_param.task_count_solver = 32;
+	runtime_param.thread_count_solver = 4;
 	runtime_param.zone_enable = 1;
+    runtime_param.random_seed = 0; // Re-seed before every GA run
 	runtime_param.logging_param = default_logging_param();
 
 	return runtime_param;
@@ -63,12 +65,13 @@ config_ga_t default_config(runtime_param_t runtime_param) {
     
 	if (mutation_param.mutation_rate == NULL) EXIT_MEM_ERROR();
 
-	for (int i = 0; i < runtime_param.individuals; i++) {
+	for (uint32_t i = 0; i < runtime_param.individuals; i++) {
         mutation_param.mutation_rate[i] = 6.0;
 	}
 
-    mutation_param.mutation_alpha = 1;
-    mutation_param.mutation_beta = 0;
+	mutation_param.mutation_slope = 1;
+    //mutation_param.mutation_alpha = 1;
+    //mutation_param.mutation_beta = 0;
 
 	fx_param_t fx_param;
 	fx_param.fx_method = fx_method_Styblinski_Tang;
@@ -84,7 +87,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 
     if (pop_param.lower == NULL || pop_param.upper == NULL) EXIT_MEM_ERROR();
 
-    for (int i = 0; i < runtime_param.genes; i++) {
+    for (uint32_t i = 0; i < runtime_param.genes; i++) {
         pop_param.lower[i] = -5.0;
         pop_param.upper[i] = 5.0;
     }
@@ -120,9 +123,16 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 	return config_ga;
 }
 
+void free_config_ga(config_ga_t* config_ga) {
+	free(config_ga->mutation_param.mutation_rate);
+	free(config_ga->population_param.lower);
+	free(config_ga->population_param.upper);
+}
+
 void verify_input_parameters(config_ga_t config_ga, runtime_param_t runtime_param) {
 	if (runtime_param.elitism > runtime_param.individuals) EXIT_WITH_ERROR("Elitism cannot be greater than the number of individuals creation", 250);
 	if (runtime_param.individuals < 3) EXIT_WITH_ERROR("The number of individuals must be greater than three", 250);
 	if (runtime_param.genes < 1) EXIT_WITH_ERROR("The number of genes must be greater than zero", 250);
+	if (config_ga.fx_param.fx_data_type != fx_data_type_int && config_ga.fx_param.fx_data_type != fx_data_type_double) EXIT_WITH_ERROR("fx data type needs to be either int or double", 250);
 }
 

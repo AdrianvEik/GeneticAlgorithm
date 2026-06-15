@@ -1,6 +1,7 @@
 # compiled code
 "Genetic .479a36c1/"
 src/x64
+build/
 
 # zipped folders
 .zip

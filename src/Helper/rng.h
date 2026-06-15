@@ -7,10 +7,10 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-#include <pthread.h>
 #include <intrin.h>
 
 #include "../Multiprocessing/mp_thread_locals.h"
+#include "../Multiprocessing/mp_thread_wrapper.h"
 
 #include "../helper/rng/SFMT.h"
 
