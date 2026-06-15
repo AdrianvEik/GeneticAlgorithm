@@ -1,26 +1,4 @@
 
 == Genetic algorithm for a DM
-The files included contain a set of functions/classes to build a genetic algorithm that can be used on an N-channel deformable mirror.
+The files included contain a set of functions/classes to build a genetic algorithm that has been optimized in c.
 
-Extensive documentation available on:
-https://kth-dfm-control.readthedocs.io/en/latest/index.html
-
-:toc:
-
-== Todo within DFM_opt_alg.py
-include::docs/Readme/DFM_opt_alg.adoc[]
-
-== Todo withing log.py
-include::docs/Readme/log.adoc[]
-
-== Todo within pop.py
-include::docs/Readme/pop.adoc[]
-
-== Todo within selection_funcs.py
-include::docs/Readme/selection_funcs.adoc[]
-
-== Todo within cross_funcs.py
-include::docs/Readme/cross_funcs.adoc[]
-
-== Todo within mutation.py
-include::docs/Readme/mutation.adoc[]

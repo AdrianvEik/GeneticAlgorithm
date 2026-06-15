@@ -1,0 +1,40 @@
+
+#ifndef OPTIMIZER_H
+#define OPTIMIZER_H
+
+#include <math.h>
+#include <stdint.h>
+
+#include "../Helper/struct.h"
+#include "../Multiprocessing/mp_solver_th.h"
+
+struct adaptive_memory_s {
+    // Mutation
+	double convergence_moving_window;
+	double convergence_moving_window_alpha;
+	double convergence_moving_window_beta;
+	double previous_best_result;
+    double computed_mutation;
+	double computed_mutation_min_seen;
+    double computed_mutation_max_seen;
+
+    // Flatten
+	double group_dispersion;
+	double group_dispersion_alpha;
+	double group_dispersion_beta;
+	double group_dispersion_moving_window;
+	double computed_flatten_factor;
+	double computed_flatten_bias;
+
+	//uint32_t iteration_counter;
+	uint32_t convergence_counter;
+	int convergence_reached;
+};
+
+typedef struct adaptive_memory_s adaptive_memory_t;
+
+void new_adaptive_memory(adaptive_memory_t* adaptive_memory);
+
+void adapt_param(task_param_t* task, gene_pool_t* gene_pool, adaptive_memory_t* adaptive_memory);
+
+#endif // OPTIMIZER_H
