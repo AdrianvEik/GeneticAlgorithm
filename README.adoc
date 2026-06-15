@@ -1,4 +1,7 @@
 
-== Genetic algorithm for a DM
-The files included contain a set of functions/classes to build a genetic algorithm that has been optimized in c.
+== GeneticAlgorithm
+
+This repository contains a C implementation of a configurable genetic algorithm.
+The library is built with CMake and documented with Sphinx/Hawkmoth from the C
+headers in `src/`.
 

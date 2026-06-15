@@ -5,34 +5,41 @@
 
 import os
 import sys
+from pathlib import Path
 
+from clang.cindex import Config
 from hawkmoth.util import readthedocs
+
+native_libclang = Path(sys.prefix) / 'Lib' / 'site-packages' / 'clang' / 'native' / 'libclang.dll'
+if native_libclang.exists():
+    Config.set_library_file(str(native_libclang))
+
 readthedocs.clang_setup()
 
-sys.path.insert(0, os.path.abspath('../..'))
-sys.path.append(os.path.abspath('sphinxext'))
-
-
-autodoc_mock_imports = ['numpy', 'matplotlib', 'matplotlib.pyplot',
-                'mpl_toolkits.axes_grid1', 'scipy', 'scipy.optimize',
-                'matplotlib.animation', 'numpy.random', 'scipy.stats']
-
-# for mod_name in MOCK_MODULES:
-#     sys.modules[mod_name] = mock.Mock()
+hawkmoth_root = os.path.abspath('../..')
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'dfmcontrol'
-copyright = '2023, Adrian van Eik'
+project = 'GeneticAlgorithm'
+copyright = '2026, Adrian van Eik'
 author = 'Adrian van Eik'
-release = '0.1'
+release = '1.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.coverage', 'sphinx.ext.napoleon',
-              'sphinx.ext.autosectionlabel','sphinx.ext.intersphinx', 'hawkmoth']
+extensions = [
+    'sphinx.ext.coverage',
+    'sphinx.ext.autosectionlabel',
+    'sphinx.ext.intersphinx',
+    'hawkmoth',
+    'myst_parser',
+]
+
+myst_enable_extensions = [
+    'colon_fence',
+]
 
 templates_path = ['_templates']
 exclude_patterns = []
@@ -43,4 +50,3 @@ exclude_patterns = []
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "sphinx_rtd_theme"
-html_static_path = ['_static']

@@ -28,17 +28,16 @@ bld/
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
+"Genetic Algrotihm.vcxproj"
+"Genetic\ Algrotihm.vcxproj.filters"
+"Genetic\ Algrotihm.vcxproj.user"
 .idea
-
-# python
-.pyc
 
 #logs
 .log
 
 # docs
 docs/source/_images/
-dfmcontrol/.idea/
 .idea/jupyter-settings.xml
 .vscode/tasks.json
 src/notes.txt

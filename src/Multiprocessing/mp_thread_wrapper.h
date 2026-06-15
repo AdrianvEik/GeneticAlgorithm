@@ -56,6 +56,9 @@ extern "C" {
        Thread options
        ============================================================ */
 
+    /**
+     * Optional thread-creation settings shared across supported platforms.
+     */
     typedef struct thread_options_t {
         size_t stack_size;         /* 0 = default */
         uint64_t affinity_mask;    /* 0 = no affinity request */
@@ -65,18 +68,84 @@ extern "C" {
        API
        ============================================================ */
 
+    /**
+     * Create a thread with default options.
+     *
+     * :param thread: Destination platform thread handle.
+     * :param func: Thread entry function.
+     * :param arg: Argument passed to ``func``.
+     * :returns: ``0`` on success, otherwise a platform error code or ``-1``.
+     */
     static int thread_create(thread_t* thread, thread_func_t func, void* arg);
+
+    /**
+     * Create a thread with optional stack-size and affinity settings.
+     *
+     * :param thread: Destination platform thread handle.
+     * :param func: Thread entry function.
+     * :param arg: Argument passed to ``func``.
+     * :param opts: Optional creation settings, or ``NULL`` for defaults.
+     * :returns: ``0`` on success, otherwise a platform error code or ``-1``.
+     */
     static int thread_create_ex(thread_t* thread,
         thread_func_t func,
         void* arg,
         const thread_options_t* opts);
+
+    /**
+     * Wait for a thread to finish and release its platform handle.
+     *
+     * :param thread: Platform thread handle.
+     * :returns: ``0`` on success, otherwise a platform error code or ``-1``.
+     */
     static int thread_join(thread_t thread);
+
+    /**
+     * Request a CPU affinity mask for a platform thread.
+     *
+     * :param thread: Platform thread handle.
+     * :param affinity_mask: Bit mask of CPUs. ``0`` means no affinity request.
+     * :returns: ``0`` on success, otherwise a platform error code or ``-1``.
+     */
     static int thread_set_affinity(thread_t thread, uint64_t affinity_mask);
+
+    /**
+     * Sleep the current thread for a number of milliseconds.
+     *
+     * :param ms: Duration in milliseconds.
+     */
     static void thread_sleep_ms(unsigned int ms);
 
+    /**
+     * Initialize a platform mutex.
+     *
+     * :param mutex: Mutex storage to initialize.
+     * :returns: ``0`` on success, otherwise a platform error code.
+     */
     static int thread_mutex_init(thread_mutex_t* mutex);
+
+    /**
+     * Lock a platform mutex.
+     *
+     * :param mutex: Mutex to lock.
+     * :returns: ``0`` on success, otherwise a platform error code.
+     */
     static int thread_mutex_lock(thread_mutex_t* mutex);
+
+    /**
+     * Unlock a platform mutex.
+     *
+     * :param mutex: Mutex to unlock.
+     * :returns: ``0`` on success, otherwise a platform error code.
+     */
     static int thread_mutex_unlock(thread_mutex_t* mutex);
+
+    /**
+     * Destroy a platform mutex.
+     *
+     * :param mutex: Mutex to destroy.
+     * :returns: ``0`` on success, otherwise a platform error code.
+     */
     static int thread_mutex_destroy(thread_mutex_t* mutex);
 
     /* ============================================================

@@ -18,8 +18,28 @@
 
 // gen purpose
 
+/**
+ * Select parent indexes for the next generation.
+ *
+ * The dispatcher reads ``flatten_result_set`` and writes chosen source indexes
+ * into ``selected_indexes``. Available strategies include roulette,
+ * tournament, rank, rank-space, and Boltzmann selection.
+ *
+ * :param gene_pool: Population state containing sorted and flattened results.
+ * :param selection_param: Selection method and probability-shaping controls.
+ */
 void process_selection(gene_pool_t* gene_pool, selection_param_t* selection_param);
+
+/**
+ * Allocate thread-local scratch arrays used by selection routines.
+ *
+ * :param gene_pool: Population dimensions used to size selection workspaces.
+ */
 void init_pre_compute_selection(gene_pool_t* gene_pool);
+
+/**
+ * Release thread-local selection scratch arrays.
+ */
 void free_pre_compute_selection();
 #endif
 

@@ -287,5 +287,3 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param, p
 
     return best_res;
 }
-
-
