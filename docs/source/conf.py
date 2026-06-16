@@ -22,8 +22,8 @@ hawkmoth_root = os.path.abspath('../..')
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'GeneticAlgorithm'
-copyright = '2026, Adrian van Eik'
-author = 'Adrian van Eik'
+copyright = '2026, Adrian van Eik Alexander Buit'
+author = 'Adrian van Eik, Alexander Buit'
 release = '1.0'
 
 # -- General configuration ---------------------------------------------------

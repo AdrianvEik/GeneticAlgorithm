@@ -1,26 +1,56 @@
 @ECHO OFF
+setlocal
 
 pushd %~dp0
 
 REM Command file for Sphinx documentation
 
-if "%SPHINXBUILD%" == "" (
-	set SPHINXBUILD=sphinx-build
-)
 set SOURCEDIR=source
 set BUILDDIR=build
+set REQUIREMENTS=%SOURCEDIR%\requirements.txt
 
-%SPHINXBUILD% >NUL 2>NUL
-if errorlevel 9009 (
+if "%PYTHON%" == "" (
+	set PYTHON=python
+)
+
+"%PYTHON%" -c "import sys" >NUL 2>NUL
+if errorlevel 1 (
+	if "%PYTHON%" == "python" (
+		set PYTHON=py
+		"%PYTHON%" -c "import sys" >NUL 2>NUL
+	)
+)
+
+if errorlevel 1 (
 	echo.
-	echo.The 'sphinx-build' command was not found. Make sure you have Sphinx
-	echo.installed, then set the SPHINXBUILD environment variable to point
-	echo.to the full path of the 'sphinx-build' executable. Alternatively you
-	echo.may add the Sphinx directory to PATH.
+	echo.Python was not found. Install Python or set the PYTHON environment
+	echo.variable to the Python executable that should build the docs.
 	echo.
-	echo.If you don't have Sphinx installed, grab it from
-	echo.https://www.sphinx-doc.org/
-	exit /b 1
+	goto end_error
+)
+
+if exist "%REQUIREMENTS%" (
+	echo.Installing documentation requirements from %REQUIREMENTS%...
+	"%PYTHON%" -m pip install -r "%REQUIREMENTS%"
+	if errorlevel 1 (
+		echo.
+		echo.Failed to install documentation requirements.
+		echo.
+		goto end_error
+	)
+)
+
+if "%SPHINXBUILD%" == "" (
+	set SPHINXBUILD="%PYTHON%" -m sphinx
+)
+
+%SPHINXBUILD% --version >NUL 2>NUL
+if errorlevel 1 (
+	echo.
+	echo.Sphinx could not be started after installing the documentation
+	echo.requirements. Set SPHINXBUILD or PYTHON to the correct environment.
+	echo.
+	goto end_error
 )
 
 if "%1" == "" goto help
@@ -33,3 +63,10 @@ goto end
 
 :end
 popd
+endlocal
+exit /b 0
+
+:end_error
+popd
+endlocal
+exit /b 1
