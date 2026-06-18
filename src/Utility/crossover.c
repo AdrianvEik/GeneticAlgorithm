@@ -337,13 +337,19 @@ void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_para
 		);
 	}
 
-	// copy the crossed over values back to the population
-	for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
-        if(memcpy_s(gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]],
+	for (uint32_t i = gene_pool->individuals - gene_pool->elitism; i < gene_pool->individuals; i++) {
+		if (memcpy_s(gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]],
 			gene_pool->individual_mem_size,
 			gene_pool->pop_param_bin_cross_buffer[i],
 			gene_pool->individual_mem_size)) EXIT_MEM_ERROR();
 	}
+
+	// copy the crossed over values back to the population
+	uint32_t** temp_ptr = (uint32_t**)gene_pool->pop_param_bin;
+    gene_pool->pop_param_bin = gene_pool->pop_param_bin_cross_buffer;
+    gene_pool->pop_param_bin_cross_buffer = temp_ptr;
+
+
 }
 
 
