@@ -193,6 +193,7 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
     // Allocate the memory
 	if ((gene_pool->gene_pool_memory_ptr = _aligned_malloc(total_memsize, AVX_bits)) == NULL) EXIT_MEM_ERROR();
 	 
+    memset(gene_pool->gene_pool_memory_ptr, 0, total_memsize);
 
 	// pointers to blocks
 	current_mem_ptr = (uintptr_t) gene_pool->gene_pool_memory_ptr + (uintptr_t) 2 * gene_pool->individuals * gene_pool->individual_mem_size;
