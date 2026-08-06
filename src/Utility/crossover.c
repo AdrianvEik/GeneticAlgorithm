@@ -329,8 +329,8 @@ void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_para
 	for (uint32_t i = 0; i < next_even; i += 2) {
 		crossover(gene_pool->pop_param_bin[gene_pool->selected_indexes[i]],
 			gene_pool->pop_param_bin[gene_pool->selected_indexes[i + 1]],
-			gene_pool->pop_param_bin_cross_buffer[i],
-			gene_pool->pop_param_bin_cross_buffer[i + 1],
+			gene_pool->pop_param_bin_cross_buffer[gene_pool->sorted_indexes[i]],
+			gene_pool->pop_param_bin_cross_buffer[gene_pool->sorted_indexes[i+ 1]],
 			gene_pool->genes,
             gene_pool->individual_mem_size,
 			crossover_param
@@ -340,7 +340,7 @@ void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_para
 	for (uint32_t i = gene_pool->individuals - gene_pool->elitism; i < gene_pool->individuals; i++) {
 		if (memcpy_s(gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]],
 			gene_pool->individual_mem_size,
-			gene_pool->pop_param_bin_cross_buffer[i],
+			gene_pool->pop_param_bin_cross_buffer[gene_pool->sorted_indexes[i]],
 			gene_pool->individual_mem_size)) EXIT_MEM_ERROR();
 	}
 
