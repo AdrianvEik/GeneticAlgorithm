@@ -113,3 +113,6 @@ become issues, tests, or code changes.
 - CMake/CTest integration: ensure tests link consistently through the CMake
   targets and can run in CI on Windows first, then Linux once the portability
   layer is mature.
+
+
+- check logging value to individual result is not correct compute result and then log it before processing the population
