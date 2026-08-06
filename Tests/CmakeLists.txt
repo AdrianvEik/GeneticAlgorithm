@@ -11,3 +11,9 @@ add_cmocka_test(test_mutation
                 LINK_LIBRARIES cmocka
 )
 
+add_cmocka_test(test_sort
+                SOURCES ${CMAKE_SOURCE_DIR}/Tests/test_sort.c
+                COMPILE_OPTIONS ${DEFAULT_C_COMPILE_FLAGS}
+                LINK_LIBRARIES cmocka
+)
+
