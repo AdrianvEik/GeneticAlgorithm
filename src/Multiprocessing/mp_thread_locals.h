@@ -53,4 +53,7 @@ extern thread_local double current_alpha;
 /** Reserved adaptive mutation beta parameter cache. */
 extern thread_local double current_beta;
 
+// Population index sequence
+extern thread_local uint32_t* pop_index_sequence;
+
 #endif // !MP_THREAD_LOCALS_H
