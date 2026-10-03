@@ -154,10 +154,18 @@ struct crossover_param_s {
 	int crossover_method;
 	/** Probability that a selected parent pair is recombined. */
 	double crossover_prob;
+	/** Step size used for crossover operations. */
+	uint32_t crossover_stepsize;
 };
 
  //TODO: per gene mutation probability and mutation pressure (rank dependant)
-/**
+
+// complete bit level random 
+static const int mutation_method_bit_level = 0;
+// bounded gene level random
+static const int mutation_method_gene_level = 1;
+ 
+ /**
  * Mutation settings.
  *
  * ``mutation_rate`` is an individual-sized array updated by the adaptive
