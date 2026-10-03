@@ -56,4 +56,7 @@ extern thread_local double current_beta;
 // Population index sequence
 extern thread_local uint32_t* pop_index_sequence;
 
+// Mutation selection array for gene-level mutation
+extern thread_local uint32_t* mutation_selection_array;
+
 #endif // !MP_THREAD_LOCALS_H

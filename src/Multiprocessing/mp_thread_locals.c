@@ -15,14 +15,16 @@ thread_local double* central_point = NULL;
 
 thread_local uint32_t* pop_index_sequence = NULL;
 
+thread_local uint32_t* mutation_selection_array = NULL;
+
 void init_pre_compute_selection(gene_pool_t* gene_pool) {
     /*
     */
     prob_distr = (double*)malloc(gene_pool->individuals * sizeof(double));
     boltzmann_distr = (double*)malloc(gene_pool->individuals * sizeof(double));
     pop_index_sequence = (uint32_t*)malloc(gene_pool->individuals * sizeof(uint32_t));
-
-    if (prob_distr == NULL || boltzmann_distr == NULL || pop_index_sequence == NULL) EXIT_MEM_ERROR();
+    mutation_selection_array = (uint32_t*)malloc(gene_pool->genes * sizeof(uint32_t));
+    if (prob_distr == NULL || boltzmann_distr == NULL || pop_index_sequence == NULL || mutation_selection_array == NULL) EXIT_MEM_ERROR();
 
     for (uint32_t i = 0; i < gene_pool->individuals; i++) {
         prob_distr[i] = -1;
@@ -38,6 +40,7 @@ void free_pre_compute_selection() {
     free(prob_distr);
     free(boltzmann_distr);
     free(pop_index_sequence);
+    free(mutation_selection_array);
 
     // They are malloc in pairs
     if (distances != NULL && central_point != NULL) {
