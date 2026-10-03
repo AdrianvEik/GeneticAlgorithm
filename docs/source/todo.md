@@ -14,10 +14,6 @@ become issues, tests, or code changes.
   selection only. This prevents flattening from accidentally redefining the
   true best/worst individual used by elitism, reseeding, mutation pressure, and
   logging.
-- `src/Utility/flatten.c`: fix logarithmic and normalized flattening. These
-  modes currently read `pop_result_set[0]` and
-  `pop_result_set[individuals - 1]` as if the result set were sorted, but
-  flattening runs before sorting in the current chain.
 - `src/Utility/flatten.c`: check the monotonicity of linear and exponential
   flattening when scores may be positive and negative. Because both divide by
   the total score, a negative or near-zero sum can reverse or destabilize
@@ -33,16 +29,13 @@ become issues, tests, or code changes.
   map sorted objective or flattened weights into the intended Boltzmann
   distribution, use a temperature/control schedule deliberately, and guard the
   pairwise acceptance probabilities from invalid negative complements.
-- `src/Utility/process.c`: decide whether `individuals - elitism` must be even
-  and add a validation check or odd-parent handling if so.
-- `src/Genetic_Algorithm.c`: revisit thread-local RNG seeding. The solver
-  worker currently seeds each thread with `runtime_param.random_seed`, which
-  may make workers identical when a non-zero seed is reused.
+
+- fix 64 bit boundary for complete crossover
+- Mutate on full gene boundary as an extra function
+
 
 ### Adaptive Controls
 
-- `src/Optimisation/Optimizer.c`: validate the adaptive mutation formula and
-  check whether the logged mutation signal is correct.
 - `src/Utility/crossover.c` and `src/Optimisation/Optimizer.c`: make
   `crossover_prob` an active control parameter. It should eventually have a
   PID-like adaptive controller similar in spirit to the mutation controller, so

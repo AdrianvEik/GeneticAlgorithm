@@ -43,9 +43,9 @@ double weigh_result(double result, progress_t progress) {
 		return weighed_result;
 	}
     double max_result = 32 * 39.166169; // Styblinski Tang max for 32 genes
-    weighed_result += (1 - ((max_result - result) / max_result)) * 0.1;
-    weighed_result += (1 / progress.elapsed_time) * 0.8;
-    weighed_result += (1 / progress.best_result_iteration) * 0.1;
+    weighed_result += (1 - ((max_result - result) / max_result)) * 0.01;
+    weighed_result += (1 / progress.result_standard_deviation) * 0.98;
+    weighed_result += (1 / progress.best_result_iteration) * 0.01;
 	printf(
         "Weighed result: %f (result: %f, elapsed time %f, iteration %d)\n", 
 		weighed_result,
@@ -56,8 +56,16 @@ double weigh_result(double result, progress_t progress) {
 	return weighed_result;
 }
 
-static inline uint16_t scaler(uint16_t min, uint16_t max, uint16_t param) {
+static inline uint32_t scaler32(uint32_t min, uint32_t max, uint32_t param) {
+	return min + param / (UINT32_MAX / (max - min));
+}
+
+static inline uint16_t scaler16(uint16_t min, uint16_t max, uint16_t param) {
 	return min + param / (UINT16_MAX / (max - min));
+}
+
+static inline uint8_t scaler8(uint8_t min, uint8_t max, uint8_t param) {
+	return min + param / (UINT8_MAX / (max - min));
 }
 
 double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param, progress_t* end_result);
@@ -65,7 +73,7 @@ double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param, p
 static double optimize_fx_ga(uint32_t* paramset, uint32_t parent_individual, uint32_t parent_iteration) {
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 0;
-	runtime_param.task_count_solver = 1;
+	runtime_param.task_count_solver = 5;
 	runtime_param.individuals = 32;
 	runtime_param.genes = 32;
 	runtime_param.thread_count_solver = 1;
@@ -76,7 +84,7 @@ static double optimize_fx_ga(uint32_t* paramset, uint32_t parent_individual, uin
 
 	runtime_param.logging_param.include_config = 0;
 	//runtime_param.logging_param.write_config = 1; // JSON dump
-	runtime_param.logging_param.write_csv = 1;
+	runtime_param.logging_param.write_csv = 0;
 	runtime_param.logging_param.write_bin = 0;
 	runtime_param.logging_param.export_interval = 10;
 	runtime_param.logging_param.top_n_export = 1;
@@ -88,22 +96,22 @@ static double optimize_fx_ga(uint32_t* paramset, uint32_t parent_individual, uin
 	config_ga_t config_ga = default_config(runtime_param);
 	config_ga.selection_param.selection_method = selection_method_roulette;
 	config_ga.population_param.reseed_bottom_N = 1;
-	config_ga.crossover_param.crossover_method = crossover_method_two_point;
+	config_ga.crossover_param.crossover_method = crossover_method_complete;
+    config_ga.mutation_param.mutation_method = mutation_method_gene_level;
 
-	uint16_t* paramset_u16 = (uint16_t*)paramset;
+	uint8_t* paramset_u8 = (uint8_t*)paramset;
 	// int 1000 < x < 50000
-	config_ga.optimizer_param.max_iterations = scaler(1000, 10000, paramset_u16[0]);
+	config_ga.optimizer_param.max_iterations = 30000;
 	// int 100 < x < 10000
-	config_ga.optimizer_param.convergence_window = scaler(100, config_ga.optimizer_param.max_iterations, paramset_u16[1]);
+	config_ga.optimizer_param.convergence_window = scaler8(100, config_ga.optimizer_param.max_iterations, paramset_u8[0]);
 	// int 10 < x < 1000
-	config_ga.optimizer_param.convergence_moving_window_size = scaler(10, config_ga.optimizer_param.convergence_window, paramset_u16[2]);
+	config_ga.optimizer_param.convergence_moving_window_size = scaler8(10, config_ga.optimizer_param.convergence_window, paramset_u8[1]);
 	// int 10 < x < 1000
-	config_ga.optimizer_param.max_mutations = scaler(10, 1000, paramset_u16[3]);
+	config_ga.optimizer_param.max_mutations = scaler8(1, 30, paramset_u8[2]);
 	// int 1 < x < 100
-	config_ga.optimizer_param.min_mutations = scaler(1, 100, paramset_u16[4]);
+    config_ga.optimizer_param.min_mutations = 0; // scaler8(1, 10, paramset_u8[3]);
 	// double 0.0 < x < 1.0
-	config_ga.mutation_param.mutation_slope = (double)paramset_u16[5] / (double)UINT16_MAX;
-
+	config_ga.mutation_param.mutation_slope = (double)paramset_u8[3] / (double)UINT8_MAX;
 	config_ga.fx_param.fx_method = fx_method_Styblinski_Tang;
 
 	for (uint32_t i = 0; i < runtime_param.genes; i++) {

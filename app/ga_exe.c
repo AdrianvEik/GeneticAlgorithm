@@ -12,9 +12,9 @@ int main() {
 	runtime_param_t runtime_param = default_runtime_param();
 	runtime_param.zone_enable = 0;
 	runtime_param.task_count_solver = 32;
-	runtime_param.individuals = 256;
-	runtime_param.genes = 32;
-	runtime_param.thread_count_solver = 6;
+	runtime_param.individuals = 16;
+	runtime_param.genes = 1;
+	runtime_param.thread_count_solver = 1;
 	runtime_param.elitism = 3;
 	runtime_param.random_seed = 0u; // random seed
 
@@ -24,9 +24,9 @@ int main() {
 	runtime_param.logging_param.write_bin = 0;
 	runtime_param.logging_param.export_interval = 0;
 	runtime_param.logging_param.top_n_export = 0;
-	runtime_param.logging_param.console_enabled = 1;
-	runtime_param.task_size_fx = 0;
-	runtime_param.thread_count_fx = 1;
+	runtime_param.logging_param.console_enabled = 0;
+	runtime_param.task_size_fx = 1;
+	runtime_param.thread_count_fx = 6;
 
 
 	config_ga_t config_ga = default_config(runtime_param);
@@ -34,17 +34,18 @@ int main() {
 	config_ga.population_param.reseed_bottom_N = 1;
 	config_ga.crossover_param.crossover_method = crossover_method_two_point;
 
-	config_ga.optimizer_param.convergence_window = 4000;
-	config_ga.optimizer_param.convergence_moving_window_size = 100;
-	config_ga.optimizer_param.max_iterations = 10000;
-	config_ga.optimizer_param.max_mutations = 300;
+	config_ga.optimizer_param.convergence_window = 10;
+	config_ga.optimizer_param.convergence_moving_window_size = 4;
+	config_ga.optimizer_param.max_iterations = 100;
+	config_ga.optimizer_param.max_mutations = 10;
 	config_ga.optimizer_param.min_mutations = 1;
     config_ga.optimizer_param.convergence_threshold = 1e-20;
 	config_ga.mutation_param.mutation_slope = 1.0;
+	config_ga.mutation_param.mutation_method = mutation_method_bit_level;
 
-	config_ga.fx_param.fx_method = fx_method_Styblinski_Tang;
+	config_ga.fx_param.fx_method = fx_method_Genetic_Algorithm;
 	//   config_ga.fx_param.fx_function = &optimize_fx_ga;
-	config_ga.fx_param.fx_data_type = fx_data_type_double;
+	config_ga.fx_param.fx_data_type = fx_data_type_int;
 	//config_ga.fx_param.fx_optim_mode = fx_optim_mode_maximize;
 
 	//config_ga.mutation_param.mutation_alpha = 10;
