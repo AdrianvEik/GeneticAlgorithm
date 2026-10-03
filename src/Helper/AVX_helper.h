@@ -40,21 +40,21 @@
 #define AVX_dwordpointer_bits 3
 #define AVX_dwordpointer_mask 0x7
 #else
-#define __mAVXi uint64_t
-#define AVX_setzero() 0
-#define AVX_setone() 0xffffffffffffffff
-#define AVX_and(left, right)      left & right
-#define AVX_or(left, right)       left | right
-#define AVX_xor(left, right)      left ^ right
-//#define AVX_bytes 8
-#define AVX_dwords 2
-#define AVX_bits 64
-#define AVX_bitpointer_bits 6
-#define AVX_bitpointer_mask 0x3f
+#define __mAVXi uint32_t
+#define AVX_setzero() 0u
+#define AVX_setone() 0xffffffffu
+#define AVX_and(left, right)      (left & right)
+#define AVX_or(left, right)       (left | right)
+#define AVX_xor(left, right)      (left ^ right)
+//#define AVX_bytes 4
+#define AVX_dwords 1
+#define AVX_bits 32
+#define AVX_bitpointer_bits 5
+#define AVX_bitpointer_mask 0x1fu
 //#define AVX_bytepointer_bits 2
 //#define AVX_bytepointer_mask 0x3
-#define AVX_dwordpointer_bits 1
-#define AVX_dwordpointer_mask 0x1
+#define AVX_dwordpointer_bits 0
+#define AVX_dwordpointer_mask 0x0u
 #endif
 #endif
 
