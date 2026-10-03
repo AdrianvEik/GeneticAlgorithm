@@ -10,6 +10,7 @@
 
 #include <stdlib.h>
 
+#include "../src/Multiprocessing/mp_thread_locals.c"
 #include "../src/Utility/mutation.c"
 #include "../src/Helper/Struct.h"
 

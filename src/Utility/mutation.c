@@ -1,6 +1,8 @@
 
 #include "mutation.h"
 
+
+
 static inline void mutate_individual_bitwise(
 	uint32_t memory_blocks,
 	double mutation_probability,
@@ -36,7 +38,7 @@ static inline void mutate_individual_bitwise(
 	}
 }
 
-void process_mutation(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {
+static void mutate_bitwise(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {
 
 	/*
 
@@ -59,22 +61,12 @@ void process_mutation(gene_pool_t* gene_pool, mutation_param_t* mutation_param) 
 
 	*/
 
-	//uint32_t* mutation_per_memoryblock;
-	//__assume_aligned(mutation_param->mutation_rate, 32); // TODO: check if this is needed
 	uint32_t memory_blocks = gene_pool->individual_mem_size / sizeof(__mAVXi);
 	__mAVXi** pop_param_bin_ptr = (__mAVXi**)gene_pool->pop_param_bin;
-
-
-	//mutation_per_memoryblock = calloc(memory_blocks, sizeof(uint32_t));
-	// mutation_rnd = gen_mt_rand();
-	//uint32_t memblock_rng_bits_left = 32;
 
 	// 2.0 / memory_blocks is the expected number of mutations to get the desired average mutation rate with a linear spread between 0 and 2 * mutation_rate
 	double mutation_factor = (2.0 / (double)memory_blocks) / (double)UINT32_MAX;
 	for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
-		//for (uint32_t j = 0; j < mutation_param->mutation_rate[i]; j++) {
-		//	mutation_per_memoryblock[gen_mt_rand() % memory_blocks]++;
-		//}
 		double mutation_probability = mutation_param->mutation_rate[i] * mutation_factor;
 		mutate_individual_bitwise(
 			memory_blocks,
@@ -83,3 +75,75 @@ void process_mutation(gene_pool_t* gene_pool, mutation_param_t* mutation_param) 
 		);
 	}
 }
+
+static inline uint32_t gen_mt_rand_bits(uint32_t bits_needed, uint32_t* bits_remaining, uint32_t* rng) {
+	if (bits_needed > *bits_remaining) {
+		*rng = gen_mt_rand();
+		*bits_remaining = 32;
+    }
+	*bits_remaining -= bits_needed;
+    uint32_t result = *rng & ((1u << bits_needed) - 1u);
+    *rng >>= bits_needed;
+	return result;
+}
+
+static inline void mutate_individual_genewise(
+	uint32_t genes,
+	uint32_t mutation_rate,
+	uint32_t* individual
+) {
+
+	if (mutation_rate > genes) {
+		mutation_rate = genes;
+	}
+
+	for (uint32_t i = 0; i < genes; i++) {
+		mutation_selection_array[i] = 0;
+    }
+
+    uint32_t bits_needed = 32 - __lzcnt(genes) + 3; // +3 to avoid bias in the random number generation
+    uint32_t bits_remaining = 0;
+	uint32_t rng = 0;
+	uint32_t gene_to_mutate = 0;
+
+	for (uint32_t i = 0; i < mutation_rate; i++) {
+		for (uint32_t j = 0; j < genes; j++) {
+			gene_to_mutate = gen_mt_rand_bits(bits_needed, &bits_remaining, &rng) % (genes - i);
+			if (mutation_selection_array[j] == 1 && j <= gene_to_mutate) {
+				gene_to_mutate++;
+			}
+		}
+		mutation_selection_array[gene_to_mutate] = 1;
+    }
+
+	// fill with which genes to mutate from chunked gen mt rand limited by clz (first set bit from msb)
+	for (uint32_t i = 0; i < mutation_rate; i++) {
+        individual[mutation_selection_array[i]] = gen_mt_rand();
+    }
+}
+
+static inline void mutate_genewise(gene_pool_t* gene_pool, mutation_param_t* mutation_param)
+ {
+	uint32_t memory_blocks = gene_pool->individual_mem_size / sizeof(__mAVXi);
+	__mAVXi** pop_param_bin_ptr = (__mAVXi**)gene_pool->pop_param_bin;
+
+	for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
+
+		mutate_individual_genewise(
+			gene_pool->genes,
+			mutation_param->mutation_rate[i],
+			pop_param_bin_ptr[gene_pool->sorted_indexes[i]]
+		);
+	}
+}
+
+
+void process_mutation(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {
+	if (mutation_param->mutation_method == mutation_method_bit_level) {
+		mutate_bitwise(gene_pool, mutation_param);
+	}
+	else if (mutation_param->mutation_method == mutation_method_gene_level) {
+		mutate_genewise(gene_pool, mutation_param);
+	}
+}
+
