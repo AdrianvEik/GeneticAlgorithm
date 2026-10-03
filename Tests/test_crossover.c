@@ -85,7 +85,7 @@ static void test_single_cross_over(void** state) {
     uint32_t child2[32];
 
 
-    single_point_crossover(parent1, parent2, child1, child2, 2, sizeof(parent1));
+    single_point_crossover(parent1, parent2, child1, child2, sizeof(parent1));
 
     for (int i = 0; i < 32; i++) {
         printf("child1[%d] = 0x%08X, child2[%d] = 0x%08X\n", i, child1[i], i, child2[i]);
@@ -121,7 +121,7 @@ static void test_two_point_cross_over(void** state) {
     uint32_t child2[64];
 
 
-    two_point_crossover(parent1, parent2, child1, child2, 2, sizeof(parent1));
+    two_point_crossover(parent1, parent2, child1, child2, sizeof(parent1));
 
     for (int i = 0; i < 64; i++) {
         printf("child1[%d] = 0x%08X, child2[%d] = 0x%08X\n", i, child1[i], i, child2[i]);
@@ -170,7 +170,7 @@ static void test_uniform_cross_over(void** state) {
     uint32_t child1[16];
     uint32_t child2[16];
 
-    uniform_crossover(parent1, parent2, child1, child2, 2, sizeof(parent1));
+    uniform_crossover(parent1, parent2, child1, child2, sizeof(parent1));
 
     uint32_t expected_child1[16] = {
         0x11111111, 0x11111111,
@@ -201,12 +201,46 @@ static void test_uniform_cross_over(void** state) {
     }
 }
 
+static void test_complete_cross_over(void** state) {
+    int cross_mask = 0b11001111111111111111111111110101; // Example split point
+
+    will_return(__wrap_gen_mt_rand, cross_mask);
+
+    uint32_t parent1[32];
+    uint32_t parent2[32];
+
+    for (int i = 0; i < 32; i++) {
+        parent1[i] = 0x00000000; // All bits set to 1
+        parent2[i] = 0xFFFFFFFF; // All bits set to 0
+    }
+
+    uint32_t child1[32];
+    uint32_t child2[32];
+
+
+    complete_crossover(parent1, parent2, child1, child2, sizeof(parent1));
+
+    for (int i = 0; i < 32; i++) {
+        printf("child1[%d] = 0x%08X, child2[%d] = 0x%08X\n", i, child1[i], i, child2[i]);
+        if (i == 1 || i == 3 || i == 28 || i == 29) {
+            assert_int_equal(child1[i], 0x00000000);
+            assert_int_equal(child2[i], 0xFFFFFFFF);
+        }
+        else {
+            assert_int_equal(child1[i], 0xFFFFFFFF);
+            assert_int_equal(child2[i], 0x00000000);
+        }
+    }
+}
+
+
 int main(void)
 {
     const struct CMUnitTest tests[] = {
         cmocka_unit_test_setup_teardown(test_single_cross_over, setup, teardown),
         cmocka_unit_test_setup_teardown(test_two_point_cross_over, setup, teardown),
         cmocka_unit_test_setup_teardown(test_uniform_cross_over, setup, teardown),
+        cmocka_unit_test_setup_teardown(test_complete_cross_over, setup, teardown)
     };
 
     return cmocka_run_group_tests(tests, NULL, NULL);
