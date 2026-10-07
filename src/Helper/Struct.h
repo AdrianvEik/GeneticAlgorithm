@@ -134,16 +134,16 @@ static const int flatten_method_none = 5;
 /**
  * Fitness flattening settings.
  *
- * Flattening transforms raw fitness values into ``flatten_result_set`` before
+ * Flattening transforms ``normalized_result_set`` into ``flatten_result_set`` before
  * selection so selection pressure can be softened or emphasized without
  * changing the underlying objective function.
  */
 struct flatten_param_s {
 	/** Flattening method identifier. */
 	int flatten_method;
-	/** Primary flattening coefficient. */
+	/** Finite nonnegative slope (linear) or gain/curvature (exp/log/sigmoid). */
 	double flatten_alpha;
-	/** Secondary flattening coefficient or offset. */
+	/** Linear baseline >=0; sigmoid center in [0,1]; unused by other methods. */
 	double flatten_beta;
 };
 
