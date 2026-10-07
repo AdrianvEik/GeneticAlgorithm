@@ -106,6 +106,47 @@ Population and Operators
 .. c:autofunction:: process_mutation
    :file: src/Utility/mutation.h
 
+Benchmark Objectives
+--------------------
+
+.. c:autofunction:: Styblinski_Tang_fx
+   :file: src/Function/Benchmarks.h
+
+.. c:autofunction:: wheelers_ridge_fx
+   :file: src/Function/Benchmarks.h
+
+Select these objectives with ``fx_method_Ackley``, ``fx_method_Griewank``,
+``fx_method_Langermann``, ``fx_method_Levy``, ``fx_method_Rastrigin`` or
+``fx_method_Schwefel``. They require ``fx_data_type_double`` and minimize the
+objective. Set the population bounds to the desired domain; selecting a method
+does not change the bounds. Default Langermann requires exactly two genes.
+For custom Ackley or Langermann parameters, use ``fx_method_pointer`` with a
+callback wrapper and explicitly select ``fx_optim_mode_minimize``.
+
+.. c:autofunction:: Ackley_fx
+   :file: src/Function/Benchmarks.h
+
+.. c:autofunction:: Ackley_param_fx
+   :file: src/Function/Benchmarks.h
+
+.. c:autofunction:: Griewank_fx
+   :file: src/Function/Benchmarks.h
+
+.. c:autofunction:: Langermann_fx
+   :file: src/Function/Benchmarks.h
+
+.. c:autofunction:: Langermann_param_fx
+   :file: src/Function/Benchmarks.h
+
+.. c:autofunction:: Levy_fx
+   :file: src/Function/Benchmarks.h
+
+.. c:autofunction:: Rastrigin_fx
+   :file: src/Function/Benchmarks.h
+
+.. c:autofunction:: Schwefel_fx
+   :file: src/Function/Benchmarks.h
+
 Adaptive Optimization and Randomness
 ------------------------------------
 

@@ -126,6 +126,12 @@ void free_config_ga(config_ga_t* config_ga) {
 }
 
 void verify_input_parameters(config_ga_t config_ga, runtime_param_t runtime_param) {
+	if (config_ga.fx_param.fx_method >= fx_method_Ackley &&
+		config_ga.fx_param.fx_method <= fx_method_Schwefel &&
+		config_ga.fx_param.fx_data_type != fx_data_type_double)
+		EXIT_WITH_ERROR("Benchmark functions require double parameters", 250);
+	if (config_ga.fx_param.fx_method == fx_method_Langermann && runtime_param.genes != 2)
+		EXIT_WITH_ERROR("Default Langermann requires two genes", 250);
 	if (runtime_param.task_size_fx > 0 && runtime_param.thread_count_fx == 0)
 		EXIT_WITH_ERROR("task_size_fx > 0 requires thread_count_fx > 0; set both to 0 for inline evaluation", 250);
 	if (runtime_param.task_size_fx == 0 && runtime_param.thread_count_fx > 0)

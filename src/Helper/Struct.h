@@ -203,6 +203,12 @@ static const int fx_method_pointer = -1;
 static const int fx_method_Styblinski_Tang = 0;
 static const int fx_method_Wheelers_Ridge = 1;
 static const int fx_method_Genetic_Algorithm = 2;
+static const int fx_method_Ackley = 3;
+static const int fx_method_Griewank = 4;
+static const int fx_method_Langermann = 5;
+static const int fx_method_Levy = 6;
+static const int fx_method_Rastrigin = 7;
+static const int fx_method_Schwefel = 8;
 
 static const int fx_data_type_double = 1;
 static const int fx_data_type_int = 2;
@@ -226,7 +232,11 @@ typedef double (*fx_ptr_generic)(void*, uint32_t);
  *
  * The fitness stage uses these values to choose a built-in objective, nested
  * GA objective, or user callback, and to decide whether the decoded parameter
- * buffer is interpreted as doubles or integers.
+ * buffer is interpreted as doubles or integers. Ackley, Griewank, Langermann,
+ * Levy, Rastrigin and Schwefel built-ins require doubles and use minimization.
+ * They use the defaults documented in ``Function/Benchmarks.h``; Langermann
+ * requires two genes. Set population bounds explicitly for the chosen domain.
+ * For custom constants, use a callback wrapper around the parameterized API.
  */
 struct fx_param_s {
 	/** Objective selector, including built-ins and callback mode. */

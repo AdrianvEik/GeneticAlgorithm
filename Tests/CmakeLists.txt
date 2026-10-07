@@ -1,5 +1,13 @@
 add_subdirectory(agentic)
 
+add_executable(test_benchmarks test_benchmarks.c)
+target_link_libraries(test_benchmarks PRIVATE ga)
+add_test(NAME test_benchmarks COMMAND test_benchmarks)
+
+add_executable(test_benchmark_dispatch test_benchmark_dispatch.c)
+target_link_libraries(test_benchmark_dispatch PRIVATE ga)
+add_test(NAME test_benchmark_dispatch COMMAND test_benchmark_dispatch)
+
 add_cmocka_test(test_crossover
                 SOURCES ${CMAKE_SOURCE_DIR}/Tests/test_crossover.c
                 COMPILE_OPTIONS ${DEFAULT_C_COMPILE_FLAGS}

@@ -2,6 +2,8 @@
 #ifndef FUNCTION_H
 #define FUNCTION_H
 
+#include "Benchmarks.h"
+
 #include <math.h>
 #include <stdio.h>
 #include <windows.h>

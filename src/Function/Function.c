@@ -4,37 +4,6 @@
 
 
 
-static double Styblinski_Tang_fx(double* parameter_set, uint32_t genes) {
-	double result = 0;
-	for (uint32_t i = 0; i < genes; i++) {
-		result += (pow(parameter_set[i], 4)) - (16 * pow(parameter_set[i], 2)) + (5 * parameter_set[i]);
-	}
-	return result / 2;
-}
-
-// def wheelers_ridge(x: Union[np.ndarray, list], a: float = 1.5) -> float:
-//     """
-//     Compute the Wheelersridge function for given x1 and x2
-
-//     :param x: list with x1 (otype: float) and x2 (otype: float)
-//     :param a: additional parameter typically a=1.5
-
-//     :return: Value f(x1, x2, a), real float
-//     """
-//     x1, x2 = x
-//     return -np.exp(-(x1 * x2 - a) ** 2 - (x2 - a) ** 2)
-
-static double wheelers_ridge_fx(double* parameter_set, uint32_t genes) {
-	double a = 1.5;
-
-	// check if genes = 2
-    if (genes != 2) EXIT_WITH_ERROR("Genes must be 2 for Wheelers Ridge", 255);
-
-	double x1 = parameter_set[0];
-	double x2 = parameter_set[1];
-	return -1 * exp(-1 * pow(x1 * x2 - a, 2) - pow(x2 - a, 2));
-}
-
 double weigh_result(double result, progress_t progress) {
 	double weighed_result = 0;
 
@@ -127,6 +96,23 @@ static double optimize_fx_ga(uint32_t* paramset, uint32_t parent_individual, uin
 }
 
 void process_fx_set(gene_pool_t* gene_pool, task_param_t* task, uint32_t individual_min, uint32_t individual_max) {
+	double (*benchmark)(double*, uint32_t) = NULL;
+	int method = task->config_ga.fx_param.fx_method;
+	if (method == fx_method_Ackley) benchmark = Ackley_fx;
+	else if (method == fx_method_Griewank) benchmark = Griewank_fx;
+	else if (method == fx_method_Langermann) benchmark = Langermann_fx;
+	else if (method == fx_method_Levy) benchmark = Levy_fx;
+	else if (method == fx_method_Rastrigin) benchmark = Rastrigin_fx;
+	else if (method == fx_method_Schwefel) benchmark = Schwefel_fx;
+	if (benchmark != NULL) {
+		if (task->config_ga.fx_param.fx_data_type != fx_data_type_double)
+			EXIT_WITH_ERROR("Benchmark functions require double parameters", 250);
+		if (gene_pool->genes == 0)
+			EXIT_WITH_ERROR("Benchmark functions require at least one gene", 250);
+		if (method == fx_method_Langermann && gene_pool->genes != 2)
+			EXIT_WITH_ERROR("Default Langermann requires two genes", 250);
+		task->config_ga.fx_param.fx_optim_mode = fx_optim_mode_minimize;
+	}
 	/*
 
 	:param pop: matrix of individuals as double (individuals x genes)
@@ -151,7 +137,11 @@ void process_fx_set(gene_pool_t* gene_pool, task_param_t* task, uint32_t individ
 			}
 		}
 
-		if (task->config_ga.fx_param.fx_method == fx_method_Styblinski_Tang) {
+		if (benchmark != NULL) {
+			gene_pool->pop_result_set[i] = fx_optim_mode_minimize *
+				benchmark(gene_pool->pop_param_double[i], gene_pool->genes);
+		}
+		else if (task->config_ga.fx_param.fx_method == fx_method_Styblinski_Tang) {
 			task->config_ga.fx_param.fx_optim_mode = fx_optim_mode_minimize;
 			gene_pool->pop_result_set[i] = task->config_ga.fx_param.fx_optim_mode * Styblinski_Tang_fx(gene_pool->pop_param_double[i], gene_pool->genes);
 
