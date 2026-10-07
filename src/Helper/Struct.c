@@ -97,6 +97,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 	selection_param.selection_temp_param = 10.0f;
 	selection_param.selection_tournament_size = 4;
     selection_param.selection_rank_distr = 0; // 0: prob_distr, 1: boltzmann_distr
+    selection_param.selection_boltzmann_threshold = 0.0; // distinguish unequal normalized scores
 
 	optimizer_param_t optimizer_param;
 	optimizer_param.convergence_moving_window_size = 10;

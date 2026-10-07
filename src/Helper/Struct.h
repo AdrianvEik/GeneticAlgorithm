@@ -101,6 +101,9 @@ static const int selection_method_rank_tournament = 1;
 static const int selection_method_rank = 2;
 static const int selection_method_rank_space = 3;
 static const int selection_method_boltzmann = 4;
+static const int selection_method_logistic_pairwise = 5;
+static const int selection_method_boltzmann_strict = 6;
+static const int selection_method_boltzmann_relaxed = 7;
 
 /**
  * Parent-selection settings.
@@ -112,16 +115,18 @@ static const int selection_method_boltzmann = 4;
 struct selection_param_s {
 	/** Selection algorithm identifier. */
 	int selection_method;
-	/** Diversity parameter used by rank-space selection. */
+	/** Rank-space mixture fraction lambda in [0,1]. */
 	double selection_div_param;
-	/** Probability-shaping parameter for rank distributions. */
+	/** Geometric rank pressure p in [0,1]; 0 is uniform, 1 selects the best group. */
 	double selection_prob_param;
-	/** Temperature parameter used by Boltzmann selection. */
+	/** Positive finite temperature; tournament differences use normalized units. */
 	double selection_temp_param;
 	/** Number of competitors sampled for tournament selection. */
 	uint32_t selection_tournament_size;
     /** Distribution source for rank-based selection variants. */
     uint32_t selection_rank_distr;
+    /** Normalized fitness-class separation for three-candidate Boltzmann, [0,1]. */
+    double selection_boltzmann_threshold;
 };
 
 static const int flatten_method_linear = 0;

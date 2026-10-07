@@ -1,298 +1,200 @@
-
 #include "selection.h"
+#include "fitness.h"
 
-static inline int find_tree(double* arr, int lo, int hi, double value) {
-    /*
-    Binary search for the index of the first element in arr that is greater than or equal to value
-    :param arr: The array to search
-    :type arr: array of doubles (double *)
-    :param lo: The lower bound of the search
-    :type lo: int
-    :param hi: The upper bound of the search
-    :type hi: int
-    :param size: The size of the array
-    :type size: int
-    :param value: The value to search for
-    :type value: double
-    :return: The index of the first element in arr that is greater than or equal to value
-    :rtype: int
-    */
-    
+/* Rejection removes modulo bias. All callers supply a positive bound. */
+static uint32_t random_index(uint32_t bound) {
+    const uint32_t threshold = (0u - bound) % bound;
+    uint32_t value;
+    do { value = gen_mt_rand(); } while (value < threshold);
+    return value % bound;
+}
+
+static double random_unit(void) {
+    return (double)gen_mt_rand() / 4294967296.0; /* [0,1), including zero */
+}
+
+/* Finite nonnegative weights are a precondition. Scaling before accumulation
+   bounds the total by N. A zero total becomes a uniform distribution. */
+static double build_cdf(const double* weights, double* cdf, uint32_t n) {
+    double maximum = 0.0;
+    for (uint32_t i = 0; i < n; ++i) if (weights[i] > maximum) maximum = weights[i];
+    double total = 0.0;
+    for (uint32_t i = 0; i < n; ++i) {
+        total += maximum == 0.0 ? 1.0 : weights[i] / maximum;
+        cdf[i] = total;
+    }
+    return total;
+}
+
+static uint32_t sample_cdf(const double* cdf, uint32_t n, double total) {
+    double draw = random_unit() * total;
+    if (draw >= total) draw = nextafter(total, 0.0);
+    uint32_t lo = 0, hi = n - 1;
+    /* First cumulative value strictly greater than draw: zero-weight entries
+       cannot win at a boundary, including a draw of exactly zero. */
     while (lo < hi) {
-        int mid = (lo + hi) >> 1;
-        if (arr[mid] < value) {
-            lo = mid + 1;
-        }
-        else {
-            hi = mid;
-        }
+        const uint32_t mid = lo + (hi - lo) / 2;
+        if (cdf[mid] <= draw) lo = mid + 1;
+        else hi = mid;
     }
     return lo;
 }
 
-// Maybe we can use this in rng too?
-static void roulette_wheel(double* probabilities, double* selection_temp, uint32_t size, uint32_t ressize, uint32_t* result) {
-
-    /*
-    Roulette wheel selection of an index based on probabilities
-
-    :param probabilities: The probabilities of the indices
-    :type probabilities: array of doubles (double *)
-
-    :param size: The size of the probabilities array
-    :type size: int
-
-    :param ressize: The size of the result array (amount of indices to be selected)
-    :type ressize: int
-
-    :param result: The index selected
-    :type result: array of ints (int *)
-
-    */
-
-    // calculate the cumulative sum of the probabilities
-    selection_temp[0] = probabilities[0];
-
-    for (uint32_t i = 1; i < size; i++) {
-        selection_temp[i] = selection_temp[i - 1] + probabilities[i];
-    }
-
-    double normaliser = selection_temp[size - 1] / (double)0xffffffff;
-
-    // generate random numbers and select the indices
-    for (uint32_t i = 0; i < ressize; i++) {
-        double randnum = ((double)gen_mt_rand()) * normaliser;
-
-        result[i] = find_tree(selection_temp, 0, size, randnum); // TODO: tree search?
-        //for (uint32_t j = 0; j < size; j++) {
-        //    if (randnum < selection_temp[j]) { // TODO: tree search?
-        //        result[i] = j;
-        //        break;
-        //    }
-        //}
-    }
+static void roulette_selection(gene_pool_t* pool) {
+    const double total = build_cdf(pool->flatten_result_set, pool->selection_temp, pool->individuals);
+    for (uint32_t i = 0; i < pool->individuals - pool->elitism; ++i)
+        pool->selected_indexes[i] = sample_cdf(pool->selection_temp, pool->individuals, total);
 }
 
-
-static void compute_distr(gene_pool_t* gene_pool, selection_param_t* selection_param) {
-    /*
-    */
-    double sum = 0;
-    current_prob_param = selection_param->selection_prob_param;
-    for (uint32_t i = 0; i < gene_pool->individuals; i++) {
-        prob_distr[i] = selection_param->selection_prob_param * pow((1 - selection_param->selection_prob_param), i - 1);
-        sum += prob_distr[i];
-    }
-    for (uint32_t i = 0; i < gene_pool->individuals; i++) {
-        prob_distr[i] /= sum;
-    }
-}
-
-static void compute_boltzmann_distr(gene_pool_t* gene_pool, selection_param_t* selection_param) {
-    /*
-    */
-    double sum = 0;
-    current_temp_param = selection_param->selection_temp_param;
-    for (uint32_t i = 0; i < gene_pool->individuals; i++) {
-        boltzmann_distr[i] = exp(-1*(double)i / selection_param->selection_temp_param);
-        sum += boltzmann_distr[i];
-    }
-    for (uint32_t i = 0; i < gene_pool->individuals; i++) {
-        boltzmann_distr[i] /= sum;
-    }
-}
-
-static inline void compute_distances(gene_pool_t* gene_pool) {
-    /*
-    */
-    // Compute the central point of the distribution as a vector
-    if (central_point == NULL) {
-        central_point = (double*)malloc(gene_pool->genes * sizeof(double));
-        if (central_point == NULL) EXIT_MEM_ERROR();
-    }
-
-    if (distances == NULL) {
-        distances = (double*)malloc(gene_pool->individuals * sizeof(double));
-        if (distances == NULL) EXIT_MEM_ERROR();
-    }
-
-
-    for (uint32_t i = 0; i < gene_pool->genes; i++) {
-        central_point[i] = 0;
-        for (uint32_t j = 0; j < gene_pool->individuals; j++) {
-            central_point[i] += gene_pool->pop_param_bin[gene_pool->selected_indexes[j]][i];
-        }
-        central_point[i] /= gene_pool->individuals;
-    }
-
-    // Compute the distance of each individual to the central point
-    for (uint32_t i = 0; i < gene_pool->individuals; i++) {
-        distances[i] = 0;
-        for (uint32_t j = 0; j < gene_pool->genes; j++) {
-            int diff = gene_pool->pop_param_bin[gene_pool->selected_indexes[i]][j] - (int)central_point[j];
-            distances[i] += diff * diff; // No sqrt for performance
-        }
-    }
-
-}
-
-// Selection functions
-static void roulette_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
-	/*
-
-	:param pop: matrix of normalised fitness values for the population (individuals x 1)
-	:param individuals: number of individuals
-	:param genes: number of genes
-	:param selected: matrix of the indices of selected individuals (individuals x 2)
-
-	*/
-
-	// select individuals
-	roulette_wheel(gene_pool->flatten_result_set, gene_pool->selection_temp, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes);
-}
-
-static void tournament_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
-	/*
-	*/
-    // We hold n tournaments and select the best individual from each tournament
-    for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
-        int best = -1;
-        double best_fitness = -1;
-        for (uint32_t j = 0; j < selection_param->selection_tournament_size; j++) {
-            int index = gen_mt_rand() % (gene_pool->individuals);
-            if (best == -1 || gene_pool->flatten_result_set[index] > best_fitness) {
-                best = index;
-                best_fitness = gene_pool->flatten_result_set[index];
+static void tournament_selection(gene_pool_t* pool, const selection_param_t* param) {
+    for (uint32_t i = 0; i < pool->individuals - pool->elitism; ++i) {
+        uint32_t best = random_index(pool->individuals), ties = 1;
+        for (uint32_t draw = 1; draw < param->selection_tournament_size; ++draw) {
+            const uint32_t candidate = random_index(pool->individuals);
+            const double u = pool->normalized_result_set[candidate];
+            const double best_u = pool->normalized_result_set[best];
+            if (u > best_u || (u == best_u && pool->pop_result_set[candidate] > pool->pop_result_set[best])) {
+                best = candidate;
+                ties = 1;
+            } else if (u == best_u && pool->pop_result_set[candidate] == pool->pop_result_set[best]) {
+                /* Reservoir sampling gives each tied draw equal probability. */
+                if (random_index(++ties) == 0) best = candidate;
             }
         }
-        gene_pool->selected_indexes[i] = best;
+        pool->selected_indexes[i] = best;
     }
 }
 
-
-static void rank_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
-	/*
-
-	*/
-    // The individuals are already sorted in ascending order so we can just use the indexes
-	roulette_wheel(selection_param->selection_rank_distr == 0 ? prob_distr : boltzmann_distr, 
-        gene_pool->selection_temp,
-        gene_pool->individuals,
-        gene_pool->individuals - gene_pool->elitism,
-        gene_pool->selected_indexes
-    );
-}
-
-static void space_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
-	/*
-
-	*/
-    // Compute the central point of the distribution as a vector
-    compute_distances(gene_pool);
-
-    // Using the fitness values plus distance times the distance parameter as the selection probability
-    double* selection_prob = (double*)malloc(gene_pool->individuals * sizeof(double));
-    if (selection_prob == NULL) EXIT_MEM_ERROR();
-
-    for (uint32_t i = 0; i < gene_pool->individuals; i++) {
-        // For now it is not "rank" maybe this should be a seperate function
-        selection_prob[i] = gene_pool->flatten_result_set[gene_pool->selected_indexes[i]] + selection_param->selection_div_param * distances[i];
+static double prepare_rank_cdf(gene_pool_t* pool, const selection_param_t* param, int diversity) {
+    prepare_selection_workspace(pool, diversity);
+    const uint32_t n = pool->individuals;
+    double* base;
+    if (param->selection_rank_distr == 0) {
+        if (current_prob_param != param->selection_prob_param) {
+            prob_distr[n - 1] = 1.0;
+            for (uint32_t r = n - 1; r > 0; --r)
+                prob_distr[r - 1] = prob_distr[r] * (1.0 - param->selection_prob_param);
+            current_prob_param = param->selection_prob_param;
+        }
+        base = prob_distr;
+    } else {
+        if (current_temp_param != param->selection_temp_param) {
+            /* Avoid 1/T overflow when T is a positive subnormal. */
+            const double ratio = param->selection_temp_param <= 1.0 / 745.0
+                ? 0.0 : exp(-1.0 / param->selection_temp_param);
+            boltzmann_distr[n - 1] = 1.0;
+            for (uint32_t r = n - 1; r > 0; --r)
+                boltzmann_distr[r - 1] = boltzmann_distr[r] * ratio;
+            current_temp_param = param->selection_temp_param;
+        }
+        base = boltzmann_distr;
     }
-
-    // Now we can use the roulette wheel selection
-    roulette_wheel(selection_prob, gene_pool->selection_temp, gene_pool->individuals, gene_pool->individuals - gene_pool->elitism, gene_pool->selected_indexes);
-
-    // clear arrays to 0
-    memset(central_point, 0, gene_pool->genes * sizeof(double));
-    memset(distances, 0, gene_pool->individuals * sizeof(double));
-
-    free(selection_prob);
+    /* Canonically equal candidates share their group's total rank weight.
+       This population-dependent adjustment is deliberately not cached. */
+    for (uint32_t first = 0; first < n;) {
+        uint32_t end = first + 1;
+        double sum = base[first];
+        while (end < n && pool->pop_result_set[pool->sorted_indexes[end]] ==
+                          pool->pop_result_set[pool->sorted_indexes[first]]) sum += base[end++];
+        const double average = sum / (double)(end - first);
+        for (uint32_t r = first; r < end; ++r) rank_weights[r] = average;
+        first = end;
+    }
+    return build_cdf(rank_weights, pool->selection_temp, n);
 }
 
-static void boltzmann_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
-	/*
-        TODO: Boltzmann selection currently uses flattened fitness values, should be able to use boltzmann distribution
-	*/
-
-    // We hold n selection rounds
-    for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
-        // Select a main competitor at random
-        int main_competitor = gen_mt_rand() % (gene_pool->individuals);
-
-        // Pick a distance from the main competitor at least two spaces away
-        int distance = 2 + gen_mt_rand() % (gene_pool->individuals - 2);
-
-        // Pick the second competitor < distance away
-        int second_competitor = (main_competitor + (gen_mt_rand() % distance)) % (gene_pool->individuals);
-
-        // Strict selection uses the same policy as the second competitor but is not the second competitor
-        // Relaxed selection can pick any competitor that is not the second or the first
-
-        int third_competitor;
-        // Use a coinflip to decide if we have strict or relaxed selection
-        if (gen_mt_rand() < 1 / 2 * 0xffffffff) { // strict
-            third_competitor = (main_competitor + (gen_mt_rand() % distance)) % (gene_pool->individuals);
-        }
-        else { // relaxed
-            third_competitor = gen_mt_rand() % (gene_pool->individuals);
-            while (third_competitor == main_competitor || third_competitor == second_competitor) {
-                third_competitor = gen_mt_rand() % (gene_pool->individuals);
-            }
-        }
-
-        // Now we can have the anti acceptance competition between 2 and 3
-        double acceptance[2] = {0};
-        acceptance[0] = exp((gene_pool->flatten_result_set[second_competitor] - gene_pool->flatten_result_set[third_competitor]) / selection_param->selection_temp_param);
-        acceptance[1] = 1 - acceptance[0];
-        int winner_anti_acceptance = 0;
-        roulette_wheel(acceptance, gene_pool->selection_temp, 2, 1, &winner_anti_acceptance);
-
-        // The winner of the anti acceptance competition competes against the main competitor
-        acceptance[0] = exp((gene_pool->flatten_result_set[main_competitor] - gene_pool->flatten_result_set[winner_anti_acceptance == 0 ? second_competitor : third_competitor]) / selection_param->selection_temp_param);
-        acceptance[1] = 1 - acceptance[0];
-        int winner_main_competitor = 0;
-        roulette_wheel(acceptance, gene_pool->selection_temp, 2, 1, &winner_main_competitor);
-
-        // If the main competitor wins he goes through, if not it depends on the outcome of the first competition
-        if (winner_main_competitor == 0) {
-            gene_pool->selected_indexes[i] = main_competitor;
-        }
-        else {
-            gene_pool->selected_indexes[i] = winner_anti_acceptance == 0 ? second_competitor : third_competitor;
-        }
+static void rank_selection(gene_pool_t* pool, const selection_param_t* param) {
+    const double total = prepare_rank_cdf(pool, param, 0);
+    for (uint32_t i = 0; i < pool->individuals - pool->elitism; ++i) {
+        const uint32_t rank = sample_cdf(pool->selection_temp, pool->individuals, total);
+        pool->selected_indexes[i] = pool->sorted_indexes[rank];
     }
 }
 
+static void compute_distances(gene_pool_t* pool) {
+    /* Numeric uint32 chromosome coordinates mapped to [0,1]. This is an
+       encoded-coordinate metric; categorical/phenotype metrics remain TODO. */
+    memset(central_point, 0, (size_t)pool->genes * sizeof(double));
+    memset(distances, 0, (size_t)pool->individuals * sizeof(double));
+    for (uint32_t g = 0; g < pool->genes; ++g) {
+        for (uint32_t i = 0; i < pool->individuals; ++i)
+            central_point[g] += (double)pool->pop_param_bin[i][g] / (double)UINT32_MAX;
+        central_point[g] /= (double)pool->individuals;
+    }
+    for (uint32_t i = 0; i < pool->individuals; ++i) {
+        for (uint32_t g = 0; g < pool->genes; ++g) {
+            const double diff = (double)pool->pop_param_bin[i][g] / (double)UINT32_MAX - central_point[g];
+            distances[i] += diff * diff;
+        }
+        distances[i] /= (double)pool->genes;
+    }
+}
 
+static void space_selection(gene_pool_t* pool, const selection_param_t* param) {
+    const double rank_total = prepare_rank_cdf(pool, param, 1);
+    compute_distances(pool);
+    const double diversity_total = build_cdf(distances, diversity_cdf, pool->individuals);
+    /* P(i) = (1-lambda) R_i/sum(R) + lambda D_i/sum(D).
+       Choosing a component then sampling it realizes the same distribution.
+       The rank CDF is in rank order; the diversity CDF is in physical order. */
+    for (uint32_t i = 0; i < pool->individuals - pool->elitism; ++i) {
+        if (random_unit() < param->selection_div_param)
+            pool->selected_indexes[i] = sample_cdf(diversity_cdf, pool->individuals, diversity_total);
+        else
+            pool->selected_indexes[i] = pool->sorted_indexes[
+                sample_cdf(pool->selection_temp, pool->individuals, rank_total)];
+    }
+}
 
+static uint32_t choose_other(gene_pool_t* pool, uint32_t a, uint32_t b,
+                             int strict, double threshold) {
+    /* Goldberg's bounded search: try roughly a tenth of the population,
+       at least once; use the last draw if no separated class was found.
+       Strict differs from both classes; relaxed differs only from A. */
+    const uint32_t attempts = pool->individuals / 10 > 0 ? pool->individuals / 10 : 1;
+    uint32_t other = a;
+    for (uint32_t j = 0; j < attempts; ++j) {
+        other = random_index(pool->individuals);
+        const double u = pool->normalized_result_set[other];
+        if (fabs(u - pool->normalized_result_set[a]) > threshold &&
+            (!strict || fabs(u - pool->normalized_result_set[b]) > threshold)) break;
+    }
+    return other;
+}
 
-void process_selection(gene_pool_t* gene_pool, selection_param_t* selection_param) {
-    
-    // Check if the distributions are up to date
-    if (current_prob_param != selection_param->selection_prob_param || prob_distr[0] == -1) { // Change or not initialized
-        compute_distr(gene_pool, selection_param);
-	}
-	if (current_temp_param != selection_param->selection_temp_param || boltzmann_distr[0] == -1) {
-		compute_boltzmann_distr(gene_pool, selection_param);
-	}
+static void boltzmann_selection(gene_pool_t* pool, const selection_param_t* param) {
+    for (uint32_t i = 0; i < pool->individuals - pool->elitism; ++i) {
+        const uint32_t a = random_index(pool->individuals);
+        const uint32_t b = choose_other(pool, a, a, 0, param->selection_boltzmann_threshold);
+        const int strict = param->selection_method == selection_method_boltzmann_strict ||
+            (param->selection_method == selection_method_boltzmann && random_index(2) == 0);
+        const uint32_t c = choose_other(pool, a, b, strict, param->selection_boltzmann_threshold);
+        const double* u = pool->normalized_result_set;
+        /* Anti-acceptance favors the weaker B/C; primary acceptance the stronger A/W. */
+        const uint32_t secondary = random_unit() < fitness_acceptance(u[c] - u[b], param->selection_temp_param) ? b : c;
+        pool->selected_indexes[i] = random_unit() < fitness_acceptance(u[a] - u[secondary], param->selection_temp_param)
+            ? a : secondary;
+    }
+}
 
-    // Select individuals
-	if (selection_param->selection_method == selection_method_roulette) {
-		roulette_selection(gene_pool, selection_param);
-	}
-	else if (selection_param->selection_method == selection_method_rank_tournament) {
-		tournament_selection(gene_pool, selection_param);
-	}
-	else if (selection_param->selection_method == selection_method_rank) {
-		rank_selection(gene_pool, selection_param);
-	}
-	else if (selection_param->selection_method == selection_method_rank_space) {
-        space_selection(gene_pool, selection_param);
-	}
-	else if (selection_param->selection_method == selection_method_boltzmann) {
-		boltzmann_selection(gene_pool, selection_param);
-	}
-	else {
-        EXIT_WITH_ERROR("Error: selection_method is not 0, 1, 2, 3 or 4\n", 0x1);
-	}
+static void pairwise_selection(gene_pool_t* pool, const selection_param_t* param) {
+    for (uint32_t i = 0; i < pool->individuals - pool->elitism; ++i) {
+        const uint32_t a = random_index(pool->individuals);
+        const uint32_t b = random_index(pool->individuals);
+        const double difference = pool->normalized_result_set[a] - pool->normalized_result_set[b];
+        pool->selected_indexes[i] = random_unit() < fitness_acceptance(difference, param->selection_temp_param) ? a : b;
+    }
+}
+
+void process_selection(gene_pool_t* pool, selection_param_t* param) {
+    if (pool->individuals == 0 || pool->individuals == pool->elitism) return;
+    if (param->selection_method == selection_method_roulette) roulette_selection(pool);
+    else if (param->selection_method == selection_method_rank_tournament) tournament_selection(pool, param);
+    else if (param->selection_method == selection_method_rank) rank_selection(pool, param);
+    else if (param->selection_method == selection_method_rank_space) space_selection(pool, param);
+    else if (param->selection_method == selection_method_boltzmann ||
+             param->selection_method == selection_method_boltzmann_strict ||
+             param->selection_method == selection_method_boltzmann_relaxed) boltzmann_selection(pool, param);
+    else if (param->selection_method == selection_method_logistic_pairwise) pairwise_selection(pool, param);
+    else EXIT_WITH_ERROR("Unknown selection method", 1);
 }

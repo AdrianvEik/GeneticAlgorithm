@@ -26,18 +26,26 @@ void init_pre_compute(gene_pool_t* gene_pool);
  */
 void free_pre_compute();
 
+/** Lazily allocate/reuse rank and optional diversity workspaces for this size. */
+void prepare_selection_workspace(gene_pool_t* gene_pool, int need_diversity);
+void free_pre_compute_selection(void);
+
 // RNG
 // has a thread local seed struct for each thread
 
 // Selection parameters
-/** Cached probability distribution used by roulette and rank selection. */
+/** Cached geometric weights in ascending rank order; prepared only for rank methods. */
 extern thread_local double* prob_distr;
-/** Cached Boltzmann probability distribution used by Boltzmann selection. */
+/** Cached exponential rank weights (not the three-candidate selector). */
 extern thread_local double* boltzmann_distr;
 /** Last selection probability parameter used to decide whether to recompute. */
 extern thread_local double current_prob_param;
 /** Last Boltzmann temperature parameter used to decide whether to recompute. */
 extern thread_local double current_temp_param;
+/** Population-specific tie-adjusted rank weights, separate from cached bases. */
+extern thread_local double* rank_weights;
+/** Diversity cumulative distribution in physical individual order. */
+extern thread_local double* diversity_cdf;
 
 // In case of using the rank_space selection method
 /** Per-individual distances from the population central point. */
