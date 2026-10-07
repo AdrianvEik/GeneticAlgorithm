@@ -113,3 +113,12 @@ void seed_rand_threadlocal(uint32_t seed) {
 	}
     sfmt_init_gen_rand(&sfmt_thread, seed);
 }
+
+void seed_rand_task_threadlocal(uint32_t base_seed, uint32_t task_id) {
+    if (base_seed == 0) {
+        seed_rand_threadlocal(0);
+        return;
+    }
+    // Do not route a wrapped zero through seed_rand_threadlocal's entropy path.
+    sfmt_init_gen_rand(&sfmt_thread, (uint32_t)(base_seed + task_id));
+}

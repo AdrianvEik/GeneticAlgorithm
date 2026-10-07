@@ -78,7 +78,7 @@ static double optimize_fx_ga(uint32_t* paramset, uint32_t parent_individual, uin
 	runtime_param.genes = 32;
 	runtime_param.thread_count_solver = 1;
 	runtime_param.elitism = 3;
-	runtime_param.thread_count_fx = 1;
+	runtime_param.thread_count_fx = 0;
 	runtime_param.task_size_fx = 0;
 	runtime_param.random_seed = 0xAbAe;
 
@@ -227,8 +227,8 @@ void process_fx(gene_pool_t* gene_pool, task_param_t* task, fx_task_queue_t* fx_
 			fx_task.gene_pool = gene_pool;
 			fx_task.individual_min = i;
 			fx_task.individual_max = i + fx_task_queue->task_size_fx - 1;
-			if (fx_task.individual_max > (gene_pool->individuals - gene_pool->elitism)) {
-				fx_task.individual_max = gene_pool->individuals - gene_pool->elitism;
+			if (fx_task.individual_max >= (gene_pool->individuals - gene_pool->elitism)) {
+				fx_task.individual_max = gene_pool->individuals - gene_pool->elitism - 1;
 			}
 			fx_task.task_param = task;
 			fx_task.task_type = FX_TASK;

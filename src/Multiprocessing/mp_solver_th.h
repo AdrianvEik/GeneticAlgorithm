@@ -188,6 +188,9 @@ void stop_task_solver_threads(task_queue_t* task_queue, uint32_t thread_count);
 
 /**
  * Initialize the fitness-task queue.
+ * Requires settings accepted by verify_input_parameters(). Both counts zero
+ * leave an empty inline-evaluation descriptor
+ * with no allocated resources; it must not be used with add/get_fx_task.
  *
  * :param fx_task_queue: Queue struct to initialize.
  * :param queue_size: Number of fitness-task slots.

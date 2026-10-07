@@ -22,6 +22,7 @@ static logging_param_t default_logging_param() {
 	logging_param.export_interval = 0;
 	logging_param.include_config = 0;
 	logging_param.write_csv = 1;
+	logging_param.write_bin = 0;
 	logging_param.config_int_count = 0;
 	logging_param.config_double_count = 3;
 	logging_param.queue_size = 128;
@@ -40,8 +41,10 @@ runtime_param_t default_runtime_param() {
 	runtime_param.gene_mem_size = 32;
 	runtime_param.task_count_solver = 32;
 	runtime_param.thread_count_solver = 4;
+	runtime_param.task_size_fx = 0;
+	runtime_param.thread_count_fx = 0;
 	runtime_param.zone_enable = 1;
-    runtime_param.random_seed = 0; // Re-seed before every GA run
+    runtime_param.random_seed = 0; // Automatic seed per task; nonzero bases use base + task_id.
 	runtime_param.logging_param = default_logging_param();
 
 	return runtime_param;
@@ -130,6 +133,10 @@ void free_config_ga(config_ga_t* config_ga) {
 }
 
 void verify_input_parameters(config_ga_t config_ga, runtime_param_t runtime_param) {
+	if (runtime_param.task_size_fx > 0 && runtime_param.thread_count_fx == 0)
+		EXIT_WITH_ERROR("task_size_fx > 0 requires thread_count_fx > 0; set both to 0 for inline evaluation", 250);
+	if (runtime_param.task_size_fx == 0 && runtime_param.thread_count_fx > 0)
+		EXIT_WITH_ERROR("thread_count_fx > 0 requires task_size_fx > 0; set both to 0 for inline evaluation", 250);
 	if (runtime_param.elitism > runtime_param.individuals) EXIT_WITH_ERROR("Elitism cannot be greater than the number of individuals creation", 250);
 	if (runtime_param.individuals < 3) EXIT_WITH_ERROR("The number of individuals must be greater than three", 250);
 	if (runtime_param.genes < 1) EXIT_WITH_ERROR("The number of genes must be greater than zero", 250);

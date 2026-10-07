@@ -274,6 +274,7 @@ inline void fill_individual_uniform(gene_pool_t* gene_pool, uint32_t individual)
 }
 
 void fill_pop(gene_pool_t* gene_pool, population_param_t pop_param, fx_param_t fx_param) {
+	(void)fx_param; // Initial fitness is already in the internal maximization convention.
 	if (pop_param.sampling_type == pop_uniform)
 		for (uint32_t i = 0; i < gene_pool->individuals; i++) {
 			fill_individual_uniform(gene_pool, i);
@@ -283,7 +284,8 @@ void fill_pop(gene_pool_t* gene_pool, population_param_t pop_param, fx_param_t f
 	}
 
 	for (uint32_t i = 0; i < gene_pool->individuals; i++) {
-        gene_pool->pop_result_set[i] =  fx_param.fx_optim_mode == fx_optim_mode_minimize ? DBL_MAX : -DBL_MAX;
+        // Evaluated minimization objectives are negated, so worst fitness is negative in both modes.
+        gene_pool->pop_result_set[i] = -DBL_MAX;
         gene_pool->sorted_indexes[i] = i;
 	}
 	//else if (pop_param.sampling_type == pop_cauchy) {

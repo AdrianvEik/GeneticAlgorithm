@@ -95,6 +95,10 @@ void stop_task_solver_threads(task_queue_t* task_queue, uint32_t thread_count) {
 }
 
 void init_fx_task_queue(fx_task_queue_t* fx_task_queue, uint32_t queue_size, uint32_t thread_count, uint32_t task_size_fx) {
+    memset(fx_task_queue, 0, sizeof(*fx_task_queue));
+    // Parameters are verified before queue creation. Both zero selects inline evaluation.
+    if (thread_count == 0 && task_size_fx == 0) return;
+
     fx_task_param_t* fx_task_list = (fx_task_param_t*)malloc(sizeof(fx_task_param_t) * queue_size);
     if (fx_task_list == NULL) EXIT_MEM_ERROR();
 
@@ -115,7 +119,10 @@ void init_fx_task_queue(fx_task_queue_t* fx_task_queue, uint32_t queue_size, uin
 }
 
 void free_fx_task_queue(fx_task_queue_t* fx_task_queue) {
-    thread_mutex_destroy(fx_task_queue->lock);
+	if (fx_task_queue->lock != NULL) {
+		thread_mutex_destroy(fx_task_queue->lock);
+		free(fx_task_queue->lock);
+	}
     free(fx_task_queue->fx_task_list);
 
     free(fx_task_queue->thread_id);

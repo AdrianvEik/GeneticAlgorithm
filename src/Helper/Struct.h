@@ -154,8 +154,6 @@ struct crossover_param_s {
 	int crossover_method;
 	/** Probability that a selected parent pair is recombined. */
 	double crossover_prob;
-	/** Step size used for crossover operations. */
-	uint32_t crossover_stepsize;
 };
 
  //TODO: per gene mutation probability and mutation pressure (rank dependant)
@@ -322,15 +320,15 @@ struct runtime_param_s {
 	uint32_t task_count_solver;
 	/** Number of solver worker threads. */
 	uint32_t thread_count_solver;
-	/** Number of individuals per queued fitness subtask; ``0`` disables queueing. */
+	/** Batch size; must be 0 with thread_count_fx == 0, or positive with fitness workers. */
 	uint32_t task_size_fx;
-    /** Number of fitness worker threads. */
+    /** Fitness worker count; both fitness settings must be 0 for inline evaluation, or both positive. */
     uint32_t thread_count_fx;
     /** Non-zero to split the search space into zones. */
     int zone_enable;
     /** Number of bits used to encode one gene. */
     uint32_t gene_mem_size;
-    /** RNG seed; ``0`` requests automatic seeding per worker. */
+    /** Base RNG seed; tasks use base + task_id modulo 2^32. ``0`` requests automatic seeding per task. */
     uint32_t random_seed;
     /** Logging and progress-display configuration. */
     struct logging_param_s logging_param;

@@ -23,7 +23,10 @@ before tasks enter the queue.
 
 {c:type}`fx_task_queue_t` carries {c:type}`fx_task_param_t` slices for parallel
 fitness evaluation. {c:func}`process_fx` chooses between synchronous
-evaluation and this queue based on `task_size_fx`.
+evaluation and this queue based on `task_size_fx`. Inline evaluation requires
+both `task_size_fx` and `thread_count_fx` to be zero. Queued evaluation requires
+both to be positive. `verify_input_parameters()` rejects mixed combinations
+with an error; it does not modify the supplied settings.
 
 The queue is managed with {c:func}`init_fx_task_queue`,
 {c:func}`add_fx_task`, {c:func}`get_fx_task`, {c:func}`free_fx_task_queue`, and

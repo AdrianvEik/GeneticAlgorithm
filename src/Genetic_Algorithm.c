@@ -177,8 +177,6 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
 }
 
 static void process_task_thread(thread_param_t* thread_param) {
-	seed_rand_threadlocal(thread_param->runtime_param.random_seed); // todo fix thread local storage
-
 	gene_pool_t gene_pool;
 
 	init_gene_pool(&gene_pool, &(thread_param->runtime_param));
@@ -192,6 +190,7 @@ static void process_task_thread(thread_param_t* thread_param) {
         if (task.task_type == TERMINATE_THREAD) {
             break;
         }
+		seed_rand_task_threadlocal(thread_param->runtime_param.random_seed, task.task_id);
 		process_task(thread_param, &task, &gene_pool);
 	}
 

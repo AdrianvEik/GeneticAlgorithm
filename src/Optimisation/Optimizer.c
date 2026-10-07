@@ -77,7 +77,7 @@ static void compute_mutation_rate(task_param_t* task, adaptive_memory_t* adaptiv
         else {
             // TODO: check if log is correct
 
-            computed_mutation_sloped = (1 - (i / gene_pool->individuals) * task->config_ga.mutation_param.mutation_slope) * computed_mutation;
+            computed_mutation_sloped = (1 - ((double)i / (double)gene_pool->individuals) * task->config_ga.mutation_param.mutation_slope) * computed_mutation;
             if (computed_mutation_sloped < 0) {
                 computed_mutation_sloped = 0;
             }
