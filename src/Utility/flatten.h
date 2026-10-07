@@ -13,13 +13,15 @@
 
 
 /**
- * Transform raw fitness values into the selection-ready fitness buffer.
+ * Shape mandatory normalized fitness into finite nonnegative selection weights.
  *
  * The function dispatches to the configured flattening method and writes the
  * transformed values to ``gene_pool->flatten_result_set``. Selection consumes
  * this flattened buffer rather than mutating the raw objective results.
  *
- * :param gene_pool: Population state with raw fitness values.
+ * Requires process_normalize first. None and normalized both copy its output.
+ * Canonical scores, normalized scores and genes remain unchanged.
+ * :param gene_pool: Population state with normalized fitness values.
  * :param flatten_param: Flattening method and tuning coefficients.
  */
 void process_flatten(gene_pool_t* gene_pool, flatten_param_t* flatten_param);

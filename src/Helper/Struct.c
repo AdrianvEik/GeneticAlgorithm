@@ -22,6 +22,7 @@ static logging_param_t default_logging_param() {
 	logging_param.export_interval = 0;
 	logging_param.include_config = 0;
 	logging_param.write_csv = 1;
+	logging_param.write_bin = 0;
 	logging_param.config_int_count = 0;
 	logging_param.config_double_count = 3;
 	logging_param.queue_size = 128;
@@ -33,6 +34,8 @@ static logging_param_t default_logging_param() {
 runtime_param_t default_runtime_param() {
 	// Setups default runtime parameters
 	runtime_param_t runtime_param;
+	runtime_param.generation_observer = NULL;
+	runtime_param.generation_observer_context = NULL;
 
 	runtime_param.individuals = 128;
 	runtime_param.genes = 2;
@@ -40,8 +43,10 @@ runtime_param_t default_runtime_param() {
 	runtime_param.gene_mem_size = 32;
 	runtime_param.task_count_solver = 32;
 	runtime_param.thread_count_solver = 4;
+	runtime_param.task_size_fx = 0;
+	runtime_param.thread_count_fx = 0;
 	runtime_param.zone_enable = 1;
-    runtime_param.random_seed = 0; // Re-seed before every GA run
+    runtime_param.random_seed = 0; // Automatic seed per task; nonzero bases use base + task_id.
 	runtime_param.logging_param = default_logging_param();
 
 	return runtime_param;
@@ -61,14 +66,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 	mutation_param_t mutation_param;
 	mutation_param.mutation_method = 0;
 	mutation_param.mutation_prob = 0.5;
-	mutation_param.mutation_rate = malloc(sizeof(double) * runtime_param.individuals);
-    
-	if (mutation_param.mutation_rate == NULL) EXIT_MEM_ERROR();
-
-	for (uint32_t i = 0; i < runtime_param.individuals; i++) {
-        mutation_param.mutation_rate[i] = 6.0;
-	}
-
+	mutation_param.initial_mutation_rate = 6.0;
 	mutation_param.mutation_slope = 1;
     //mutation_param.mutation_alpha = 1;
     //mutation_param.mutation_beta = 0;
@@ -101,6 +99,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 	selection_param.selection_temp_param = 10.0f;
 	selection_param.selection_tournament_size = 4;
     selection_param.selection_rank_distr = 0; // 0: prob_distr, 1: boltzmann_distr
+    selection_param.selection_boltzmann_threshold = 0.0; // distinguish unequal normalized scores
 
 	optimizer_param_t optimizer_param;
 	optimizer_param.convergence_moving_window_size = 10;
@@ -124,12 +123,21 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 }
 
 void free_config_ga(config_ga_t* config_ga) {
-	free(config_ga->mutation_param.mutation_rate);
 	free(config_ga->population_param.lower);
 	free(config_ga->population_param.upper);
 }
 
 void verify_input_parameters(config_ga_t config_ga, runtime_param_t runtime_param) {
+	if (config_ga.fx_param.fx_method >= fx_method_Ackley &&
+		config_ga.fx_param.fx_method <= fx_method_Schwefel &&
+		config_ga.fx_param.fx_data_type != fx_data_type_double)
+		EXIT_WITH_ERROR("Benchmark functions require double parameters", 250);
+	if (config_ga.fx_param.fx_method == fx_method_Langermann && runtime_param.genes != 2)
+		EXIT_WITH_ERROR("Default Langermann requires two genes", 250);
+	if (runtime_param.task_size_fx > 0 && runtime_param.thread_count_fx == 0)
+		EXIT_WITH_ERROR("task_size_fx > 0 requires thread_count_fx > 0; set both to 0 for inline evaluation", 250);
+	if (runtime_param.task_size_fx == 0 && runtime_param.thread_count_fx > 0)
+		EXIT_WITH_ERROR("thread_count_fx > 0 requires task_size_fx > 0; set both to 0 for inline evaluation", 250);
 	if (runtime_param.elitism > runtime_param.individuals) EXIT_WITH_ERROR("Elitism cannot be greater than the number of individuals creation", 250);
 	if (runtime_param.individuals < 3) EXIT_WITH_ERROR("The number of individuals must be greater than three", 250);
 	if (runtime_param.genes < 1) EXIT_WITH_ERROR("The number of genes must be greater than zero", 250);

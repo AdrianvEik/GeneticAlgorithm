@@ -8,27 +8,35 @@ become issues, tests, or code changes.
 
 ### Algorithm Correctness
 
-- `src/Utility/process.c` and `src/Utility/flatten.c`: separate true fitness
-  ordering from selection-pressure scaling. Sort `sorted_indexes` from the
-  sign-canonicalized `pop_result_set`, then apply flattening/scaling for
-  selection only. This prevents flattening from accidentally redefining the
-  true best/worst individual used by elitism, reseeding, mutation pressure, and
-  logging.
-- `src/Utility/flatten.c`: check the monotonicity of linear and exponential
-  flattening when scores may be positive and negative. Because both divide by
-  the total score, a negative or near-zero sum can reverse or destabilize
-  selection pressure.
-- `src/Utility/selection.c`: fix rank-based selection so sampled ranks are
-  mapped through `sorted_indexes`. The thread-local rank distributions should
-  select a rank, not be treated as physical individual indexes.
-- `src/Utility/selection.c`: define roulette input requirements explicitly.
-  Roulette needs non-negative, monotonic cumulative weights; raw `none`
-  flattening can violate this if canonical scores are negative.
-- `src/Utility/selection.c`: align Boltzmann tournament selection with
-  Goldberg's acceptance/anti-acceptance formulation. The implementation should
-  map sorted objective or flattened weights into the intended Boltzmann
-  distribution, use a temperature/control schedule deliberately, and guard the
-  pairwise acceptance probabilities from invalid negative complements.
+- Fitness normalization and selector repairs are implemented; contracts and
+  method IDs are recorded in [Operator Pipeline](operator_pipeline.md).
+- Preserve the adjacent SIMD dedupe algorithm and existing worst-slot reseed
+  policy. Discuss exhaustive equal-score-group detection or reseeding specific
+  duplicate positions separately if desired.
+- Broader operator validation sweep (explicitly deferred by the user): validate
+  active flattener finite alpha >= 0, linear beta >= 0, sigmoid beta in [0,1];
+  selection p/lambda in [0,1], positive finite temperature, tournament size >= 1,
+  class threshold in [0,1], and supported method/rank-distribution IDs. Extend
+  equivalent checks to crossover, mutation, optimizer, and population settings
+  together. Currently these are documented preconditions; do not silently alter
+  invalid configurations. NaN/infinite objectives remain a separate contract.
+- Broader reproducibility/configuration-export sweep (explicitly deferred):
+  include rank-distribution choice, Boltzmann class threshold, all effective
+  settings, numeric precision, and method semantics. Existing JSON exports have
+  not been expanded in this change.
+- Reporting snapshots and score/candidate correspondence remain deferred for
+  separate discussion. Preserve existing adaptation timing when addressing it.
+- Remove the optional mutation/adaptation debug fields from CSV and binary
+  solution exports (including header/row sizing and configuration counts).
+  These were debugging aids, not solution metadata. Their timing/rank indexing
+  does not need a separate redesign before removal.
+- Elite preservation in `process_crossover()` was fixed and regression-tested
+  on 2026-10-07; see the reproduction and repair below.
+- Compare mixed/strict/relaxed three-candidate Boltzmann and pairwise logistic
+  under equal objective-evaluation budgets. Existing regression checks establish
+  probability behavior and termination, not optimization superiority.
+- Consider phenotype-aware diversity distances (including fixed dimensions and
+  categorical genes). Current rank-space distance uses normalized uint32 codes.
 
 - fix 64 bit boundary for complete crossover
 - Mutate on full gene boundary as an extra function
@@ -51,10 +59,10 @@ become issues, tests, or code changes.
 
 - `src/Utility/process.c`: handle remaining and small sort sizes in the
   vectorized indexed bitonic sort paths.
-- `src/Utility/mutation.c`: confirm whether `mutation_param->mutation_rate`
-  should be explicitly aligned or copied to aligned scratch storage.
-- `src/Utility/flatten.c`: make the exponential flattening clamp domain
-  configurable instead of hard-coding `[0, 1]`.
+- `src/Utility/mutation.c`: validate alignment and vectorization requirements
+  for the mutation-rate block now owned by the aligned gene-pool allocation.
+- Fitness weights deliberately use [0,1]; review alternative pressure controls
+  only as an explicit change to the documented operator contracts.
 - `src/Utility/pop.c`: either repair or remove the commented Cauchy population
   path; the comment notes undesirable casts from integer RNG output to double.
 - `src/Multiprocessing/mp_logger.c` and `mp_logger.h`: confirm ownership of the
@@ -109,3 +117,60 @@ become issues, tests, or code changes.
 
 
 - check logging value to individual result is not correct compute result and then log it before processing the population
+
+## Results and measurement follow-up (2026-10-07)
+
+The small O9 statistics fixes are implemented: public best/mean, CSV, and binary
+scores use original objective units; the logger computes the actual mean and
+sample standard deviation with Welford's algorithm once per completed task.
+No completions gives NAN best/mean/stddev; one completion gives NAN stddev.
+The effective task direction travels with the record because built-in objectives
+can override the originally configured direction. Rebuild clients for the
+record/queue layout changes and account for the changed minimization sign and
+mean/stddev semantics. Internal selection/ranking scores are unchanged.
+
+Remaining bookkeeping should be placed at generation boundaries:
+
+- After `process_fx()` returns successfully in `process_pop()`, increment a
+  task-local evaluation count by the number actually evaluated (currently
+  `individuals - elitism`). No per-objective atomic counter is needed. If the
+  evaluation policy later changes, have the evaluator return that count.
+- Immediately after sorting, before crossover/mutation/reseeding, compare the
+  generation winner with a task-local best-ever record. Copy its evaluated
+  inputs and record its discovery iteration only on strict improvement. This
+  costs one comparison per generation and O(genes) only for improvements;
+  allocate candidate storage once, not inside the generation loop.
+- Capture requested top-N evaluated inputs/scores at that same boundary on
+  export generations. Do not snapshot the entire population every generation.
+  The saved best-ever record supplies a final result when stopping is detected
+  later. Preserve the current variation/adaptation order while separating
+  capture time from the later decision to publish a final record.
+- Set a termination-reason enum where `check_convergence()` detects a stopping
+  condition. Define precedence when multiple conditions fire. The current
+  single boolean loses the distinction between convergence and iteration limit.
+- Keep final-report iteration separate from best-discovery iteration.
+  `progress_t.best_result_iteration` still means final-report iteration;
+  candidate return, evaluation count, best-ever tracking, and stop reason are
+  not implemented by the small statistics change.
+
+Q4 is data-type dependent: double evaluation writes decoded inputs into a
+separate buffer and normal variation leaves those doubles/scores intact, so
+evaluated double CSV rows can remain consistent after variation. Integer CSV
+reads changed chromosomes directly; binary logging always copies the double
+buffer, even for integer objectives. Unevaluated slots still need explicit
+treatment. A future result record must capture the actual
+evaluated input for either data type before variation.
+
+Elite preservation was verified against the real `process_crossover()` in a
+focused probe with 64 individuals, 16 genes, two elites, complete crossover,
+and seed 12345. The final elite's active buffer started at 1063 and its alternate
+buffer at 9063. After crossover both held 9063; the expected active value was
+1063. `memcpy_s` currently has the active buffer as destination and alternate
+buffer as source, followed by a pointer swap. This overwrites the elite before
+the swap. The subsequent repair reverses only the elite copy's source and
+destination, preserving the existing crossover and pointer-swap order. The
+original probe now retains 1063. `test_crossover_elitism` fails before the repair
+and passes afterward, checking complete chromosomes across three swaps,
+identity/permuted rank mappings, and 0/1/2/3/64 elites in a population of 64.
+Eight additional runtime/result/fitness/selection/benchmark regressions passed.
+The local probe and build scripts are under ignored `build/results-audit/`.

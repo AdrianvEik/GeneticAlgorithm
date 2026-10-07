@@ -17,6 +17,17 @@
 #include "..\Helper\Struct.h"
 
 /**
+ * Reset the mutable per-rank mutation rates for a new solver task.
+ *
+ * A solver worker reuses its gene pool across tasks, so this initializer must
+ * run once at every task boundary before the first population iteration.
+ *
+ * :param gene_pool: Population state whose rate array will be initialized.
+ * :param initial_mutation_rate: Starting rate assigned to every rank.
+ */
+void init_mutation_rates(gene_pool_t* gene_pool, double initial_mutation_rate);
+
+/**
  * Mutate non-elite chromosomes in-place.
  *
  * For each sorted non-elite individual, this function derives a per-block bit
@@ -24,9 +35,9 @@
  * the binary chromosome. Mutation rates are typically updated by
  * :c:func:`adapt_param` before this function runs.
  *
- * :param gene_pool: Population state containing sorted binary chromosomes.
- * :param mutation_param: Mutation probabilities and per-individual mutation
- *     rates.
+ * :param gene_pool: Population state containing sorted binary chromosomes and
+ *     the mutable per-rank mutation rates.
+ * :param mutation_param: Immutable mutation method settings.
  */
 void process_mutation(gene_pool_t* gene_pool, mutation_param_t* mutation_param);
 #endif

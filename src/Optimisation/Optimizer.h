@@ -12,7 +12,7 @@
  * Adaptive state carried across iterations for one solver task.
  *
  * The optimizer stores convergence counters, moving-window estimates, and the
- * normalized mutation signal used to update per-individual mutation rates.
+ * normalized mutation signal used to update per-rank mutation rates.
  */
 struct adaptive_memory_s {
     // Mutation
@@ -65,10 +65,10 @@ void new_adaptive_memory(adaptive_memory_t* adaptive_memory);
  * Update adaptive mutation settings and convergence state.
  *
  * The function reads the current best sorted result from ``gene_pool``, updates
- * moving-window convergence data, adjusts ``task->config_ga.mutation_param``,
- * and sets ``convergence_reached`` when the task should stop.
+ * moving-window convergence data, adjusts ``gene_pool->mutation_rate``, and
+ * sets ``convergence_reached`` when the task should stop.
  *
- * :param task: Current task whose configuration is adapted in-place.
+ * :param task: Current task providing immutable adaptation settings.
  * :param gene_pool: Population state containing sorted fitness results.
  * :param adaptive_memory: State carried between iterations of the same task.
  */

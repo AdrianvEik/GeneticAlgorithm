@@ -2,6 +2,7 @@
 #ifndef STRUCT_H
 #define STRUCT_H
 
+#include <stdatomic.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,20 +35,30 @@ struct gene_pool_s {
 	uint32_t** pop_param_bin_cross_buffer;
 	/** Decoded floating-point parameters for objective functions. */
 	double** pop_param_double;
-	/** Raw objective results, already signed for min/max mode. */
+	/** Canonical measured scores, signed for min/max; physical individual order. */
 	double* pop_result_set;
-	/** Fitness values after optional flattening. */
+	/** Mandatory [0,1] normalization of canonical scores, in physical order. */
+	double* normalized_result_set;
+	/** Finite nonnegative selection weights derived from normalized scores. */
 	double* flatten_result_set;
 	/** Scratch array used by selection probability calculations. */
 	double* selection_temp;
+	/** Per-rank mutation rates for the task currently using this pool. */
+	double* mutation_rate;
 	/** Source indexes selected as parents for the next generation. */
 	uint32_t* selected_indexes;
 	/** Indexes sorted by ``pop_result_set`` from worst to best. */
 	uint32_t* sorted_indexes;
 	/** Temporary workspace for indexed sorting. */
     uint32_t* sorted_indexes_temp;
+	/** Per-physical-individual duplicate markers; never stored in measured scores. */
+	uint32_t* duplicate_flags;
+	/** Physical slots scheduled for reseeding; independent of parent selection. */
+	uint32_t* reseed_indexes;
+	/** Number of active entries in reseed_indexes, reset at each task boundary. */
+	uint32_t reseed_count;
 	/** Per-individual completion flags for parallel fitness subtasks. */
-	uint32_t* fx_ready;
+	_Atomic(uint32_t)* fx_ready;
 	/** Number of genes in each individual. */
 	uint32_t genes;
 	/** Number of individuals in the population. */
@@ -90,6 +101,9 @@ static const int selection_method_rank_tournament = 1;
 static const int selection_method_rank = 2;
 static const int selection_method_rank_space = 3;
 static const int selection_method_boltzmann = 4;
+static const int selection_method_logistic_pairwise = 5;
+static const int selection_method_boltzmann_strict = 6;
+static const int selection_method_boltzmann_relaxed = 7;
 
 /**
  * Parent-selection settings.
@@ -101,16 +115,18 @@ static const int selection_method_boltzmann = 4;
 struct selection_param_s {
 	/** Selection algorithm identifier. */
 	int selection_method;
-	/** Diversity parameter used by rank-space selection. */
+	/** Rank-space mixture fraction lambda in [0,1]. */
 	double selection_div_param;
-	/** Probability-shaping parameter for rank distributions. */
+	/** Geometric rank pressure p in [0,1]; 0 is uniform, 1 selects the best group. */
 	double selection_prob_param;
-	/** Temperature parameter used by Boltzmann selection. */
+	/** Positive finite temperature; tournament differences use normalized units. */
 	double selection_temp_param;
 	/** Number of competitors sampled for tournament selection. */
 	uint32_t selection_tournament_size;
     /** Distribution source for rank-based selection variants. */
     uint32_t selection_rank_distr;
+    /** Normalized fitness-class separation for three-candidate Boltzmann, [0,1]. */
+    double selection_boltzmann_threshold;
 };
 
 static const int flatten_method_linear = 0;
@@ -123,16 +139,16 @@ static const int flatten_method_none = 5;
 /**
  * Fitness flattening settings.
  *
- * Flattening transforms raw fitness values into ``flatten_result_set`` before
+ * Flattening transforms ``normalized_result_set`` into ``flatten_result_set`` before
  * selection so selection pressure can be softened or emphasized without
  * changing the underlying objective function.
  */
 struct flatten_param_s {
 	/** Flattening method identifier. */
 	int flatten_method;
-	/** Primary flattening coefficient. */
+	/** Finite nonnegative slope (linear) or gain/curvature (exp/log/sigmoid). */
 	double flatten_alpha;
-	/** Secondary flattening coefficient or offset. */
+	/** Linear baseline >=0; sigmoid center in [0,1]; unused by other methods. */
 	double flatten_beta;
 };
 
@@ -154,8 +170,6 @@ struct crossover_param_s {
 	int crossover_method;
 	/** Probability that a selected parent pair is recombined. */
 	double crossover_prob;
-	/** Step size used for crossover operations. */
-	uint32_t crossover_stepsize;
 };
 
  //TODO: per gene mutation probability and mutation pressure (rank dependant)
@@ -168,17 +182,17 @@ static const int mutation_method_gene_level = 1;
  /**
  * Mutation settings.
  *
- * ``mutation_rate`` is an individual-sized array updated by the adaptive
- * optimizer and consumed by :c:func:`process_mutation` to decide how many bits
- * to flip per chromosome.
+ * The mutable per-rank mutation-rate array belongs to :c:type:`gene_pool_t`.
+ * This structure contains only the immutable settings used to initialize and
+ * update those rates for each task.
  */
 struct mutation_param_s {
 	/** Mutation method identifier. */
 	int mutation_method;
 	/** Base mutation probability used by mutation dispatchers. */
 	double mutation_prob;
-	/** Per-individual mutation rate array, usually sized to ``individuals``. */
-	double* mutation_rate;
+	/** Mutation rate assigned to every population rank when a task starts. */
+	double initial_mutation_rate;
     /** Rank-dependent slope applied by adaptive mutation updates. */
     double mutation_slope;
     //double mutation_alpha; // DEFAULT = 1
@@ -189,6 +203,12 @@ static const int fx_method_pointer = -1;
 static const int fx_method_Styblinski_Tang = 0;
 static const int fx_method_Wheelers_Ridge = 1;
 static const int fx_method_Genetic_Algorithm = 2;
+static const int fx_method_Ackley = 3;
+static const int fx_method_Griewank = 4;
+static const int fx_method_Langermann = 5;
+static const int fx_method_Levy = 6;
+static const int fx_method_Rastrigin = 7;
+static const int fx_method_Schwefel = 8;
 
 static const int fx_data_type_double = 1;
 static const int fx_data_type_int = 2;
@@ -212,7 +232,11 @@ typedef double (*fx_ptr_generic)(void*, uint32_t);
  *
  * The fitness stage uses these values to choose a built-in objective, nested
  * GA objective, or user callback, and to decide whether the decoded parameter
- * buffer is interpreted as doubles or integers.
+ * buffer is interpreted as doubles or integers. Ackley, Griewank, Langermann,
+ * Levy, Rastrigin and Schwefel built-ins require doubles and use minimization.
+ * They use the defaults documented in ``Function/Benchmarks.h``; Langermann
+ * requires two genes. Set population bounds explicitly for the chosen domain.
+ * For custom constants, use a callback wrapper around the parameterized API.
  */
 struct fx_param_s {
 	/** Objective selector, including built-ins and callback mode. */
@@ -312,6 +336,14 @@ struct logging_param_s {
  * :c:func:`Genetic_Algorithm` invocation.
  */
 struct runtime_param_s {
+	/** Optional observer after each process_pop/adapt_param pair, on solver threads.
+	 * seconds measures that pair with QueryPerformanceCounter, excluding observer
+	 * and logging work. Pool is borrowed and must not be modified. Callbacks must
+	 * synchronize their context when using multiple solver threads. NULL disables
+	 * instrumentation. iteration_number is zero-based. */
+	void (*generation_observer)(const struct gene_pool_s* pool, uint32_t task_id,
+	                            double seconds, void* context);
+	void* generation_observer_context;
 	/** Number of genes per individual. */
 	uint32_t genes;
 	/** Number of individuals per population. */
@@ -322,15 +354,15 @@ struct runtime_param_s {
 	uint32_t task_count_solver;
 	/** Number of solver worker threads. */
 	uint32_t thread_count_solver;
-	/** Number of individuals per queued fitness subtask; ``0`` disables queueing. */
+	/** Batch size; must be 0 with thread_count_fx == 0, or positive with fitness workers. */
 	uint32_t task_size_fx;
-    /** Number of fitness worker threads. */
+    /** Fitness worker count; both fitness settings must be 0 for inline evaluation, or both positive. */
     uint32_t thread_count_fx;
     /** Non-zero to split the search space into zones. */
     int zone_enable;
     /** Number of bits used to encode one gene. */
     uint32_t gene_mem_size;
-    /** RNG seed; ``0`` requests automatic seeding per worker. */
+    /** Base RNG seed; tasks use base + task_id modulo 2^32. ``0`` requests automatic seeding per task. */
     uint32_t random_seed;
     /** Logging and progress-display configuration. */
     struct logging_param_s logging_param;
@@ -360,9 +392,9 @@ runtime_param_t default_runtime_param();
 /**
  * Build the default genetic algorithm configuration for a runtime.
  *
- * This allocates per-gene population bounds and per-individual mutation rates,
- * so callers must release the returned struct with
- * :c:func:`free_config_ga`.
+ * This allocates per-gene population bounds, so callers must release the
+ * returned struct with :c:func:`free_config_ga`. Mutable per-rank mutation
+ * rates are allocated separately with each gene pool.
  *
  * :param runtime_param: Runtime dimensions used to size configuration arrays.
  * :returns: A ``config_ga_t`` initialized with built-in defaults.

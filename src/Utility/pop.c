@@ -169,15 +169,19 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
 
     // Calculate the total memory size needed
     total_memsize += gene_pool->individuals * sizeof(double); // flatten result set
+    total_memsize += gene_pool->individuals * sizeof(double); // normalized result set
     total_memsize += gene_pool->individuals * sizeof(uint32_t*); // pop_param_bin
     total_memsize += gene_pool->individuals * sizeof(uint32_t*); // pop_param_bin_cross_buffer
 	total_memsize += gene_pool->individuals * sizeof(double*); // pop_param_double
     total_memsize += gene_pool->individuals * sizeof(double); // pop_result_set
     total_memsize += gene_pool->individuals * sizeof(double); // selection_temp
+	total_memsize += gene_pool->individuals * sizeof(double); // mutation_rate
     total_memsize += gene_pool->individuals * sizeof(uint32_t); // selected_indexes
     total_memsize += gene_pool->individuals * sizeof(uint32_t); // sorted_indexes
 	total_memsize += gene_pool->individuals * sizeof(uint32_t); // sorted_indexes_temp
-	total_memsize += gene_pool->individuals * sizeof(uint32_t); // fx_ready
+    total_memsize += gene_pool->individuals * sizeof(uint32_t); // duplicate_flags
+    total_memsize += gene_pool->individuals * sizeof(uint32_t); // reseed_indexes
+	total_memsize += gene_pool->individuals * sizeof(_Atomic(uint32_t)); // fx_ready
 
 
 #if defined __AVX512VL__
@@ -199,6 +203,8 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
 	current_mem_ptr = (uintptr_t) gene_pool->gene_pool_memory_ptr + (uintptr_t) 2 * gene_pool->individuals * gene_pool->individual_mem_size;
     gene_pool->flatten_result_set = (double*) current_mem_ptr;
 	current_mem_ptr += gene_pool->individuals * sizeof(double);
+    gene_pool->normalized_result_set = (double*)current_mem_ptr;
+    current_mem_ptr += gene_pool->individuals * sizeof(double);
 
     gene_pool->pop_param_bin = (uint32_t**)current_mem_ptr ;
     current_mem_ptr += gene_pool->individuals * sizeof(int*);
@@ -215,6 +221,9 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
     gene_pool->selection_temp = (double*)current_mem_ptr;
     current_mem_ptr += gene_pool->individuals * sizeof(double);
 
+	gene_pool->mutation_rate = (double*)current_mem_ptr;
+	current_mem_ptr += gene_pool->individuals * sizeof(double);
+
     gene_pool->selected_indexes = (uint32_t*)current_mem_ptr;
     current_mem_ptr += gene_pool->individuals * sizeof(uint32_t);
 
@@ -223,9 +232,18 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
 
     gene_pool->sorted_indexes_temp = (uint32_t*)current_mem_ptr;
     current_mem_ptr += gene_pool->individuals * sizeof(uint32_t);
+    gene_pool->duplicate_flags = (uint32_t*)current_mem_ptr;
+    current_mem_ptr += gene_pool->individuals * sizeof(uint32_t);
+    gene_pool->reseed_indexes = (uint32_t*)current_mem_ptr;
+    current_mem_ptr += gene_pool->individuals * sizeof(uint32_t);
+    gene_pool->reseed_count = 0;
 
-	gene_pool->fx_ready = (uint32_t*)current_mem_ptr;
-	current_mem_ptr += gene_pool->individuals * sizeof(uint32_t);
+	gene_pool->fx_ready = (_Atomic(uint32_t)*)current_mem_ptr;
+	current_mem_ptr += gene_pool->individuals * sizeof(_Atomic(uint32_t));
+
+	for (uint32_t i = 0; i < gene_pool->individuals; i++) {
+		atomic_init(&gene_pool->fx_ready[i], 0);
+	}
 
 	uint64_t alligned_mem_ptr = (uint64_t)gene_pool->gene_pool_memory_ptr;
     // pointers to data
@@ -274,6 +292,8 @@ inline void fill_individual_uniform(gene_pool_t* gene_pool, uint32_t individual)
 }
 
 void fill_pop(gene_pool_t* gene_pool, population_param_t pop_param, fx_param_t fx_param) {
+	(void)fx_param; // Initial fitness is already in the internal maximization convention.
+    gene_pool->reseed_count = 0;
 	if (pop_param.sampling_type == pop_uniform)
 		for (uint32_t i = 0; i < gene_pool->individuals; i++) {
 			fill_individual_uniform(gene_pool, i);
@@ -283,7 +303,12 @@ void fill_pop(gene_pool_t* gene_pool, population_param_t pop_param, fx_param_t f
 	}
 
 	for (uint32_t i = 0; i < gene_pool->individuals; i++) {
-        gene_pool->pop_result_set[i] =  fx_param.fx_optim_mode == fx_optim_mode_minimize ? DBL_MAX : -DBL_MAX;
+        // Evaluated minimization objectives are negated, so worst fitness is negative in both modes.
+        gene_pool->pop_result_set[i] = -DBL_MAX;
+        gene_pool->normalized_result_set[i] = 0.0;
+        gene_pool->flatten_result_set[i] = 0.0;
+        gene_pool->duplicate_flags[i] = 0;
+        gene_pool->reseed_indexes[i] = 0;
         gene_pool->sorted_indexes[i] = i;
 	}
 	//else if (pop_param.sampling_type == pop_cauchy) {

@@ -63,6 +63,8 @@ void write_config(
     fprintf_s(fileptrconfig, "\"mutation_param\": {\n");
     fprintf_s(fileptrconfig, "    \"mutation_method\": %d,\n", config_ga.mutation_param.mutation_method);
     fprintf_s(fileptrconfig, "    \"mutation_prob\": %f,\n", config_ga.mutation_param.mutation_prob);
+	fprintf_s(fileptrconfig, "    \"initial_mutation_rate\": %f,\n", config_ga.mutation_param.initial_mutation_rate);
+	fprintf_s(fileptrconfig, "    \"mutation_slope\": %f\n", config_ga.mutation_param.mutation_slope);
     fprintf_s(fileptrconfig, "},\n");
 
     // Write fx parameters

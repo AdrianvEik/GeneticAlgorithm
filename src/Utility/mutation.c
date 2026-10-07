@@ -1,6 +1,12 @@
 
 #include "mutation.h"
 
+void init_mutation_rates(gene_pool_t* gene_pool, double initial_mutation_rate) {
+	for (uint32_t i = 0; i < gene_pool->individuals; i++) {
+		gene_pool->mutation_rate[i] = initial_mutation_rate;
+	}
+}
+
 
 
 static inline void mutate_individual_bitwise(
@@ -38,7 +44,7 @@ static inline void mutate_individual_bitwise(
 	}
 }
 
-static void mutate_bitwise(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {
+static void mutate_bitwise(gene_pool_t* gene_pool) {
 
 	/*
 
@@ -67,7 +73,7 @@ static void mutate_bitwise(gene_pool_t* gene_pool, mutation_param_t* mutation_pa
 	// 2.0 / memory_blocks is the expected number of mutations to get the desired average mutation rate with a linear spread between 0 and 2 * mutation_rate
 	double mutation_factor = (2.0 / (double)memory_blocks) / (double)UINT32_MAX;
 	for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
-		double mutation_probability = mutation_param->mutation_rate[i] * mutation_factor;
+		double mutation_probability = gene_pool->mutation_rate[i] * mutation_factor;
 		mutate_individual_bitwise(
 			memory_blocks,
 			mutation_probability,
@@ -122,7 +128,7 @@ static inline void mutate_individual_genewise(
     }
 }
 
-static inline void mutate_genewise(gene_pool_t* gene_pool, mutation_param_t* mutation_param)
+static inline void mutate_genewise(gene_pool_t* gene_pool)
  {
 	uint32_t memory_blocks = gene_pool->individual_mem_size / sizeof(__mAVXi);
 	__mAVXi** pop_param_bin_ptr = (__mAVXi**)gene_pool->pop_param_bin;
@@ -131,7 +137,7 @@ static inline void mutate_genewise(gene_pool_t* gene_pool, mutation_param_t* mut
 
 		mutate_individual_genewise(
 			gene_pool->genes,
-			mutation_param->mutation_rate[i],
+			gene_pool->mutation_rate[i],
 			pop_param_bin_ptr[gene_pool->sorted_indexes[i]]
 		);
 	}
@@ -140,10 +146,10 @@ static inline void mutate_genewise(gene_pool_t* gene_pool, mutation_param_t* mut
 
 void process_mutation(gene_pool_t* gene_pool, mutation_param_t* mutation_param) {
 	if (mutation_param->mutation_method == mutation_method_bit_level) {
-		mutate_bitwise(gene_pool, mutation_param);
+		mutate_bitwise(gene_pool);
 	}
 	else if (mutation_param->mutation_method == mutation_method_gene_level) {
-		mutate_genewise(gene_pool, mutation_param);
+		mutate_genewise(gene_pool);
 	}
 }
 

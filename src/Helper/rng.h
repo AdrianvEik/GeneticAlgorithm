@@ -32,6 +32,13 @@
 void seed_rand_threadlocal(uint32_t seed);
 
 /**
+ * Seed a solver task independently of worker assignment and prior tasks.
+ * A nonzero base uses base_seed + task_id modulo 2^32, including a derived
+ * zero as an ordinary deterministic SFMT seed. A zero base requests entropy.
+ */
+void seed_rand_task_threadlocal(uint32_t base_seed, uint32_t task_id);
+
+/**
  * Generate a 32-bit unsigned random integer from the thread-local SFMT state.
  *
  * :returns: Random ``uint32_t`` value.

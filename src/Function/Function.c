@@ -4,37 +4,6 @@
 
 
 
-static double Styblinski_Tang_fx(double* parameter_set, uint32_t genes) {
-	double result = 0;
-	for (uint32_t i = 0; i < genes; i++) {
-		result += (pow(parameter_set[i], 4)) - (16 * pow(parameter_set[i], 2)) + (5 * parameter_set[i]);
-	}
-	return result / 2;
-}
-
-// def wheelers_ridge(x: Union[np.ndarray, list], a: float = 1.5) -> float:
-//     """
-//     Compute the Wheelersridge function for given x1 and x2
-
-//     :param x: list with x1 (otype: float) and x2 (otype: float)
-//     :param a: additional parameter typically a=1.5
-
-//     :return: Value f(x1, x2, a), real float
-//     """
-//     x1, x2 = x
-//     return -np.exp(-(x1 * x2 - a) ** 2 - (x2 - a) ** 2)
-
-static double wheelers_ridge_fx(double* parameter_set, uint32_t genes) {
-	double a = 1.5;
-
-	// check if genes = 2
-    if (genes != 2) EXIT_WITH_ERROR("Genes must be 2 for Wheelers Ridge", 255);
-
-	double x1 = parameter_set[0];
-	double x2 = parameter_set[1];
-	return -1 * exp(-1 * pow(x1 * x2 - a, 2) - pow(x2 - a, 2));
-}
-
 double weigh_result(double result, progress_t progress) {
 	double weighed_result = 0;
 
@@ -78,7 +47,7 @@ static double optimize_fx_ga(uint32_t* paramset, uint32_t parent_individual, uin
 	runtime_param.genes = 32;
 	runtime_param.thread_count_solver = 1;
 	runtime_param.elitism = 3;
-	runtime_param.thread_count_fx = 1;
+	runtime_param.thread_count_fx = 0;
 	runtime_param.task_size_fx = 0;
 	runtime_param.random_seed = 0xAbAe;
 
@@ -123,10 +92,28 @@ static double optimize_fx_ga(uint32_t* paramset, uint32_t parent_individual, uin
 
 	free_config_ga(&config_ga);
     free(runtime_param.logging_param.fully_qualified_basename);
-	return weigh_result(result, progress);
+	/* This WIP scorer still expects the historical maximize-oriented score. */
+	return weigh_result(result * progress.optim_mode, progress);
 }
 
 void process_fx_set(gene_pool_t* gene_pool, task_param_t* task, uint32_t individual_min, uint32_t individual_max) {
+	double (*benchmark)(double*, uint32_t) = NULL;
+	int method = task->config_ga.fx_param.fx_method;
+	if (method == fx_method_Ackley) benchmark = Ackley_fx;
+	else if (method == fx_method_Griewank) benchmark = Griewank_fx;
+	else if (method == fx_method_Langermann) benchmark = Langermann_fx;
+	else if (method == fx_method_Levy) benchmark = Levy_fx;
+	else if (method == fx_method_Rastrigin) benchmark = Rastrigin_fx;
+	else if (method == fx_method_Schwefel) benchmark = Schwefel_fx;
+	if (benchmark != NULL) {
+		if (task->config_ga.fx_param.fx_data_type != fx_data_type_double)
+			EXIT_WITH_ERROR("Benchmark functions require double parameters", 250);
+		if (gene_pool->genes == 0)
+			EXIT_WITH_ERROR("Benchmark functions require at least one gene", 250);
+		if (method == fx_method_Langermann && gene_pool->genes != 2)
+			EXIT_WITH_ERROR("Default Langermann requires two genes", 250);
+		task->config_ga.fx_param.fx_optim_mode = fx_optim_mode_minimize;
+	}
 	/*
 
 	:param pop: matrix of individuals as double (individuals x genes)
@@ -151,7 +138,11 @@ void process_fx_set(gene_pool_t* gene_pool, task_param_t* task, uint32_t individ
 			}
 		}
 
-		if (task->config_ga.fx_param.fx_method == fx_method_Styblinski_Tang) {
+		if (benchmark != NULL) {
+			gene_pool->pop_result_set[i] = fx_optim_mode_minimize *
+				benchmark(gene_pool->pop_param_double[i], gene_pool->genes);
+		}
+		else if (task->config_ga.fx_param.fx_method == fx_method_Styblinski_Tang) {
 			task->config_ga.fx_param.fx_optim_mode = fx_optim_mode_minimize;
 			gene_pool->pop_result_set[i] = task->config_ga.fx_param.fx_optim_mode * Styblinski_Tang_fx(gene_pool->pop_param_double[i], gene_pool->genes);
 
@@ -191,7 +182,7 @@ void process_fx_set(gene_pool_t* gene_pool, task_param_t* task, uint32_t individ
 			EXIT_WITH_ERROR("Unkown fitness function", 255);
 		}
 
-        gene_pool->fx_ready[individual] = 1;
+		atomic_store_explicit(&gene_pool->fx_ready[individual], 1, memory_order_release);
 	}
 }
 
@@ -199,7 +190,7 @@ static void wait_fx_tasks_finish(gene_pool_t* gene_pool) {
 	while (1) {
 		int all_done = 1;
 		for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
-			if (gene_pool->fx_ready[i] == 0) {
+			if (atomic_load_explicit(&gene_pool->fx_ready[i], memory_order_acquire) == 0) {
 				all_done = 0;
 				break;
 			}
@@ -220,20 +211,23 @@ void process_fx(gene_pool_t* gene_pool, task_param_t* task, fx_task_queue_t* fx_
 		}
 	}
 	else {
+		uint32_t active_count = gene_pool->individuals - gene_pool->elitism;
+		for (uint32_t individual = 0; individual < active_count; individual++) {
+			atomic_store_explicit(&gene_pool->fx_ready[individual], 0, memory_order_relaxed);
+		}
+
 		uint32_t i = 0;
 
-		while (i < gene_pool->individuals - gene_pool->elitism) {
+		while (i < active_count) {
 			fx_task_param_t fx_task;
 			fx_task.gene_pool = gene_pool;
 			fx_task.individual_min = i;
 			fx_task.individual_max = i + fx_task_queue->task_size_fx - 1;
-			if (fx_task.individual_max > (gene_pool->individuals - gene_pool->elitism)) {
-				fx_task.individual_max = gene_pool->individuals - gene_pool->elitism;
+			if (fx_task.individual_max >= active_count) {
+				fx_task.individual_max = active_count - 1;
 			}
 			fx_task.task_param = task;
 			fx_task.task_type = FX_TASK;
-
-            gene_pool->fx_ready[i] = 0;
 
 			add_fx_task(fx_task_queue, fx_task);
 			i += fx_task_queue->task_size_fx;

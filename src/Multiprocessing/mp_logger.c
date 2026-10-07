@@ -9,13 +9,13 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
 	task_result_queue->lock = (thread_mutex_t*)malloc(sizeof(thread_mutex_t));
 	if (task_result_queue->lock == NULL) EXIT_MEM_ERROR();
 
-	//TODO: Should this be here?
-	task_result_queue->progress.best_result = -INFINITY;
-	task_result_queue->progress.tasks_completed = 0;
-	task_result_queue->progress.optim_mode = 0;
-	task_result_queue->progress.average_result = 0;
-	task_result_queue->progress.result_standard_deviation = 0;
+	task_result_queue->progress = (progress_t){0};
+	task_result_queue->progress.best_result = NAN;
+	task_result_queue->progress.best_result_iteration = UINT32_MAX;
+	task_result_queue->progress.average_result = NAN;
+	task_result_queue->progress.result_standard_deviation = NAN;
 	task_result_queue->progress.max_tasks = runtime_param.task_count_solver;
+	task_result_queue->result_m2 = 0;
 
 	task_result_queue->fx_param = fx_param;
 
@@ -55,6 +55,32 @@ void free_task_result_queue(task_result_queue_t* task_result_queue) {
 	thread_mutex_destroy(task_result_queue->lock);
     free(task_result_queue->result_list);
     free(task_result_queue->lock);
+}
+
+int record_completed_result(task_result_queue_t* queue, const task_result_t* result) {
+    if (result->task_type != BEST_RESULT_TASK) return 0;
+    progress_t* progress = &queue->progress;
+    const uint32_t count = ++progress->tasks_completed;
+    const double value = result->result;
+    if (count == 1) {
+        progress->average_result = value;
+        progress->optim_mode = result->optim_mode;
+        queue->result_m2 = 0;
+    } else {
+        const double delta = value - progress->average_result;
+        progress->average_result += delta / count;
+        queue->result_m2 += delta * (value - progress->average_result);
+    }
+    progress->result_standard_deviation = count > 1
+        ? sqrt(queue->result_m2 / (count - 1)) : NAN;
+
+    if (count == 1 || (result->optim_mode == fx_optim_mode_minimize
+        ? value < progress->best_result : value > progress->best_result)) {
+        progress->best_result = value;
+        progress->best_result_iteration = result->iteration;
+        return 1;
+    }
+    return 0;
 }
 
 void stop_result_logger(task_result_queue_t* task_result_queue, uint32_t thread_count, double* best_res) {

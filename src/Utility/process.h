@@ -27,9 +27,9 @@
 /**
  * Execute one full genetic-operator iteration for a task.
  *
- * The iteration evaluates fitness, sorts individuals, applies optional
- * bottom-N reseeding, flattens fitness values, selects parents, runs
- * crossover, and mutates the non-elite offspring. It is the main connection
+ * The iteration evaluates fitness, sorts ascending indexes, marks adjacent
+ * duplicates, normalizes and flattens scores, selects parents, runs crossover
+ * and mutation, then reseeds weak non-elite slots. It is the main connection
  * point between objective evaluation and the genetic operators.
  *
  * :param gene_pool: Population state to process.
@@ -37,6 +37,12 @@
  * :param fx_task_queue: Optional queue for parallel fitness evaluation.
  */
 void process_pop(gene_pool_t* gene_pool, task_param_t* task, fx_task_queue_t* fx_task_queue);
+
+/** Record adjacent equal-score/equal-chromosome duplicates in duplicate_flags.
+ * Requires ascending sorted_indexes. Preserves canonical scores and genes.
+ * Returns the duplicate count used by the existing worst-slot reseed policy.
+ */
+uint32_t dedupe_population(gene_pool_t* gene_pool);
 
 /**
  * Allocate thread-local pre-compute buffers used by process and selection code.
