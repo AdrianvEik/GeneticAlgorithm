@@ -1,6 +1,6 @@
 # GA project working notes
 
-Last updated: 2026-10-07 (F8 validation performed on 2026-10-07; earlier review validation was performed on 2026-10-03).
+Last updated: 2026-10-07 (includes F9/O9 result statistics and Q4/Q8 measurement follow-up, commit `ebe1902`; earlier review validation was performed on 2026-10-03).
 
 ## Project overview
 
@@ -25,6 +25,10 @@ Last updated: 2026-10-07 (F8 validation performed on 2026-10-07; earlier review 
 
 ## Fixed in the current changes
 
+- [x] **F10 — Preserve elites across crossover buffer swaps (O16).** Reversed the elite `memcpy_s` source/destination in `process_crossover()` so current elites are copied into the next-population buffer before the existing pointer swap. The permanent `test_crossover_elitism` regression failed on the old code and passes on the fix; the original probe now preserves 1063 instead of replacing it with 9063. See the repair update below.
+
+- [x] **F9 — Objective units and completed-task statistics (partial O9).** Commit `ebe1902` converts reported scores back to original objective units in `report_task()`, including CSV/binary score columns and the public scalar/progress result. Records carry the effective task direction. `record_completed_result()` computes the actual mean and sample standard deviation with Welford's algorithm once per completed task in the logger; its M2 accumulator is separate from public progress. Empty best/mean/stddev and single-result stddev are NAN. Internal ranking scores and variation/adaptation order are unchanged. Candidate capture, discovery iteration, evaluation count, and stop reason remain open; see the detailed update below.
+
 - [x] **F4 — Unused crossover setting removed.** Removed `crossover_stepsize` from `crossover_param_t`; no consumers were found. Rebuild clients because the struct layout changed.
 - [x] **F5 — Inline defaults and verified combinations.** `task_size_fx = 0`, `thread_count_fx = 0`, and `write_bin = 0` are explicit defaults. Both fitness settings must be zero for inline evaluation or both positive for queued evaluation. `verify_input_parameters()` rejects each mixed combination with a specific diagnostic and exit 250 before allocating queues or starting threads. Per user direction, settings are never silently normalized. Disabled queues allocate no resources; solver/logger threads still exist. Updated the WIP inner GA to explicitly request zero fitness workers alongside its zero batch size, preserving its intended inline behavior.
 - [x] **F6 — Stable fixed-base task RNG streams (O5).** `process_task_thread()` reseeds before each real task through `seed_rand_task_threadlocal(base, task_id)`. For nonzero base seeds, unsigned addition wraps modulo 2^32 and derived zero directly initializes SFMT without requesting entropy. A base seed of zero retains automatic seeding, now per task. Verified replay after other tasks/random draws, execution on another worker, and wraparound against direct SFMT initialization. Full GA repeatability still depends on objective behavior and the remaining state audits.
@@ -40,28 +44,41 @@ Last updated: 2026-10-07 (F8 validation performed on 2026-10-07; earlier review 
 - [x] **O1 — Shared mutable mutation rates (F8).** Concurrent solver workers now have distinct arrays because mutation rates live in their separate gene pools. A worker may reuse its pool for successive tasks, but `init_mutation_rates()` restores every entry from `task->config_ga.mutation_param.initial_mutation_rate` before the new population is filled. The configuration is no longer modified by adaptation, and no mutation allocation is copied through `init_task()`.
 - [x] **O2 — Fitness completion protocol (F7).** Every active flag is now reset before jobs are published. Atomic release stores publish each completed score and acquire loads prevent the solver from continuing until all required results are visible. The stale-flag and plain-integer data races are covered by a delayed-worker regression. This retains polling rather than adding an event-based barrier; polling overhead remains O7.
 - [x] **O3 — Full finite fitness range (operator implementation).** Mandatory normalization, all flatteners and selectors repaired for finite scores under documented parameter preconditions. Exact endpoint policy and validation evidence are in the O3/O11 implementation update below. Invalid/non-finite input contracts and broad validation remain O13.
-- [ ] **O4 — Remaining internal initialization audit.** All four configuration-default omissions are resolved by F4/F5: three fields now default to zero and unused `crossover_stepsize` is removed. The separate internal initialization inventory below remains open (CSV sizing, progress metadata, integer zone masks).
+- [ ] **O4 — Remaining internal initialization audit.** All four configuration-default omissions are resolved by F4/F5: three fields now default to zero and unused `crossover_stepsize` is removed. F9 initializes all progress fields, including elapsed time and the empty best-iteration value. The separate internal initialization inventory below remains open for CSV sizing and integer zone masks.
 - [x] **O5 — Fixed-base seeds now belong to tasks (F6).** Real tasks reseed their solver TLS RNG before population initialization using `(base_seed + task_id) mod 2^32`. Derived zero is a deterministic SFMT seed. Base zero still requests automatic seeding per task; persisting automatic seeds is deferred. This fixes RNG stream assignment but does not control random external objectives.
 - [ ] **O6 — Inline fitness is not a fully serial solve.** Both fitness settings zero disable fitness workers and their queue (F5); mixed zero/positive settings are invalid. Solver and logging threads still run. Preserve the distinction between an inline CPU evaluation backend and a fully serial GA implementation; discuss whether the latter is needed.
 - [ ] **O7 — Worker polling overhead.** Queue operations use `Sleep(1000)`, evaluation completion uses `Sleep(10)`, and logging uses `Sleep(500)`. These delays can dominate cheap runs. Separate algorithm quality measurements from scheduling overhead; consider condition/event-based waits and reusable workers.
 - [ ] **O8 — Objective dispatch is coupled to experiments.** Benchmark functions, GA tuning, decoding, scoring, and dispatch live in `Function.c`. The callback lacks user context and returns no evaluation status. Wheeler's Ridge has a method constant and implementation but no dispatch branch. Built-ins also override the direction during evaluation; queued workers therefore still write the task's direction concurrently. Determine built-in direction before publishing jobs. Resolve objective contracts before expanding the API.
-- [ ] **O9 — Result/statistics contract.** The public return currently reflects internal ranking scores; `progress_t` cannot return a best-candidate vector or evaluation count/stop reason. `average_result` is a sum, and `result_standard_deviation` is an accumulated quantity rather than a computed standard deviation. Audit the variance calculation before using it as an experimental metric. `best_result_iteration` records the winning task's final report generation, not necessarily when that value first appeared.
+- [ ] **O9 — Result/statistics contract (partially fixed by F9).** Public/exported scores now use original objective units, `average_result` is an actual mean, and `result_standard_deviation` is a computed sample standard deviation. `progress_t` still cannot return a best-candidate vector or evaluation count/stop reason. `best_result_iteration` remains the winning task's final report generation, not discovery time; best-ever tracking without elitism and Q4 candidate correspondence remain open.
 - [ ] **O10 — Cleanup across repeated runs.** `start_threads()` allocates a worker-parameter array through a local pointer that is not returned for cleanup. `Genetic_Algorithm()` does not call `free_task_result_queue()`. Queue cleanup also needs an ownership audit for allocated locks. Repeated/cascading runs need bounded memory use and complete teardown.
 - [x] **O11 — Selection assumptions (operator implementation).** Repaired probability construction, rank mapping/ties, diversity mixture, and temperature-based selectors. Added strict/relaxed and pairwise variants while preserving existing IDs. See O3/O11 implementation update; optimization-quality comparisons remain open.
 - [ ] **O12 — Domain/task generation.** Integer evaluation applies `zone_mask` and `zone_id`, but the non-zoned task path does not initialize those allocated arrays. Integer splitting can shift by 32 for an unsplit dimension. Audit masks, shifts, actual generated task counts, and complete domain coverage before comparing partitioning against restarts.
 - [ ] **O13 — Public error handling and validation.** Most failures call `exit()`, terminating an entire experiment sweep. Input validation covers only a few fields. Define behavior for invalid bounds, unsupported dimensions/population sizes, callback failures, NaN/infinity, and no valid candidates. Preserve failing cases as explicit outcomes in experiments.
 - [ ] **O14 — Bitonic sorters overrun partial blocks.** `process_pop()` always calls `indexed_bitonic_sort_8v()`. Its full-block loop runs while `i < size` but unconditionally loads and stores 64 elements, so the current `app/ga_exe.c` population of 16 accesses indexes 0 through 63. This corrupts arrays following `sorted_indexes`; the resulting invalid indexes can then fault in `post_bitonic_merge()` when used to index the result array. The defect predates the current branch changes, but packed-layout changes can alter or expose the undefined behavior. The 2v, 4v, 8v, and 16v loops and remainder thresholds (`>= 7`, `>= 15`, `>= 31`, and analogous cases) need a complete block-boundary audit. Add exact-size, undersized, odd, and non-block-multiple regression tests rather than testing only size 128. A population of 64 avoids this specific 8v overrun only as a temporary workaround.
 
+- [ ] **O15 — Automatic task seeds collide within a second.** Confirmed on 2026-10-07 with the current app configuration (32 tasks, 8 solver workers, 128 individuals, 32 genes, inline fitness, `random_seed = 0`). `is_RDRAND_supported()` in `src/Helper/rng.c` accepts only the Intel vendor string; this machine reports `AuthenticAMD` and CPUID RDRAND support, but the function rejects it. The fallback `random_int32()` calls `srand(time(0))` on every seed request. Tasks starting within the same second receive the same seed and repeat the same search. F6's move from once-per-worker to once-per-task seeding exposes this pre-existing fallback defect at every task boundary; its fixed nonzero-base path remains distinct by task ID. Correct automatic entropy and its capability detection/initialization before relying on zero-seeded restarts. No RNG or reporter implementation was changed in this investigation.
+
+- [x] **O16 — Crossover overwrites elites from the alternate buffer (F10).** The reproduced defect replaced active elite 1063 with alternate-buffer contents 9063. Fixed by copying active elites into the alternate buffer before swapping pointers. The original probe and permanent regression now pass. This repairs elite preservation for both data types without changing crossover generation or adaptation timing; Q4 integer reporting still needs its separate capture fix.
+
+### O15 reproduction and completion-report audit (2026-10-07)
+
+- Read the existing `C:/temp/GA.csv` matching the user's console output and preserved it under ignored `build/report-audit/user-run.csv`. The first 32 records contain each task ID 0 through 31 exactly once. IDs 0–7 stop at 2938, 8–15 at 4505, 16–23 at 3689, and 24–31 at 6880. Within each group, every CSV field except task ID is identical, including exported genes and scores. This is repeated search work, not merely identical printed iteration numbers.
+- Source trace: `process_task()` creates and resets its own stack-local `adaptive_memory`; each worker has its own gene pool, resets the iteration counter, and dequeues each solver task separately. A convergence result is copied into the result queue once, followed by breaking that task's loop. The logger increments `tasks_completed` by one for each `BEST_RESULT_TASK`. It does not mark other tasks owned by the worker complete. `task_size_fx = thread_count_fx = 0` bypasses fitness queues/completion flags entirely in this configuration. The groups of eight match the solver-worker count, not a fitness batch size.
+- Fresh MSVC 19.51 Debug library build in `build/report-audit/cmake`, with tests disabled for this focused investigation. A probe copied the current app configuration and changed only the output basename (to preserve the user's output) and made the seed a command-line argument. Automatic seed 0 reproduced four groups of eight at iterations 3809, 5349, 5862, and 6355; all exported fields except task ID matched within each group. With seed 12345, the same configuration produced 32 distinct stopping iterations and 32 distinct exported records. Both runs contain all 32 task IDs exactly once before the final best-record duplicate.
+- A separate probe linked the freshly built RNG and called the actual `seed_rand_task_threadlocal(0, id)` for eight IDs within one second. All eight produced the same first four SFMT outputs. It also recorded CPUID RDRAND=1 versus the library's detected support=0 on this AMD CPU.
+- The CSV has 33 data rows because logger shutdown deliberately writes the saved overall best record once more. That extra row is not another completion event and does not increment progress. This is separate from the eight-task clusters.
+- Immediate experimental workaround: use an explicit nonzero `runtime_param.random_seed`, retaining the existing `base_seed + task_id` mapping. A proper automatic-seeding repair remains open. Ignored probes and captured output live in `build/report-audit/`; the existing app edits were preserved. This audit does not validate the other open optimizer/operator issues.
+
 ## Questions and proposals requiring more reasoning
 
 - [x] **Q1 — Ownership choice for O1.** Chosen design: the worker-owned gene pool holds the mutable, individual-sized rate array and gives its active task exclusive use. Configuration holds the immutable scalar starting rate. Rates reset at every task boundary, and nested solves remain isolated when they run through their own solver worker and gene pool.
 - [ ] **Q2 — Evaluation semantics.** Retain intentional partial initial evaluation and make operators robust to the full finite fitness range (O3). Decide separately whether unevaluated sentinels need explicit metadata to distinguish them from legitimate worst-case objective values. Establish elite reuse for noisy objectives and behavior on evaluation failure. Use a generation barrier before selection/adaptation.
 - [ ] **Q3 — Mutation controller behavior.** After F3, inspect response curves, denominator-zero cases, min/max limits, rank direction, and whether fixed mutation should be available as a baseline. The casts do not validate the whole controller.
-- [ ] **Q4 — Measurement timing.** `process_pop()` evaluates and then changes chromosomes before `report_task()` runs. Audit that reported candidates still correspond to their reported scores, especially for multiple exported individuals or zero elitism. This is also flagged in `docs/source/todo.md`.
+- [ ] **Q4 — Measurement timing.** Reporting follows variation, but the mismatch is data-type dependent: evaluated double inputs remain in a separate decoded buffer, so double CSV rows can still match scores. Integer CSV reads changed chromosomes; binary logging copies the double buffer even for integer objectives. Capture evaluated inputs/scores after sorting and before variation, while preserving operator/adaptation logic. Unevaluated slots remain a separate concern; O16 elite preservation is repaired by F10. No snapshot implementation is included in F9/F10.
 - [ ] **Q5 — SIMD and small sizes.** Establish supported population/gene sizes, alignment/tail handling, and CPU instruction requirements. The code forces AVX feature macros; build presets alone do not establish portability. Include a scalar reference or explicitly validate supported limits.
 - [ ] **Q6 — Search and execution controls.** Separate independent searches, evaluation workers, evaluation batch size, restarts, and explicit subdomains. Define nested parallelism and worker budgets before reusing pools for cascades.
 - [ ] **Q7 — Future objective API.** Consider typed read-only callbacks with user context, evaluation status, and a thread-safety/lifetime contract. Distinguish raw `uint32_t` chromosomes from bounded integer decision variables. Move benchmark objectives and tuning code into examples/experiments.
-- [ ] **Q8 — Future results/observers.** Return original objective values, best candidates, evaluation counts, timing, termination reasons, seeds, and effective configuration. Observe evaluated populations before variation and record actual adaptive settings; let logging consume observations.
+- [ ] **Q8 — Future results/observers.** Original objective values are implemented by F9. Best candidates, evaluation counts, discovery iteration, termination reasons, seeds, and broader timing/effective configuration metadata remain future work. Observe evaluated inputs before variation and let logging consume those observations. User clarified that mutation/adaptation export fields are debugging aids, not solution metadata; removal is a TODO rather than a priority to repair their timing/indexing.
 - [ ] **Q9 — New cascade design.** Decode named integer/real/categorical parameters with explicit constraints. Evaluate inner configurations over specified problems and seeds under fair budgets. Start with normalized final error under a fixed evaluation budget; report success, time, and variability separately. Validate selected configurations on held-out seeds/problems.
 
 ## Discussion details: O2–O5
@@ -98,8 +115,8 @@ These were all unset active fields found in the default configuration constructo
 Additional internal initialization paths found during this discussion (a separate inventory, not a proof of an exhaustive whole-program read-before-write audit):
 
 - `task_result_queue_t.csv_single_entry_length`: assigned only when CSV is enabled, but read unconditionally by `init_task_result()` to compute `csv_buffer_length`.
-- `progress_t.best_result_iteration`: not assigned in `init_task_result_queue()`; assigned only when a completed task improves the best score. Define the value when no valid improvement is reported.
-- `progress_t.elapsed_time`: not assigned by that initializer, but the logger assigns it before normal display and again on termination; this is staged initialization rather than an established bad read.
+- `progress_t.best_result_iteration`: resolved by F9; initialized to UINT32_MAX when empty, then assigned the winning task's final reporting iteration. Discovery iteration remains O9.
+- `progress_t.elapsed_time`: resolved by F9; zero-initialized with the rest of progress, then updated by the logger.
 - `task_param_t.zone_mask[]` and `zone_id[]`: allocated by `init_task()` but not filled in the non-zoned path; integer objective evaluation subsequently reads them (O12).
 - `fx_task_param_t.task_id`: never assigned for fitness jobs; no consumer found. `thread_param_t.status` is first assigned on task completion; no reader found. These are unused/incomplete metadata rather than demonstrated evaluation failures.
 - Some fields are intentionally initialized later: solver task IDs by `add_task()`, iteration numbers by the solver loop, console message count by `Genetic_Algorithm()`, and file handles only for enabled outputs. Do not label every such field a bug.
@@ -139,6 +156,42 @@ Selection audit (all five public methods):
 | Boltzmann | **Fails.** Score differences can overflow; exponentials can overflow. Even scores 1 and 0 at T=10 produce probability 1.10517 and complement -0.105171. The branch test `1 / 2` uses integer division, making the intended coin flip always false. | Revisit acceptance formula, stable arithmetic, temperature validation, and randomized branching. |
 
 Important distinction: finite inputs do not imply finite sums, differences, or exponentials. The complete pipeline is not fixed merely by assigning a negative initialization sentinel.
+
+### O3 architecture discussion (2026-10-07; design only)
+
+User decisions and constraints:
+
+- Keep operators acting on the population's base arrays. Make normalization mandatory before optional pressure shaping. Preserve genes and canonical fitness during normalization, flattening, and selection; these operations must not require objective reevaluation.
+- Preserve the existing ascending convention throughout: rank 0 is worst, rank N-1 is best, and a sampled rank r maps directly to sorted_indexes[r]. Do not introduce a reversed public/internal rank convention.
+- Retain canonical fitness for reporting and other consumers that need original score units. Canonical fitness is direction-adjusted; the original objective value is recoverable using the evaluation's direction, provided that direction is retained.
+- Adopt the rank/diversity probability mixture below. Keep the existing three-candidate Boltzmann idea available for repair and compare it with a separate two-candidate logistic method; do not silently replace the existing method or renumber existing method IDs.
+
+Proposed implementation, not yet applied:
+
+- Existing pop_result_set supplies canonical f; existing flatten_result_set can supply selection weights w. Add normalized_result_set for mandatory u in [0,1], inside the worker-owned packed gene-pool allocation, including size/pointer accounting. This is one additional N-double array (8N bytes on the current platform). Keep selection_temp as sampler workspace. All value arrays use physical individual indexes.
+- Add a normalization operator with safe extreme-range arithmetic and explicit equal-score handling. Invoke it after evaluation and canonical ranking, before process_flatten. Flatteners read u and write finite nonnegative w; scale w by a common positive factor if a bounded final array is required. Do not perform another min-max subtraction after shaping, because that changes intentional baseline weights and probability ratios.
+- Under mandatory normalization, none copies u to w. The existing normalized method becomes an equivalent identity operator after normalization; preserve its ID for compatibility. This replaces the earlier proposal for none to feed raw signed scores to roulette.
+- Add a shared safe weighted sampler: bounded cumulative arithmetic, half-open draws, strict cumulative boundary selection, uniform zero-total fallback, and valid physical output indexes. Rank methods sample ranks and then map them; other selectors already construct weights by physical index.
+- Normalization provides a consistent tournament input, but does not itself improve comparison-based selection. Proposed tournament policy: compare u, resolve normalization-induced equalities using canonical f, and randomize genuine ties. Flattening is bypassed. This tie-resolution policy remains a proposal.
+- Canonical preservation needs a separate duplicate/reseed flag or index list: dedupe_population currently changes pop_result_set using nextafter. Remove that use of scores as bookkeeping when implementing the contract. Also preserve score/candidate correspondence: reporting currently follows variation, so snapshots or a pre-variation observation stage are needed for an exact evaluation record (Q4/O9). Evaluation validity/identity metadata is distinct from fx_ready completion flags; the sentinel policy remains undecided.
+- Population-relative normalization preserves gap ratios in exact arithmetic but can collapse distinct floating-point scores in the presence of extreme sentinels. It also changes absolute temperature/threshold units across generations. Store canonical values and define controls in normalized units; do not claim original-unit Boltzmann equilibrium guarantees for changing normalized landscapes.
+
+Accepted rank-space probability equation (physical index i):
+
+    P(i) = (1 - lambda) * P_rank(i) + lambda * P_diversity(i),  0 <= lambda <= 1
+    P_rank(i) = R_i / sum_j R_j
+    P_diversity(i) = D_i / sum_j D_j
+
+Each component is normalized independently, with uniform probability when that component's weights are all zero. Proposed D_i is bounded mean squared distance from the population centroid in normalized decision coordinates, using an appropriate metric for the gene representation. An implementation can choose the rank sampler with probability 1-lambda or the diversity sampler with probability lambda, which realizes the same mixture without constructing another combined array.
+
+Boltzmann findings and comparison proposal:
+
+- Current exp((score_a-score_b)/T) is used as a probability and complemented by 1-p; for score_a=1, score_b=0, T=10 this gives p about 1.10517 and a negative complement. The strict/relaxed branch uses integer 1/2, so strict is never selected. Candidate selection uses physical-index offsets rather than fitness-class separation; the second can equal the first, and the strict branch does not enforce its documented exclusions. N=2 makes the distance modulus zero. Temperature and candidate availability need explicit rules.
+- Checked Goldberg's original 1990 paper, section 3 and the Pascal discussion: https://wpmedia.wolfram.com/uploads/sites/13/2018/02/04-4-5.pdf . Its strict/relaxed distinction concerns objective-value classes, with bounded retries/fallback when suitable classes cannot be found. Its secondary anti-acceptance favors the weaker contestant; the primary acceptance favors the stronger contestant. The current code uses the same preference direction in both stages.
+- For normalized maximizing scores, the intended probability signs translate to P(keep B in anti-acceptance against C) = sigmoid((u_C-u_B)/T), followed by P(keep A against secondary winner W) = sigmoid((u_A-u_W)/T). Use a stable logistic helper and positive finite T. Exact threshold and fallback policies still need specification before implementation.
+- Keep a separate proposed pairwise comparator P(A beats B) = sigmoid((u_A-u_B)/T). Compare selection-only behavior on fixed populations first, then optimization quality/diversity and cost under equal objective-evaluation budgets and repeatable seeds. No superiority or performance result is established.
+
+No executable code was changed or operator tests run for this discussion; O3/O11 remain open.
 
 ## Evaluation backend intent and measured dispatch cost
 
@@ -258,6 +311,174 @@ correctness checks, not a benchmark of optimization quality. git diff --check pa
 Work is split into concise commits for storage/normalization, duplicate bookkeeping,
 flatteners, selectors/workspaces, tests, and documentation. Pre-existing app and
 scratch-note edits are preserved separately from these staged changes.
+
+## O9/Q4/Q8 implementation and measurement update (2026-10-07)
+
+Commit: `ebe1902` — `Fix reported objective units and completed-task statistics`.
+This implements the small result/statistics fixes, not the broader observer API.
+
+### Implemented and validated (F9)
+
+- `report_task()` converts direction-adjusted internal scores to original
+  objective units when producing periodic/final records and CSV/binary score
+  columns. Records retain the effective direction from the evaluated task,
+  since built-ins may override the initial configuration. This does not resolve
+  O8's concurrent direction writes inside objective dispatch.
+- `record_completed_result()` runs in the logger once per final task record.
+  It uses Welford mean/M2 updates and exposes sample standard deviation with
+  denominator N-1. Best selection respects minimize/maximize; equal results keep
+  the first winning report. The display consumes finalized statistics directly.
+- With no completed tasks, best/mean/stddev are NAN, best-result iteration is
+  UINT32_MAX, elapsed time starts at zero, and direction is zero until the first
+  completion. With one completed task, best/mean are defined and sample stddev
+  is NAN. Logger shutdown avoids writing a nonexistent best record when empty.
+- The returned scalar and `progress_t` describe final task results in original
+  objective units. Internal operator scores are unchanged. Rebuild clients for
+  task-result/queue layout changes and update consumers for minimization signs
+  and finalized mean/stddev semantics. The disposable nested-GA scorer explicitly
+  converts its scalar input back to historical ranking units; its formula was
+  not redesigned.
+- MSVC x64 Debug build passed. Eight selected CTest regressions passed:
+  `test_benchmarks`, `test_benchmark_dispatch`, `test_runtime`, `test_results`,
+  `test_fitness`, `test_selection_boundaries`, and both invalid fitness-setting
+  tests. New `Tests/agentic/test_results.c` covers empty/single-result behavior,
+  known sample variance, reversed arrival order, large offsets, both directions,
+  ties, periodic/final CSV and binary score conversion, effective task direction,
+  and unchanged internal scores. Two short constant-objective solves verify the
+  public scalar and progress statistics with zero elitism and population 64.
+  These checks do not validate integer candidate correspondence, elite retention,
+  arbitrary population sizes, or full optimization quality. `git diff --check`
+  passed. The existing app and scratch-note edits were excluded from the commit.
+
+### Q4 clarification and confirmed elite defect (O16)
+
+The existing logger queue already owns copied report data; delayed file writing
+is not the cause. The relevant question is what `report_task()` copies after
+variation. `pop_param_double` retains decoded evaluated inputs, whereas
+`pop_param_bin` contains chromosomes modified by crossover/mutation/reseeding.
+Thus ordinary evaluated double CSV rows can still match their stored scores;
+integer CSV rows can pair new chromosomes with old scores. Binary output always
+copies decoded doubles, even for integer objectives. Unevaluated candidates
+still need explicit validity semantics.
+
+The elite-copy concern was verified rather than changed speculatively. A probe
+linked the real `process_crossover()` with 64 individuals, 16 genes, two elites,
+complete crossover, and seed 12345. The last elite's active buffer held 1063 and
+its alternate buffer held 9063. After crossover both held 9063, proving loss of
+the active elite. The `memcpy_s` destination/source are reversed for preserving
+active elites into the next buffer before the pointer swap. Crossover was left
+unchanged during that investigation, then repaired by F10 below. Source and
+build scripts are in ignored `build/results-audit/`; rerunning the original probe
+after F10 now records successful preservation of 1063.
+
+### Agreed priorities and proposed bookkeeping placement
+
+The user prefers preserving algorithm logic while capturing data at the correct
+time, and keeping bookkeeping outside per-individual hot loops. The following
+placement is documented but not implemented:
+
+- Count evaluations once after `process_fx()` completes: currently add
+  `individuals - elitism`; have the evaluator return an actual count if its
+  policy later changes. No atomic increment per objective invocation is needed.
+- After sorting, before variation, compare the winner with task-local best-ever
+  state. Record its discovery iteration and copy evaluated inputs only on strict
+  improvement. Allocate storage once; cost is one comparison per generation and
+  O(genes) copying only when the best improves. This also retains earlier better
+  results when elitism is zero.
+- Capture requested top-N evaluated inputs/scores at the same boundary only on
+  export generations. Avoid full-population snapshots every iteration. Publish
+  the saved best-ever candidate if stopping is detected later; keep final-report
+  iteration distinct from discovery iteration.
+- Record a termination enum where `check_convergence()` detects the stopping
+  condition; define precedence if multiple conditions fire. Both conditions
+  currently collapse into `convergence_reached`.
+- Preserve current variation/adaptation order while separating capture time
+  from report publication. Candidate return, discovery iteration, evaluation
+  count, and termination reason remain open under O9/Q4/Q8.
+- Mutation/adaptation export fields were only debugging aids. User requested a
+  TODO to remove them from CSV/binary solution output, including headers, sizing,
+  and configuration counts. Do not prioritize a separate timing/rank-index fix
+  for those fields ahead of removal. The TODO is recorded; fields are still saved.
+
+Further detail: [results follow-up](docs/source/todo.md),
+[result contract](docs/source/data_model.md), and [test notes](docs/source/tests.md).
+
+### Q4 alternative proposal: stable evaluated-input buffer (2026-10-07)
+
+User proposal accepted as a plausible design for further consideration, not an
+implementation decision. Keep mutable working chromosomes separate from a
+double-valued evaluated-input buffer. Reporting reads the evaluated inputs and
+their matching scores, even when working chromosomes have already changed.
+This is an alternative to copying top-N candidates before variation, not an
+additional mandatory population snapshot. It may reuse `pop_param_double`,
+which already supplies this separation for double-valued objectives.
+
+- During evaluation, retain the exact input associated with the resulting score
+  at the same physical individual index. For double objectives this is the
+  existing bounded decoding. For integer objectives retain the actual masked/
+  zoned uint32_t inputs passed to the objective, represented numerically as
+  doubles; do not apply double-mode bounds decoding to integer inputs. Every
+  uint32_t value is exactly representable by the current binary64 double type.
+  The integer objective itself continues to receive its integer representation.
+- Crossover, mutation and reseeding change working chromosomes only. The
+  evaluated-input buffer and scores stay paired until that slot is evaluated
+  again. "Static" means stable between evaluations, not immutable for the entire
+  run. Cached elites retain both their evaluated input and cached score.
+- Workers must finish writing inputs and scores before publishing evaluation
+  completion. The existing release/acquire completion barrier can then make
+  both visible to the solver. Reporting still copies data into queue-owned
+  buffers before the next evaluation can overwrite it; do not enqueue pointers
+  into the reusable evaluated-input storage.
+- Route CSV and binary candidate serialization through this evaluated buffer.
+  Decide and document integer formatting/binary layout explicitly; double
+  storage does not require changing the integer objective API or losing type
+  metadata. Existing callbacks can mutate their input pointers, so preserving
+  exact call inputs requires either a read-only callback contract or a separate
+  capture before the call; this point remains undecided.
+- Track or otherwise define evaluation validity: initial unevaluated slots must
+  not be exported as real evaluated solutions. Reusing an old evaluated record
+  after variation is intentional; it describes the last evaluation, not the
+  newly generated working chromosome. Reset validity at task boundaries and
+  distinguish evaluation generation from current report generation if needed.
+- Cost tradeoff: reusing the double buffer can avoid another population-sized
+  allocation/copy in double mode. Integer mode adds O(genes) conversion/storage
+  per evaluated individual, on the evaluation path. Compare that cost with
+  capturing only requested reports before variation, especially for cheap
+  integer objectives. No performance advantage has been measured.
+- This can resolve Q4 correspondence while retaining the current reporting and
+  adaptation order. It does not itself retain best-ever candidates once a slot
+  is reevaluated, or add discovery iteration, evaluation counts, stop reasons,
+  or the wider Q8 observer interface. Those remain separate follow-ups.
+
+No implementation or tests were changed for this proposal. The user will
+consider how to implement it before proceeding.
+
+## O16 elite preservation repair (2026-10-07)
+
+Commit: `5b7c01b` — `Preserve current elites in the next crossover buffer`.
+
+- Implemented the user-approved source/destination reversal in the elite
+  `memcpy_s` in `src/Utility/crossover.c::process_crossover()`. Current elites
+  are copied to `pop_param_bin_cross_buffer` before the existing pointer swap.
+  Crossover generation and operator/adaptation order remain unchanged.
+- Added `Tests/agentic/test_crossover_elitism.c`, linked against the real library
+  and registered in CTest's agentic group. It verifies every chromosome word,
+  distinct active/alternate buffers, identity/permuted rank mappings, three
+  successive buffer swaps, and elite counts 0, 1, 2, 3, and 64 for population 64
+  with 16 genes. Identical selected parents give an exact expected child as well
+  as a preservation check. Odd non-elite counts exercise the final child pair
+  overlapping an elite slot that must then be restored.
+- Verified failure before the fix: elites=2, generation=0, rank=62, slot=62.
+  After the fix the regression passes. The original focused probe now reports
+  active elite=1063 and old-buffer elite=1063, matching the expected 1063.
+- MSVC x64 Debug build passed. The new regression and eight additional selected
+  CTest tests passed: benchmarks, benchmark dispatch, runtime, results, fitness,
+  selection boundaries, and both invalid fitness-setting cases. This verifies
+  the shared elite-copy path using complete crossover at the tested dimensions;
+  it is not broad validation of every crossover method or arbitrary sizes.
+- Q4 integer candidate serialization, O14 sorter boundaries, and the remaining
+  O9/Q8 result metadata are outside this repair. Existing app and scratch-note
+  changes remain separate from the implementation commit.
 
 ## Keeping this file useful across sessions
 

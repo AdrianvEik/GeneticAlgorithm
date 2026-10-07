@@ -34,6 +34,8 @@ static logging_param_t default_logging_param() {
 runtime_param_t default_runtime_param() {
 	// Setups default runtime parameters
 	runtime_param_t runtime_param;
+	runtime_param.generation_observer = NULL;
+	runtime_param.generation_observer_context = NULL;
 
 	runtime_param.individuals = 128;
 	runtime_param.genes = 2;

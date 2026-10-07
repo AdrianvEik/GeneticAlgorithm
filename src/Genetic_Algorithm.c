@@ -44,13 +44,22 @@ static void process_task(thread_param_t* thread_param, task_param_t* task, gene_
 
     adaptive_memory_t adaptive_memory;
     new_adaptive_memory(&adaptive_memory);
+	LARGE_INTEGER frequency = {0}, begin = {0}, end = {0};
+	if (thread_param->runtime_param.generation_observer) QueryPerformanceFrequency(&frequency);
 
 	while (1) {
 
 		// Process Population
+		if (thread_param->runtime_param.generation_observer) QueryPerformanceCounter(&begin);
 		process_pop(gene_pool, task, thread_param->fx_task_queue);
 
 		adapt_param(task, gene_pool, &adaptive_memory);
+		if (thread_param->runtime_param.generation_observer) {
+			QueryPerformanceCounter(&end);
+			thread_param->runtime_param.generation_observer(gene_pool, task->task_id,
+				(double)(end.QuadPart - begin.QuadPart) / (double)frequency.QuadPart,
+				thread_param->runtime_param.generation_observer_context);
+		}
 
 		if (adaptive_memory.convergence_reached == 1 ||
 			(thread_param->runtime_param.logging_param.export_interval != 0 &&

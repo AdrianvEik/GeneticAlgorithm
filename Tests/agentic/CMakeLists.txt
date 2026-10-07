@@ -18,6 +18,15 @@ target_link_libraries(test_fitness PRIVATE ga)
 target_compile_features(test_fitness PRIVATE c_std_11)
 add_test(NAME test_fitness COMMAND test_fitness)
 
+add_executable(test_benchmarks test_benchmarks.c)
+target_link_libraries(test_benchmarks PRIVATE ga)
+add_test(NAME test_benchmarks COMMAND test_benchmarks)
+
+add_executable(test_benchmark_dispatch test_benchmark_dispatch.c)
+target_link_libraries(test_benchmark_dispatch PRIVATE ga)
+add_test(NAME test_benchmark_dispatch COMMAND test_benchmark_dispatch)
+
+
 # Compile the real selector with a scripted RNG for exact probability boundaries.
 add_executable(test_selection_boundaries test_selection_boundaries.c
     ${CMAKE_SOURCE_DIR}/src/Utility/selection.c)

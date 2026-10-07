@@ -20,6 +20,7 @@ include(CTest)
 include(FetchContent)
 
 option(BUILD_GA_EXE "Build the GA executable" ON)
+option(BUILD_GA_BENCH "Build the reproducible experiment worker" OFF)
 option(BUILD_TESTING "Build tests" ON)
 
 file(GLOB_RECURSE GA_SOURCES CONFIGURE_DEPENDS
@@ -67,6 +68,14 @@ if(BUILD_GA_EXE)
         target_compile_options(ga_main PRIVATE /W4)
     else()
         target_compile_options(ga_main PRIVATE -Wall -Wextra -Werror)
+    endif()
+endif()
+
+if(BUILD_GA_BENCH)
+    add_executable(ga_bench experiments/ga_bench.c)
+    target_link_libraries(ga_bench PRIVATE ga)
+    if(MSVC)
+        target_compile_options(ga_bench PRIVATE /W4)
     endif()
 endif()
 

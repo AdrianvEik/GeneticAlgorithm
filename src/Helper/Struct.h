@@ -336,6 +336,14 @@ struct logging_param_s {
  * :c:func:`Genetic_Algorithm` invocation.
  */
 struct runtime_param_s {
+	/** Optional observer after each process_pop/adapt_param pair, on solver threads.
+	 * seconds measures that pair with QueryPerformanceCounter, excluding observer
+	 * and logging work. Pool is borrowed and must not be modified. Callbacks must
+	 * synchronize their context when using multiple solver threads. NULL disables
+	 * instrumentation. iteration_number is zero-based. */
+	void (*generation_observer)(const struct gene_pool_s* pool, uint32_t task_id,
+	                            double seconds, void* context);
+	void* generation_observer_context;
 	/** Number of genes per individual. */
 	uint32_t genes;
 	/** Number of individuals per population. */
