@@ -9,8 +9,8 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-#include "../src/Utility/selection.h"
-#include "../src/Utility/fitness.h"
+#include "../../src/Utility/selection.h"
+#include "../../src/Utility/fitness.h"
 
 /* This target compiles the production selection.c with gen_mt_rand renamed.
    All candidate/coin/interval boundaries can therefore be driven exactly. */

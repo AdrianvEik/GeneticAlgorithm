@@ -5,13 +5,13 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include "../src/Helper/Struct.h"
-#include "../src/Helper/rng.h"
-#include "../src/Function/Function.h"
-#include "../src/Multiprocessing/mp_solver_th.h"
-#include "../src/Optimisation/Optimizer.h"
-#include "../src/Utility/mutation.h"
-#include "../src/Utility/pop.h"
+#include "../../src/Helper/Struct.h"
+#include "../../src/Helper/rng.h"
+#include "../../src/Function/Function.h"
+#include "../../src/Multiprocessing/mp_solver_th.h"
+#include "../../src/Optimisation/Optimizer.h"
+#include "../../src/Utility/mutation.h"
+#include "../../src/Utility/pop.h"
 
 enum { SAMPLE_COUNT = 16 };
 

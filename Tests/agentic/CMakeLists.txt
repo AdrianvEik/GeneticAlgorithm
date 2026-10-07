@@ -1,0 +1,33 @@
+add_executable(test_runtime test_runtime.c)
+target_link_libraries(test_runtime PRIVATE ga)
+target_compile_features(test_runtime PRIVATE c_std_11)
+add_test(NAME test_runtime COMMAND test_runtime)
+
+add_executable(test_fitness test_fitness.c)
+target_link_libraries(test_fitness PRIVATE ga)
+target_compile_features(test_fitness PRIVATE c_std_11)
+add_test(NAME test_fitness COMMAND test_fitness)
+
+# Compile the real selector with a scripted RNG for exact probability boundaries.
+add_executable(test_selection_boundaries test_selection_boundaries.c
+    ${CMAKE_SOURCE_DIR}/src/Utility/selection.c)
+target_compile_definitions(test_selection_boundaries PRIVATE gen_mt_rand=test_selection_random)
+target_link_libraries(test_selection_boundaries PRIVATE ga)
+target_compile_features(test_selection_boundaries PRIVATE c_std_11)
+add_test(NAME test_selection_boundaries COMMAND test_selection_boundaries)
+add_test(NAME test_runtime_invalid_fx_no_workers
+    COMMAND ${CMAKE_COMMAND} "-DPROGRAM=$<TARGET_FILE:test_runtime>"
+        "-DCASE=--invalid-fx-no-workers"
+        "-DEXPECTED=task_size_fx > 0 requires thread_count_fx > 0"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/expect_runtime_error.cmake")
+add_test(NAME test_runtime_invalid_fx_no_batch
+    COMMAND ${CMAKE_COMMAND} "-DPROGRAM=$<TARGET_FILE:test_runtime>"
+        "-DCASE=--invalid-fx-no-batch"
+        "-DEXPECTED=thread_count_fx > 0 requires task_size_fx > 0"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/expect_runtime_error.cmake")
+
+set_tests_properties(
+    test_runtime test_fitness test_selection_boundaries
+    test_runtime_invalid_fx_no_workers test_runtime_invalid_fx_no_batch
+    PROPERTIES LABELS "agentic"
+)

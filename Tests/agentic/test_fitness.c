@@ -9,12 +9,12 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-#include "../src/Utility/fitness.h"
-#include "../src/Utility/flatten.h"
-#include "../src/Utility/selection.h"
-#include "../src/Utility/pop.h"
-#include "../src/Utility/process.h"
-#include "../src/Utility/mutation.h"
+#include "../../src/Utility/fitness.h"
+#include "../../src/Utility/flatten.h"
+#include "../../src/Utility/selection.h"
+#include "../../src/Utility/pop.h"
+#include "../../src/Utility/process.h"
+#include "../../src/Utility/mutation.h"
 
 static void sort_reference(gene_pool_t* p) {
     for (uint32_t i = 0; i < p->individuals; ++i) {

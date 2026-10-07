@@ -5,6 +5,21 @@ registration happens in [`Tests/CmakeLists.txt`](../../Tests/CmakeLists.txt),
 which is included from the top-level CMake build when `BUILD_TESTING` is
 enabled.
 
+## Test Organization
+
+Handwritten crossover, mutation, and sorting tests remain directly under `Tests/`.
+Agent-authored regression tests and their error-checking helper are in
+[`Tests/agentic`](../../Tests/agentic), with their own CMake registration:
+
+- [`test_runtime.c`](../../Tests/agentic/test_runtime.c)
+- [`test_fitness.c`](../../Tests/agentic/test_fitness.c)
+- [`test_selection_boundaries.c`](../../Tests/agentic/test_selection_boundaries.c)
+- [`expect_runtime_error.cmake`](../../Tests/agentic/expect_runtime_error.cmake)
+
+CTest still runs all tests by default. Run only the agent-authored tests with
+`ctest --test-dir <build-dir> -L agentic --output-on-failure`, or exclude them
+with `-LE agentic`. Test names and behavior are unchanged.
+
 ## Existing Tests
 
 ### `test_crossover`
