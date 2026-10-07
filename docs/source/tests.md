@@ -1,6 +1,6 @@
 # Tests
 
-The repository currently uses CMocka tests under `Tests/`. Test
+The repository uses CMocka operator tests and linked assertion-based runtime/fitness tests under `Tests/`. Test
 registration happens in [`Tests/CmakeLists.txt`](../../Tests/CmakeLists.txt),
 which is included from the top-level CMake build when `BUILD_TESTING` is
 enabled.
@@ -53,7 +53,22 @@ build cache.
 
 ## Test Notes
 
-The current tests are focused unit tests for low-level genetic operators. They
-do not yet exercise the full `ga` static library as a linked unit, the solver
-thread queues, task generation, logging, or end-to-end optimization behavior.
-Those gaps are tracked in [TODO](todo.md).
+`test_runtime` links the library and covers defaults, queue completion, task RNG
+streams, and mutation ownership. `test_fitness` also links the library and covers
+sentinel exclusion, opposite-extreme ranges, subnormals, equal scores, all six
+flatteners, allocation/reset isolation, adjacent SIMD dedupe, statistical selector
+probabilities, tied ranks, diversity mixtures, workspace resizing, and three
+inline population iterations at a sorter-compatible size of 64. It does not claim
+arbitrary-size sorter safety or complete end-to-end optimization quality.
+
+`test_selection_boundaries` compiles the production selector with a scripted RNG.
+It checks exact zero/maximum/cumulative draws, zero/overflowing weight totals,
+physical rank mapping, canonical tie resolution, randomized true ties, both
+mixed branches, strict-versus-relaxed class retries, fallback termination, and
+anti-acceptance/acceptance directions. Assertions fail on stderr rather than a
+Windows dialog. Performance comparisons, reporting, task generation, and broad
+end-to-end experiments remain in [TODO](todo.md).
+
+On the current Windows CMocka build, put `_deps/cmocka-build/src` from the build
+directory on the test process PATH so CTest can locate `cmocka.dll`. All eight
+registered tests passed with that environment after the fitness changes.

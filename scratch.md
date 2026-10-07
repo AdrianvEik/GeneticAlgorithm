@@ -39,7 +39,7 @@ Last updated: 2026-10-07 (F8 validation performed on 2026-10-07; earlier review 
 
 - [x] **O1 — Shared mutable mutation rates (F8).** Concurrent solver workers now have distinct arrays because mutation rates live in their separate gene pools. A worker may reuse its pool for successive tasks, but `init_mutation_rates()` restores every entry from `task->config_ga.mutation_param.initial_mutation_rate` before the new population is filled. The configuration is no longer modified by adaptation, and no mutation allocation is copied through `init_task()`.
 - [x] **O2 — Fitness completion protocol (F7).** Every active flag is now reset before jobs are published. Atomic release stores publish each completed score and acquire loads prevent the solver from continuing until all required results are visible. The stale-flag and plain-integer data races are covered by a delayed-worker regression. This retains polling rather than adding an event-based barrier; polling overhead remains O7.
-- [ ] **O3 — Full finite fitness range.** The user intends every flattener and selector to tolerate scores from `-DBL_MAX` through `DBL_MAX`, while retaining partial initial evaluation. Audit below identifies numeric failures, reversed ordering, invalid probability distributions, and incorrect rank mapping. No flattener or selector was changed. Safe sentinel ordering alone does not establish safe downstream arithmetic; operators must accept signed finite fitness and construct valid selection weights where required.
+- [x] **O3 — Full finite fitness range (operator implementation).** Mandatory normalization, all flatteners and selectors repaired for finite scores under documented parameter preconditions. Exact endpoint policy and validation evidence are in the O3/O11 implementation update below. Invalid/non-finite input contracts and broad validation remain O13.
 - [ ] **O4 — Remaining internal initialization audit.** All four configuration-default omissions are resolved by F4/F5: three fields now default to zero and unused `crossover_stepsize` is removed. The separate internal initialization inventory below remains open (CSV sizing, progress metadata, integer zone masks).
 - [x] **O5 — Fixed-base seeds now belong to tasks (F6).** Real tasks reseed their solver TLS RNG before population initialization using `(base_seed + task_id) mod 2^32`. Derived zero is a deterministic SFMT seed. Base zero still requests automatic seeding per task; persisting automatic seeds is deferred. This fixes RNG stream assignment but does not control random external objectives.
 - [ ] **O6 — Inline fitness is not a fully serial solve.** Both fitness settings zero disable fitness workers and their queue (F5); mixed zero/positive settings are invalid. Solver and logging threads still run. Preserve the distinction between an inline CPU evaluation backend and a fully serial GA implementation; discuss whether the latter is needed.
@@ -47,7 +47,7 @@ Last updated: 2026-10-07 (F8 validation performed on 2026-10-07; earlier review 
 - [ ] **O8 — Objective dispatch is coupled to experiments.** Benchmark functions, GA tuning, decoding, scoring, and dispatch live in `Function.c`. The callback lacks user context and returns no evaluation status. Wheeler's Ridge has a method constant and implementation but no dispatch branch. Built-ins also override the direction during evaluation; queued workers therefore still write the task's direction concurrently. Determine built-in direction before publishing jobs. Resolve objective contracts before expanding the API.
 - [ ] **O9 — Result/statistics contract.** The public return currently reflects internal ranking scores; `progress_t` cannot return a best-candidate vector or evaluation count/stop reason. `average_result` is a sum, and `result_standard_deviation` is an accumulated quantity rather than a computed standard deviation. Audit the variance calculation before using it as an experimental metric. `best_result_iteration` records the winning task's final report generation, not necessarily when that value first appeared.
 - [ ] **O10 — Cleanup across repeated runs.** `start_threads()` allocates a worker-parameter array through a local pointer that is not returned for cleanup. `Genetic_Algorithm()` does not call `free_task_result_queue()`. Queue cleanup also needs an ownership audit for allocated locks. Repeated/cascading runs need bounded memory use and complete teardown.
-- [ ] **O11 — Selection assumptions.** Raw canonical scores can be negative, but roulette cumulative weights require a valid nonnegative distribution. Rank selection samples ranks without mapping them through `sorted_indexes`. Existing `docs/source/todo.md` also flags flattening monotonicity and Boltzmann acceptance issues. Validate these before treating all selectable operators as equivalent supported options.
+- [x] **O11 — Selection assumptions (operator implementation).** Repaired probability construction, rank mapping/ties, diversity mixture, and temperature-based selectors. Added strict/relaxed and pairwise variants while preserving existing IDs. See O3/O11 implementation update; optimization-quality comparisons remain open.
 - [ ] **O12 — Domain/task generation.** Integer evaluation applies `zone_mask` and `zone_id`, but the non-zoned task path does not initialize those allocated arrays. Integer splitting can shift by 32 for an unsplit dimension. Audit masks, shifts, actual generated task counts, and complete domain coverage before comparing partitioning against restarts.
 - [ ] **O13 — Public error handling and validation.** Most failures call `exit()`, terminating an entire experiment sweep. Input validation covers only a few fields. Define behavior for invalid bounds, unsupported dimensions/population sizes, callback failures, NaN/infinity, and no valid candidates. Preserve failing cases as explicit outcomes in experiments.
 - [ ] **O14 — Bitonic sorters overrun partial blocks.** `process_pop()` always calls `indexed_bitonic_sort_8v()`. Its full-block loop runs while `i < size` but unconditionally loads and stores 64 elements, so the current `app/ga_exe.c` population of 16 accesses indexes 0 through 63. This corrupts arrays following `sorted_indexes`; the resulting invalid indexes can then fault in `post_bitonic_merge()` when used to index the result array. The defect predates the current branch changes, but packed-layout changes can alter or expose the undefined behavior. The 2v, 4v, 8v, and 16v loops and remainder thresholds (`>= 7`, `>= 15`, `>= 31`, and analogous cases) need a complete block-boundary audit. Add exact-size, undersized, odd, and non-block-multiple regression tests rather than testing only size 128. A population of 64 avoids this specific 8v overrun only as a temporary workaround.
@@ -185,6 +185,79 @@ Important distinction: finite inputs do not imply finite sums, differences, or e
 - The same harness passed initial-score checks in both directions using normal population initialization, and controller checks showing slope 0 yields uniform rates while slope 1 changes rates across ranks.
 - Local validation artifacts are under ignored `build/review-probes/` (`fixes.c`, `run-fixes.cmd`) and `build/review-fixes/` (`build.log`). They are not durable checked-in tests; use the recorded cases when adding regression coverage. The CMocka suite, asynchronous synchronization, complete GA behavior, and performance benchmarks were not run in this change.
 - `git diff --check` passed.
+
+## O3/O11 implementation update (2026-10-07)
+
+This update supersedes the earlier design-only discussion and historical operator
+counterexamples above. The approved implementation is complete for finite scores
+and the documented valid operator parameters; broad validation remains O13.
+
+- Added worker-owned `normalized_result_set`, `duplicate_flags`, `reseed_indexes`
+  and `reseed_count` to the packed gene pool. Task initialization resets these
+  buffers. Canonical/normalized/weight arrays retain physical individual order.
+- Mandatory `process_normalize` copies canonical scores after ascending indexed
+  sorting. Exact -DBL_MAX/+DBL_MAX map to 0/1 and are excluded from ordinary
+  extrema, as explicitly requested. This also assigns sentinel treatment to a
+  legitimate score equal to either exact endpoint. Equal ordinary scores map to
+  1; opposite-sign ranges use half-sized differences when needed. Other finite
+  score distinctions may still round together. Genes and canonical scores remain
+  unchanged throughout normalization/flattening/selection.
+- Retained adjacent equal-score SIMD chromosome comparisons and the existing
+  worst-slot reseed policy `max(duplicates, reseed_bottom_N)`, capped to non-elites.
+  Fixed its eight-bit equality-mask comparison (previously compared to a 64-bit
+  all-ones constant). Duplicate flags replace `nextafter` score perturbations;
+  there is no second sort. This does not introduce exhaustive duplicate search
+  or change to reseeding each detected duplicate position. Those policies remain
+  discussion items. Equal scores can represent different genes and normalization
+  precedes reseeding, so equal-score handling is required.
+- All six flatteners now read normalized scores. None/normalized copy u; linear
+  uses safely scaled nonnegative affine weights; exp/log/sigmoid use bounded
+  monotonic formulas. Alpha is nonnegative slope/gain/curvature; beta is the
+  linear nonnegative baseline or sigmoid center in [0,1], unused for exp/log.
+  Log uses its linear limit for alpha <= 1e-8. Invalid coefficients are not
+  automatically corrected and remain outside the documented contract.
+- Repaired roulette cumulative boundaries, overflow handling and zero-total
+  fallback; tournament uses normalized comparisons with canonical tie resolution
+  and random genuine ties; rank keeps worst=0/best=N-1, fixes weights/mapping,
+  and shares rank mass among equal-score candidates. Rank-space implements
+  `P(i)=(1-lambda)R_i/sum(R)+lambda D_i/sum(D)`, with each zero-total component
+  uniform. D is mean squared centroid distance in normalized uint32 chromosome
+  coordinates. Other phenotype/categorical metrics remain TODO.
+- Rank caches are prepared only for rank methods and invalidated on dimension
+  or relevant parameter changes. Tie adjustments are per population. Diversity
+  buffers are reusable, reset before use, and fully freed with pointers cleared.
+- Existing selector IDs 0..4 remain. ID 4 is repaired mixed Boltzmann; appended
+  IDs 5/6/7 are pairwise logistic, strict Boltzmann and relaxed Boltzmann. The
+  user explicitly confirmed exposing all four. Stable logistic probabilities
+  use anti-acceptance for B/C and acceptance for A/winner. Class threshold defaults
+  to zero in normalized units; bounded searches try max(1,N/10) draws and retain
+  the last draw when no separated class is found, including tied populations.
+  This is the paper's bounded-fallback approach on normalized fitness; comparative
+  optimization performance and original-unit equilibrium guarantees are unproven.
+- Deferred explicitly: reporting snapshots/adaptation timing changes (Q4/O9),
+  the broader operator-parameter validation sweep (O13), and broader configuration
+  exports/reproducibility metadata. Current validation is basic structural and
+  execution-setting validation, so no partial coefficient-validation sweep was
+  added. Requirements are recorded in docs/source/todo.md and operator contracts.
+  Logger/dump_config code was not changed. O14 sorter tails and O15 automatic
+  seeds remain separate open issues; the pipeline regression uses size 64 and
+  explicit deterministic seeds.
+- Public gene-pool/selection structs changed; clients must rebuild. A new
+  selection_boltzmann_threshold field defaults to 0 through default_config.
+
+Validation: MSVC 19.51 x64 Debug complete build passed. All eight CTest tests
+passed with the existing CMocka DLL directory added to the test process PATH.
+New test_fitness coverage includes sentinel and extreme arithmetic, all flatteners,
+allocation/reset isolation, dedupe, selector frequency checks, cache resizing,
+and three population iterations. New test_selection_boundaries drives the actual
+selector with scripted RNG values for exact probability boundaries, rank mapping,
+ties, mixed/strict/relaxed/pairwise behavior, and strict class-retry distinctions.
+The final additional class-retry test also passed after rebuilding. These are
+correctness checks, not a benchmark of optimization quality. git diff --check passed.
+
+Work is split into concise commits for storage/normalization, duplicate bookkeeping,
+flatteners, selectors/workspaces, tests, and documentation. Pre-existing app and
+scratch-note edits are preserved separately from these staged changes.
 
 ## Keeping this file useful across sessions
 

@@ -13,14 +13,33 @@ contains:
 - Binary chromosomes in `pop_param_bin`.
 - A crossover staging buffer in `pop_param_bin_cross_buffer`.
 - Decoded floating-point values in `pop_param_double`.
-- Raw fitness values in `pop_result_set`.
-- Flattened selection values in `flatten_result_set`.
+- Canonical, direction-adjusted measurements in `pop_result_set`.
+- Mandatory normalized scores in `normalized_result_set`.
+- Finite nonnegative selection weights in `flatten_result_set`.
+- Physical-index duplicate markers and reseed targets in `duplicate_flags` and
+  `reseed_indexes`, with active length `reseed_count`.
 - Mutable per-rank mutation rates in `mutation_rate`.
 - Sorted, selected, and temporary index buffers.
 - `fx_ready` flags for parallel fitness subtasks.
 
 Allocate it with {c:func}`init_gene_pool`, seed it with {c:func}`fill_pop`, and
-release it with {c:func}`free_gene_pool`.
+release it with {c:func}`free_gene_pool`. The new score and bookkeeping arrays
+share that worker-owned allocation and reset when a task fills its population.
+All value arrays use physical individual indexes. `sorted_indexes` traverses
+canonical fitness from worst (rank 0) to best (rank N-1); it does not reorder
+those arrays. Normalization, flattening, selection, and duplicate marking do
+not change canonical measurements or genes.
+
+Exact `-DBL_MAX` and `DBL_MAX` values map to 0 and 1 and are excluded from the
+ordinary-score extrema. This policy also applies to legitimate measurements
+that equal those exact endpoints. Equal ordinary scores map to 1; equal genes
+are not implied by equal scores. Dedupe only compares adjacent equal-score
+candidates, and reseeding happens after selection and variation.
+
+The added fields change public structure layouts; rebuild clients. The new
+`selection_boltzmann_threshold` defaults to zero (unequal normalized scores
+form different classes). Parameter validation and configuration-export changes
+are deliberately deferred to the broader sweeps tracked in TODO.
 
 ## Config Structs
 

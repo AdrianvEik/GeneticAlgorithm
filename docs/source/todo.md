@@ -8,27 +8,29 @@ become issues, tests, or code changes.
 
 ### Algorithm Correctness
 
-- `src/Utility/process.c` and `src/Utility/flatten.c`: separate true fitness
-  ordering from selection-pressure scaling. Sort `sorted_indexes` from the
-  sign-canonicalized `pop_result_set`, then apply flattening/scaling for
-  selection only. This prevents flattening from accidentally redefining the
-  true best/worst individual used by elitism, reseeding, mutation pressure, and
-  logging.
-- `src/Utility/flatten.c`: check the monotonicity of linear and exponential
-  flattening when scores may be positive and negative. Because both divide by
-  the total score, a negative or near-zero sum can reverse or destabilize
-  selection pressure.
-- `src/Utility/selection.c`: fix rank-based selection so sampled ranks are
-  mapped through `sorted_indexes`. The thread-local rank distributions should
-  select a rank, not be treated as physical individual indexes.
-- `src/Utility/selection.c`: define roulette input requirements explicitly.
-  Roulette needs non-negative, monotonic cumulative weights; raw `none`
-  flattening can violate this if canonical scores are negative.
-- `src/Utility/selection.c`: align Boltzmann tournament selection with
-  Goldberg's acceptance/anti-acceptance formulation. The implementation should
-  map sorted objective or flattened weights into the intended Boltzmann
-  distribution, use a temperature/control schedule deliberately, and guard the
-  pairwise acceptance probabilities from invalid negative complements.
+- Fitness normalization and selector repairs are implemented; contracts and
+  method IDs are recorded in [Operator Pipeline](operator_pipeline.md).
+- Preserve the adjacent SIMD dedupe algorithm and existing worst-slot reseed
+  policy. Discuss exhaustive equal-score-group detection or reseeding specific
+  duplicate positions separately if desired.
+- Broader operator validation sweep (explicitly deferred by the user): validate
+  active flattener finite alpha >= 0, linear beta >= 0, sigmoid beta in [0,1];
+  selection p/lambda in [0,1], positive finite temperature, tournament size >= 1,
+  class threshold in [0,1], and supported method/rank-distribution IDs. Extend
+  equivalent checks to crossover, mutation, optimizer, and population settings
+  together. Currently these are documented preconditions; do not silently alter
+  invalid configurations. NaN/infinite objectives remain a separate contract.
+- Broader reproducibility/configuration-export sweep (explicitly deferred):
+  include rank-distribution choice, Boltzmann class threshold, all effective
+  settings, numeric precision, and method semantics. Existing JSON exports have
+  not been expanded in this change.
+- Reporting snapshots and score/candidate correspondence remain deferred for
+  separate discussion. Preserve existing adaptation timing when addressing it.
+- Compare mixed/strict/relaxed three-candidate Boltzmann and pairwise logistic
+  under equal objective-evaluation budgets. Existing regression checks establish
+  probability behavior and termination, not optimization superiority.
+- Consider phenotype-aware diversity distances (including fixed dimensions and
+  categorical genes). Current rank-space distance uses normalized uint32 codes.
 
 - fix 64 bit boundary for complete crossover
 - Mutate on full gene boundary as an extra function
@@ -53,8 +55,8 @@ become issues, tests, or code changes.
   vectorized indexed bitonic sort paths.
 - `src/Utility/mutation.c`: validate alignment and vectorization requirements
   for the mutation-rate block now owned by the aligned gene-pool allocation.
-- `src/Utility/flatten.c`: make the exponential flattening clamp domain
-  configurable instead of hard-coding `[0, 1]`.
+- Fitness weights deliberately use [0,1]; review alternative pressure controls
+  only as an explicit change to the documented operator contracts.
 - `src/Utility/pop.c`: either repair or remove the commented Cauchy population
   path; the comment notes undesirable casts from integer RNG output to double.
 - `src/Multiprocessing/mp_logger.c` and `mp_logger.h`: confirm ownership of the
