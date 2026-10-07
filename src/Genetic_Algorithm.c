@@ -39,6 +39,7 @@
 #include <Windows.h>
 
 static void process_task(thread_param_t* thread_param, task_param_t* task, gene_pool_t* gene_pool) {
+	init_mutation_rates(gene_pool, task->config_ga.mutation_param.initial_mutation_rate);
 	fill_pop(gene_pool, task->config_ga.population_param, task->config_ga.fx_param);
 
     adaptive_memory_t adaptive_memory;

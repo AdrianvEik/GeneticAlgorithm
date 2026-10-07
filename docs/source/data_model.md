@@ -15,6 +15,7 @@ contains:
 - Decoded floating-point values in `pop_param_double`.
 - Raw fitness values in `pop_result_set`.
 - Flattened selection values in `flatten_result_set`.
+- Mutable per-rank mutation rates in `mutation_rate`.
 - Sorted, selected, and temporary index buffers.
 - `fx_ready` flags for parallel fitness subtasks.
 
@@ -25,7 +26,9 @@ release it with {c:func}`free_gene_pool`.
 
 {c:type}`config_ga_t` groups all algorithm choices. The default is created by
 {c:func}`default_config` and must be released with {c:func}`free_config_ga`
-because it owns heap arrays for population bounds and mutation rates.
+because it owns heap arrays for population bounds. Mutation configuration
+contains a scalar starting rate; each worker's gene pool owns and resets the
+mutable per-rank rates for every task.
 
 {c:type}`runtime_param_t` controls dimensions and execution settings:
 population size, gene count, elitism, bit width, solver task count, worker

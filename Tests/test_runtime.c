@@ -9,6 +9,8 @@
 #include "../src/Helper/rng.h"
 #include "../src/Function/Function.h"
 #include "../src/Multiprocessing/mp_solver_th.h"
+#include "../src/Optimisation/Optimizer.h"
+#include "../src/Utility/mutation.h"
 #include "../src/Utility/pop.h"
 
 enum { SAMPLE_COUNT = 16 };
@@ -142,6 +144,50 @@ static void check_atomic_fx_flags(void) {
     free_gene_pool(&gene_pool);
 }
 
+static void check_mutation_rate_ownership(void) {
+    runtime_param_t runtime = default_runtime_param();
+    runtime.individuals = 7;
+
+    config_ga_t config = default_config(runtime);
+    assert(config.mutation_param.initial_mutation_rate == 6.0);
+
+    gene_pool_t first_pool;
+    gene_pool_t second_pool;
+    init_gene_pool(&first_pool, &runtime);
+    init_gene_pool(&second_pool, &runtime);
+    assert(first_pool.mutation_rate != second_pool.mutation_rate);
+
+    init_mutation_rates(&first_pool, config.mutation_param.initial_mutation_rate);
+    init_mutation_rates(&second_pool, 3.0);
+    for (uint32_t i = 0; i < runtime.individuals; ++i) {
+        assert(first_pool.mutation_rate[i] == 6.0);
+        assert(second_pool.mutation_rate[i] == 3.0);
+        first_pool.sorted_indexes[i] = i;
+        first_pool.pop_result_set[i] = (double)i + 1.0;
+    }
+    first_pool.iteration_number = 0;
+
+    task_param_t task = {0};
+    task.config_ga = config;
+    adaptive_memory_t adaptive_memory;
+    new_adaptive_memory(&adaptive_memory);
+    adapt_param(&task, &first_pool, &adaptive_memory);
+
+    for (uint32_t i = 0; i < runtime.individuals; ++i) {
+        assert(first_pool.mutation_rate[i] == 7.0);
+        assert(second_pool.mutation_rate[i] == 3.0);
+    }
+    assert(config.mutation_param.initial_mutation_rate == 6.0);
+
+    init_mutation_rates(&first_pool, config.mutation_param.initial_mutation_rate);
+    for (uint32_t i = 0; i < runtime.individuals; ++i)
+        assert(first_pool.mutation_rate[i] == 6.0);
+
+    free_gene_pool(&second_pool);
+    free_gene_pool(&first_pool);
+    free_config_ga(&config);
+}
+
 static void check_queued_fitness_waits_for_every_individual(void) {
     runtime_param_t runtime = default_runtime_param();
     runtime.individuals = 10;
@@ -207,7 +253,8 @@ int main(int argc, char **argv) {
     check_defaults_and_inline_queue();
     check_task_streams();
     check_atomic_fx_flags();
+    check_mutation_rate_ownership();
     check_queued_fitness_waits_for_every_individual();
-    puts("PASS: runtime defaults, queues, task seed streams, and atomic fitness completion.");
+    puts("PASS: runtime defaults, queues, task seed streams, mutation-rate ownership, and atomic fitness completion.");
     return 0;
 }

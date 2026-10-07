@@ -182,11 +182,11 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 			}
 		}
 		if (thread_param->runtime_param.logging_param.include_config == 1) {
-			//task_result.config_int[0] = task->config_ga.mutation_param.mutation_rate;
+			//task_result.config_double[0] = gene_pool->mutation_rate[individual_id];
 			//task_result.config_double[0] = adaptive_memory->computed_mutation;
 			//task_result.config_double[1] = adaptive_memory->convergence_moving_window;
 			
-			copy_to_bin_buffer(&task_result, &task->config_ga.mutation_param.mutation_rate, sizeof(double));
+			copy_to_bin_buffer(&task_result, &gene_pool->mutation_rate[individual_id], sizeof(double));
 			copy_to_bin_buffer(&task_result, &adaptive_memory->computed_mutation, sizeof(double));
 			copy_to_bin_buffer(&task_result, &adaptive_memory->convergence_moving_window, sizeof(double));
 
@@ -195,7 +195,7 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 					task_result.csv_buffer + task_result.csv_position,
 					(uint64_t)task_result.csv_buffer_length - task_result.csv_position,
 					"%e;%e;%e;",
-                    task->config_ga.mutation_param.mutation_rate[individual_id],
+					gene_pool->mutation_rate[individual_id],
 					adaptive_memory->computed_mutation,
                     adaptive_memory->convergence_moving_window
 				);

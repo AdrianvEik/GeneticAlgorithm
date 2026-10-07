@@ -174,6 +174,7 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
 	total_memsize += gene_pool->individuals * sizeof(double*); // pop_param_double
     total_memsize += gene_pool->individuals * sizeof(double); // pop_result_set
     total_memsize += gene_pool->individuals * sizeof(double); // selection_temp
+	total_memsize += gene_pool->individuals * sizeof(double); // mutation_rate
     total_memsize += gene_pool->individuals * sizeof(uint32_t); // selected_indexes
     total_memsize += gene_pool->individuals * sizeof(uint32_t); // sorted_indexes
 	total_memsize += gene_pool->individuals * sizeof(uint32_t); // sorted_indexes_temp
@@ -214,6 +215,9 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
 
     gene_pool->selection_temp = (double*)current_mem_ptr;
     current_mem_ptr += gene_pool->individuals * sizeof(double);
+
+	gene_pool->mutation_rate = (double*)current_mem_ptr;
+	current_mem_ptr += gene_pool->individuals * sizeof(double);
 
     gene_pool->selected_indexes = (uint32_t*)current_mem_ptr;
     current_mem_ptr += gene_pool->individuals * sizeof(uint32_t);

@@ -23,8 +23,8 @@
  * Allocate and wire the contiguous memory backing a gene pool.
  *
  * The allocator creates aligned storage for binary chromosomes, crossover
- * buffers, decoded doubles, result arrays, sorted-index workspaces, and
- * fitness-completion flags. The pool dimensions are copied from
+ * buffers, decoded doubles, result arrays, mutation rates, sorted-index
+ * workspaces, and fitness-completion flags. The pool dimensions are copied from
  * ``runtime_param``.
  *
  * :param gene_pool: Gene pool struct to initialize.

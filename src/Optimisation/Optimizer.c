@@ -70,8 +70,8 @@ static void compute_mutation_rate(task_param_t* task, adaptive_memory_t* adaptiv
 
     for (uint32_t i = 0; i < gene_pool->individuals; i++) {
         if (adaptive_memory->convergence_moving_window == 0) {
-            if (task->config_ga.mutation_param.mutation_rate[i] < task->config_ga.optimizer_param.max_mutations) {
-                task->config_ga.mutation_param.mutation_rate[i]++;
+            if (gene_pool->mutation_rate[i] < task->config_ga.optimizer_param.max_mutations) {
+                gene_pool->mutation_rate[i]++;
             }
         }
         else {
@@ -82,20 +82,20 @@ static void compute_mutation_rate(task_param_t* task, adaptive_memory_t* adaptiv
                 computed_mutation_sloped = 0;
             }
 
-            task->config_ga.mutation_param.mutation_rate[i] = computed_mutation_sloped * (task->config_ga.optimizer_param.max_mutations - task->config_ga.optimizer_param.min_mutations) + task->config_ga.optimizer_param.min_mutations;
+            gene_pool->mutation_rate[i] = computed_mutation_sloped * (task->config_ga.optimizer_param.max_mutations - task->config_ga.optimizer_param.min_mutations) + task->config_ga.optimizer_param.min_mutations;
 
             // now add the distribution according to mutation alpha and beta
             /*double sigmoid_factor = -1 + 2 / (1 + exp(-task->config_ga.mutation_param.mutation_alpha * computed_mutation * exp(i * task->config_ga.mutation_param.mutation_beta)));
             computed_mutation = sigmoid_factor * (task->config_ga.optimizer_param.max_mutations - task->config_ga.optimizer_param.min_mutations) + task->config_ga.optimizer_param.min_mutations;
 
             if (computed_mutation < task->config_ga.optimizer_param.min_mutations) {
-                task->config_ga.mutation_param.mutation_rate[i] = task->config_ga.optimizer_param.min_mutations;
+                gene_pool->mutation_rate[i] = task->config_ga.optimizer_param.min_mutations;
             }
             else if (computed_mutation > task->config_ga.optimizer_param.max_mutations) {
-                task->config_ga.mutation_param.mutation_rate[i] = task->config_ga.optimizer_param.max_mutations;
+                gene_pool->mutation_rate[i] = task->config_ga.optimizer_param.max_mutations;
             }
             else {
-                task->config_ga.mutation_param.mutation_rate[i] = computed_mutation;
+                gene_pool->mutation_rate[i] = computed_mutation;
             }*/
         }
     }

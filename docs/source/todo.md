@@ -51,8 +51,8 @@ become issues, tests, or code changes.
 
 - `src/Utility/process.c`: handle remaining and small sort sizes in the
   vectorized indexed bitonic sort paths.
-- `src/Utility/mutation.c`: confirm whether `mutation_param->mutation_rate`
-  should be explicitly aligned or copied to aligned scratch storage.
+- `src/Utility/mutation.c`: validate alignment and vectorization requirements
+  for the mutation-rate block now owned by the aligned gene-pool allocation.
 - `src/Utility/flatten.c`: make the exponential flattening clamp domain
   configurable instead of hard-coding `[0, 1]`.
 - `src/Utility/pop.c`: either repair or remove the commented Cauchy population

@@ -21,8 +21,9 @@ The iteration connects functions in this order:
 7. {c:func}`process_mutation` mutates sorted non-elite chromosomes in place.
 
 Adaptive updates happen outside this function through {c:func}`adapt_param`,
-which reads the sorted best result and updates `mutation_rate` for the next
-iteration.
+which reads the sorted best result and updates the gene pool's
+`mutation_rate` array for the next iteration. {c:func}`init_mutation_rates`
+restores the configured starting rate when a worker begins a new task.
 
 ## Population Seeding
 

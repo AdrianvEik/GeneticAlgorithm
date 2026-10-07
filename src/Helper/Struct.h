@@ -41,6 +41,8 @@ struct gene_pool_s {
 	double* flatten_result_set;
 	/** Scratch array used by selection probability calculations. */
 	double* selection_temp;
+	/** Per-rank mutation rates for the task currently using this pool. */
+	double* mutation_rate;
 	/** Source indexes selected as parents for the next generation. */
 	uint32_t* selected_indexes;
 	/** Indexes sorted by ``pop_result_set`` from worst to best. */
@@ -167,17 +169,17 @@ static const int mutation_method_gene_level = 1;
  /**
  * Mutation settings.
  *
- * ``mutation_rate`` is an individual-sized array updated by the adaptive
- * optimizer and consumed by :c:func:`process_mutation` to decide how many bits
- * to flip per chromosome.
+ * The mutable per-rank mutation-rate array belongs to :c:type:`gene_pool_t`.
+ * This structure contains only the immutable settings used to initialize and
+ * update those rates for each task.
  */
 struct mutation_param_s {
 	/** Mutation method identifier. */
 	int mutation_method;
 	/** Base mutation probability used by mutation dispatchers. */
 	double mutation_prob;
-	/** Per-individual mutation rate array, usually sized to ``individuals``. */
-	double* mutation_rate;
+	/** Mutation rate assigned to every population rank when a task starts. */
+	double initial_mutation_rate;
     /** Rank-dependent slope applied by adaptive mutation updates. */
     double mutation_slope;
     //double mutation_alpha; // DEFAULT = 1
@@ -359,9 +361,9 @@ runtime_param_t default_runtime_param();
 /**
  * Build the default genetic algorithm configuration for a runtime.
  *
- * This allocates per-gene population bounds and per-individual mutation rates,
- * so callers must release the returned struct with
- * :c:func:`free_config_ga`.
+ * This allocates per-gene population bounds, so callers must release the
+ * returned struct with :c:func:`free_config_ga`. Mutable per-rank mutation
+ * rates are allocated separately with each gene pool.
  *
  * :param runtime_param: Runtime dimensions used to size configuration arrays.
  * :returns: A ``config_ga_t`` initialized with built-in defaults.

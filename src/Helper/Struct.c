@@ -64,14 +64,7 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 	mutation_param_t mutation_param;
 	mutation_param.mutation_method = 0;
 	mutation_param.mutation_prob = 0.5;
-	mutation_param.mutation_rate = malloc(sizeof(double) * runtime_param.individuals);
-    
-	if (mutation_param.mutation_rate == NULL) EXIT_MEM_ERROR();
-
-	for (uint32_t i = 0; i < runtime_param.individuals; i++) {
-        mutation_param.mutation_rate[i] = 6.0;
-	}
-
+	mutation_param.initial_mutation_rate = 6.0;
 	mutation_param.mutation_slope = 1;
     //mutation_param.mutation_alpha = 1;
     //mutation_param.mutation_beta = 0;
@@ -127,7 +120,6 @@ config_ga_t default_config(runtime_param_t runtime_param) {
 }
 
 void free_config_ga(config_ga_t* config_ga) {
-	free(config_ga->mutation_param.mutation_rate);
 	free(config_ga->population_param.lower);
 	free(config_ga->population_param.upper);
 }
