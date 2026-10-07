@@ -1,4 +1,19 @@
 
+add_executable(test_runtime test_runtime.c)
+target_link_libraries(test_runtime PRIVATE ga)
+target_compile_features(test_runtime PRIVATE c_std_11)
+add_test(NAME test_runtime COMMAND test_runtime)
+add_test(NAME test_runtime_invalid_fx_no_workers
+    COMMAND ${CMAKE_COMMAND} "-DPROGRAM=$<TARGET_FILE:test_runtime>"
+        "-DCASE=--invalid-fx-no-workers"
+        "-DEXPECTED=task_size_fx > 0 requires thread_count_fx > 0"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/expect_runtime_error.cmake")
+add_test(NAME test_runtime_invalid_fx_no_batch
+    COMMAND ${CMAKE_COMMAND} "-DPROGRAM=$<TARGET_FILE:test_runtime>"
+        "-DCASE=--invalid-fx-no-batch"
+        "-DEXPECTED=thread_count_fx > 0 requires task_size_fx > 0"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/expect_runtime_error.cmake")
+
 add_cmocka_test(test_crossover
                 SOURCES ${CMAKE_SOURCE_DIR}/Tests/test_crossover.c
                 COMPILE_OPTIONS ${DEFAULT_C_COMPILE_FLAGS}
