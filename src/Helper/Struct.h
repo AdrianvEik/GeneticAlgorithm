@@ -35,9 +35,11 @@ struct gene_pool_s {
 	uint32_t** pop_param_bin_cross_buffer;
 	/** Decoded floating-point parameters for objective functions. */
 	double** pop_param_double;
-	/** Raw objective results, already signed for min/max mode. */
+	/** Canonical measured scores, signed for min/max; physical individual order. */
 	double* pop_result_set;
-	/** Fitness values after optional flattening. */
+	/** Mandatory [0,1] normalization of canonical scores, in physical order. */
+	double* normalized_result_set;
+	/** Finite nonnegative selection weights derived from normalized scores. */
 	double* flatten_result_set;
 	/** Scratch array used by selection probability calculations. */
 	double* selection_temp;
@@ -49,6 +51,12 @@ struct gene_pool_s {
 	uint32_t* sorted_indexes;
 	/** Temporary workspace for indexed sorting. */
     uint32_t* sorted_indexes_temp;
+	/** Per-physical-individual duplicate markers; never stored in measured scores. */
+	uint32_t* duplicate_flags;
+	/** Physical slots scheduled for reseeding; independent of parent selection. */
+	uint32_t* reseed_indexes;
+	/** Number of active entries in reseed_indexes, reset at each task boundary. */
+	uint32_t reseed_count;
 	/** Per-individual completion flags for parallel fitness subtasks. */
 	_Atomic(uint32_t)* fx_ready;
 	/** Number of genes in each individual. */

@@ -23,8 +23,10 @@
  * Allocate and wire the contiguous memory backing a gene pool.
  *
  * The allocator creates aligned storage for binary chromosomes, crossover
- * buffers, decoded doubles, result arrays, mutation rates, sorted-index
- * workspaces, and fitness-completion flags. The pool dimensions are copied from
+ * buffers, decoded doubles, canonical/normalized/weight arrays, mutation rates,
+ * sorted-index workspaces, duplicate/reseed bookkeeping and completion flags.
+ * All value arrays use physical individual indexes and share the pool lifetime.
+ * The pool dimensions are copied from
  * ``runtime_param``.
  *
  * :param gene_pool: Gene pool struct to initialize.
@@ -43,8 +45,8 @@ void free_gene_pool(gene_pool_t* gene_pool);
  * Seed a gene pool population and reset initial result bookkeeping.
  *
  * The selected population sampler fills ``pop_param_bin`` and initializes
- * every fitness result to the worst sentinel for the configured optimization
- * mode.
+ * every canonical score to -DBL_MAX in the internal maximization convention.
+ * Normalized scores, weights and duplicate/reseed bookkeeping are reset.
  *
  * :param gene_pool: Allocated population storage to fill.
  * :param pop_param: Population sampling configuration.
