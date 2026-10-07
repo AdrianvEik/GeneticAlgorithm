@@ -191,7 +191,7 @@ void process_fx_set(gene_pool_t* gene_pool, task_param_t* task, uint32_t individ
 			EXIT_WITH_ERROR("Unkown fitness function", 255);
 		}
 
-        gene_pool->fx_ready[individual] = 1;
+		atomic_store_explicit(&gene_pool->fx_ready[individual], 1, memory_order_release);
 	}
 }
 
@@ -199,7 +199,7 @@ static void wait_fx_tasks_finish(gene_pool_t* gene_pool) {
 	while (1) {
 		int all_done = 1;
 		for (uint32_t i = 0; i < gene_pool->individuals - gene_pool->elitism; i++) {
-			if (gene_pool->fx_ready[i] == 0) {
+			if (atomic_load_explicit(&gene_pool->fx_ready[i], memory_order_acquire) == 0) {
 				all_done = 0;
 				break;
 			}
@@ -220,20 +220,23 @@ void process_fx(gene_pool_t* gene_pool, task_param_t* task, fx_task_queue_t* fx_
 		}
 	}
 	else {
+		uint32_t active_count = gene_pool->individuals - gene_pool->elitism;
+		for (uint32_t individual = 0; individual < active_count; individual++) {
+			atomic_store_explicit(&gene_pool->fx_ready[individual], 0, memory_order_relaxed);
+		}
+
 		uint32_t i = 0;
 
-		while (i < gene_pool->individuals - gene_pool->elitism) {
+		while (i < active_count) {
 			fx_task_param_t fx_task;
 			fx_task.gene_pool = gene_pool;
 			fx_task.individual_min = i;
 			fx_task.individual_max = i + fx_task_queue->task_size_fx - 1;
-			if (fx_task.individual_max >= (gene_pool->individuals - gene_pool->elitism)) {
-				fx_task.individual_max = gene_pool->individuals - gene_pool->elitism - 1;
+			if (fx_task.individual_max >= active_count) {
+				fx_task.individual_max = active_count - 1;
 			}
 			fx_task.task_param = task;
 			fx_task.task_type = FX_TASK;
-
-            gene_pool->fx_ready[i] = 0;
 
 			add_fx_task(fx_task_queue, fx_task);
 			i += fx_task_queue->task_size_fx;

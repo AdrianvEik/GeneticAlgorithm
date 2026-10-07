@@ -2,6 +2,7 @@
 #ifndef STRUCT_H
 #define STRUCT_H
 
+#include <stdatomic.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -47,7 +48,7 @@ struct gene_pool_s {
 	/** Temporary workspace for indexed sorting. */
     uint32_t* sorted_indexes_temp;
 	/** Per-individual completion flags for parallel fitness subtasks. */
-	uint32_t* fx_ready;
+	_Atomic(uint32_t)* fx_ready;
 	/** Number of genes in each individual. */
 	uint32_t genes;
 	/** Number of individuals in the population. */

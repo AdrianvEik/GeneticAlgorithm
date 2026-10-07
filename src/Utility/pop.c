@@ -177,7 +177,7 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
     total_memsize += gene_pool->individuals * sizeof(uint32_t); // selected_indexes
     total_memsize += gene_pool->individuals * sizeof(uint32_t); // sorted_indexes
 	total_memsize += gene_pool->individuals * sizeof(uint32_t); // sorted_indexes_temp
-	total_memsize += gene_pool->individuals * sizeof(uint32_t); // fx_ready
+	total_memsize += gene_pool->individuals * sizeof(_Atomic(uint32_t)); // fx_ready
 
 
 #if defined __AVX512VL__
@@ -224,8 +224,12 @@ void init_gene_pool(gene_pool_t* gene_pool, runtime_param_t* runtime_param) {
     gene_pool->sorted_indexes_temp = (uint32_t*)current_mem_ptr;
     current_mem_ptr += gene_pool->individuals * sizeof(uint32_t);
 
-	gene_pool->fx_ready = (uint32_t*)current_mem_ptr;
-	current_mem_ptr += gene_pool->individuals * sizeof(uint32_t);
+	gene_pool->fx_ready = (_Atomic(uint32_t)*)current_mem_ptr;
+	current_mem_ptr += gene_pool->individuals * sizeof(_Atomic(uint32_t));
+
+	for (uint32_t i = 0; i < gene_pool->individuals; i++) {
+		atomic_init(&gene_pool->fx_ready[i], 0);
+	}
 
 	uint64_t alligned_mem_ptr = (uint64_t)gene_pool->gene_pool_memory_ptr;
     // pointers to data
