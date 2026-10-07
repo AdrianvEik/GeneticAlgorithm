@@ -363,10 +363,11 @@ void process_crossover(gene_pool_t* gene_pool, crossover_param_t* crossover_para
 		);
 	}
 
+	// Preserve current elites in the next population before swapping buffers.
 	for (uint32_t i = gene_pool->individuals - gene_pool->elitism; i < gene_pool->individuals; i++) {
-		if (memcpy_s(gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]],
+		if (memcpy_s(gene_pool->pop_param_bin_cross_buffer[gene_pool->sorted_indexes[i]],
 			gene_pool->individual_mem_size,
-			gene_pool->pop_param_bin_cross_buffer[gene_pool->sorted_indexes[i]],
+			gene_pool->pop_param_bin[gene_pool->sorted_indexes[i]],
 			gene_pool->individual_mem_size)) EXIT_MEM_ERROR();
 	}
 

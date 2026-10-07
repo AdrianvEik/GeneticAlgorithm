@@ -8,6 +8,11 @@ target_link_libraries(test_results PRIVATE ga)
 target_compile_features(test_results PRIVATE c_std_11)
 add_test(NAME test_results COMMAND test_results)
 
+add_executable(test_crossover_elitism test_crossover_elitism.c)
+target_link_libraries(test_crossover_elitism PRIVATE ga)
+target_compile_features(test_crossover_elitism PRIVATE c_std_11)
+add_test(NAME test_crossover_elitism COMMAND test_crossover_elitism)
+
 add_executable(test_fitness test_fitness.c)
 target_link_libraries(test_fitness PRIVATE ga)
 target_compile_features(test_fitness PRIVATE c_std_11)
@@ -32,7 +37,7 @@ add_test(NAME test_runtime_invalid_fx_no_batch
         -P "${CMAKE_CURRENT_SOURCE_DIR}/expect_runtime_error.cmake")
 
 set_tests_properties(
-    test_runtime test_results test_fitness test_selection_boundaries
+    test_runtime test_results test_crossover_elitism test_fitness test_selection_boundaries
     test_runtime_invalid_fx_no_workers test_runtime_invalid_fx_no_batch
     PROPERTIES LABELS "agentic"
 )

@@ -30,8 +30,8 @@ become issues, tests, or code changes.
   solution exports (including header/row sizing and configuration counts).
   These were debugging aids, not solution metadata. Their timing/rank indexing
   does not need a separate redesign before removal.
-- Fix and regression-test elite preservation in `process_crossover()` after
-  the confirmed reproduction below. Keep this separate from result statistics.
+- Elite preservation in `process_crossover()` was fixed and regression-tested
+  on 2026-10-07; see the reproduction and repair below.
 - Compare mixed/strict/relaxed three-candidate Boltzmann and pairwise logistic
   under equal objective-evaluation budgets. Existing regression checks establish
   probability behavior and termination, not optimization superiority.
@@ -157,8 +157,8 @@ Q4 is data-type dependent: double evaluation writes decoded inputs into a
 separate buffer and normal variation leaves those doubles/scores intact, so
 evaluated double CSV rows can remain consistent after variation. Integer CSV
 reads changed chromosomes directly; binary logging always copies the double
-buffer, even for integer objectives. Unevaluated slots and elite preservation
-still need explicit treatment. A future result record must capture the actual
+buffer, even for integer objectives. Unevaluated slots still need explicit
+treatment. A future result record must capture the actual
 evaluated input for either data type before variation.
 
 Elite preservation was verified against the real `process_crossover()` in a
@@ -167,5 +167,10 @@ and seed 12345. The final elite's active buffer started at 1063 and its alternat
 buffer at 9063. After crossover both held 9063; the expected active value was
 1063. `memcpy_s` currently has the active buffer as destination and alternate
 buffer as source, followed by a pointer swap. This overwrites the elite before
-the swap. Crossover was not modified in this investigation. The local probe,
-build script, and captured output are under ignored `build/results-audit/`.
+the swap. The subsequent repair reverses only the elite copy's source and
+destination, preserving the existing crossover and pointer-swap order. The
+original probe now retains 1063. `test_crossover_elitism` fails before the repair
+and passes afterward, checking complete chromosomes across three swaps,
+identity/permuted rank mappings, and 0/1/2/3/64 elites in a population of 64.
+Eight additional runtime/result/fitness/selection/benchmark regressions passed.
+The local probe and build scripts are under ignored `build/results-audit/`.

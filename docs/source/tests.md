@@ -13,6 +13,7 @@ Agent-authored regression tests and their error-checking helper are in
 
 - [`test_runtime.c`](../../Tests/agentic/test_runtime.c)
 - [`test_results.c`](../../Tests/agentic/test_results.c)
+- [`test_crossover_elitism.c`](../../Tests/agentic/test_crossover_elitism.c)
 - [`test_fitness.c`](../../Tests/agentic/test_fitness.c)
 - [`test_selection_boundaries.c`](../../Tests/agentic/test_selection_boundaries.c)
 - [`expect_runtime_error.cmake`](../../Tests/agentic/expect_runtime_error.cmake)
@@ -68,6 +69,15 @@ configure/build needs network access unless CMocka is already available in the
 build cache.
 
 ## Test Notes
+
+`test_crossover_elitism` links the real crossover dispatcher and checks complete
+chromosome contents after the pointer swap. Distinct alternate-buffer contents
+expose reversed elite copying. It covers 0/1/2/3/64 elites, identity and permuted
+rank mappings, and three consecutive swaps. Identical selected parents provide
+an exact expected child as well as an elite-preservation check. The test fails
+on the original copy direction and passes on the repair. It uses complete
+crossover with 64 individuals and 16 genes; it does not establish arbitrary-size
+or other crossover-method correctness.
 
 `test_results` checks empty/single/completed result semantics, sample standard
 deviation against a known dataset, reversed completion order, large offsets,
