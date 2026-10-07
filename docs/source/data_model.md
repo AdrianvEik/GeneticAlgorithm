@@ -77,3 +77,29 @@ The multiprocessing layer uses plain structs as queue records:
 
 Those records are passed through the queues described in
 [Threading and Logging](threading_and_logging.md).
+
+## Returned Results
+
+`Genetic_Algorithm()` returns the best final task result in original objective
+units. Result records, CSV/binary score columns, and `progress_t.best_result`
+use the same units. Minimization scores are converted back at report creation;
+internal ranking continues to maximize direction-adjusted scores. Records carry
+the direction actually used by their task, including built-in overrides.
+
+`progress_t.average_result` is the mean of completed tasks' final results, and
+`result_standard_deviation` is their sample standard deviation (denominator
+N-1). The logger keeps its Welford accumulator separately. These fields no
+longer contain a sum or an unfinished variance accumulator. Empty results have
+NAN best/mean/stddev; with one result the mean/best are defined and stddev is
+NAN. Empty `best_result_iteration` is UINT32_MAX and `optim_mode` is zero until
+the first completion supplies the effective direction.
+
+`best_result_iteration` still records the winning task's final reporting
+generation, not when the solution was discovered. Returning a candidate vector,
+best-ever tracking without elitism, and evaluation/termination metadata remain
+follow-up work. Integer candidate serialization also needs the Q4 snapshot fix.
+
+Consumers must rebuild for the task-result/queue layout changes and adapt to
+the original-objective sign and finalized statistics. The WIP nested-GA scorer
+explicitly converts the returned scalar back to its historical ranking units;
+its scoring formula remains otherwise unchanged.

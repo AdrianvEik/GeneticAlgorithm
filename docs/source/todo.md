@@ -26,6 +26,12 @@ become issues, tests, or code changes.
   not been expanded in this change.
 - Reporting snapshots and score/candidate correspondence remain deferred for
   separate discussion. Preserve existing adaptation timing when addressing it.
+- Remove the optional mutation/adaptation debug fields from CSV and binary
+  solution exports (including header/row sizing and configuration counts).
+  These were debugging aids, not solution metadata. Their timing/rank indexing
+  does not need a separate redesign before removal.
+- Fix and regression-test elite preservation in `process_crossover()` after
+  the confirmed reproduction below. Keep this separate from result statistics.
 - Compare mixed/strict/relaxed three-candidate Boltzmann and pairwise logistic
   under equal objective-evaluation budgets. Existing regression checks establish
   probability behavior and termination, not optimization superiority.
@@ -111,3 +117,55 @@ become issues, tests, or code changes.
 
 
 - check logging value to individual result is not correct compute result and then log it before processing the population
+
+## Results and measurement follow-up (2026-10-07)
+
+The small O9 statistics fixes are implemented: public best/mean, CSV, and binary
+scores use original objective units; the logger computes the actual mean and
+sample standard deviation with Welford's algorithm once per completed task.
+No completions gives NAN best/mean/stddev; one completion gives NAN stddev.
+The effective task direction travels with the record because built-in objectives
+can override the originally configured direction. Rebuild clients for the
+record/queue layout changes and account for the changed minimization sign and
+mean/stddev semantics. Internal selection/ranking scores are unchanged.
+
+Remaining bookkeeping should be placed at generation boundaries:
+
+- After `process_fx()` returns successfully in `process_pop()`, increment a
+  task-local evaluation count by the number actually evaluated (currently
+  `individuals - elitism`). No per-objective atomic counter is needed. If the
+  evaluation policy later changes, have the evaluator return that count.
+- Immediately after sorting, before crossover/mutation/reseeding, compare the
+  generation winner with a task-local best-ever record. Copy its evaluated
+  inputs and record its discovery iteration only on strict improvement. This
+  costs one comparison per generation and O(genes) only for improvements;
+  allocate candidate storage once, not inside the generation loop.
+- Capture requested top-N evaluated inputs/scores at that same boundary on
+  export generations. Do not snapshot the entire population every generation.
+  The saved best-ever record supplies a final result when stopping is detected
+  later. Preserve the current variation/adaptation order while separating
+  capture time from the later decision to publish a final record.
+- Set a termination-reason enum where `check_convergence()` detects a stopping
+  condition. Define precedence when multiple conditions fire. The current
+  single boolean loses the distinction between convergence and iteration limit.
+- Keep final-report iteration separate from best-discovery iteration.
+  `progress_t.best_result_iteration` still means final-report iteration;
+  candidate return, evaluation count, best-ever tracking, and stop reason are
+  not implemented by the small statistics change.
+
+Q4 is data-type dependent: double evaluation writes decoded inputs into a
+separate buffer and normal variation leaves those doubles/scores intact, so
+evaluated double CSV rows can remain consistent after variation. Integer CSV
+reads changed chromosomes directly; binary logging always copies the double
+buffer, even for integer objectives. Unevaluated slots and elite preservation
+still need explicit treatment. A future result record must capture the actual
+evaluated input for either data type before variation.
+
+Elite preservation was verified against the real `process_crossover()` in a
+focused probe with 64 individuals, 16 genes, two elites, complete crossover,
+and seed 12345. The final elite's active buffer started at 1063 and its alternate
+buffer at 9063. After crossover both held 9063; the expected active value was
+1063. `memcpy_s` currently has the active buffer as destination and alternate
+buffer as source, followed by a pointer swap. This overwrites the elite before
+the swap. Crossover was not modified in this investigation. The local probe,
+build script, and captured output are under ignored `build/results-audit/`.

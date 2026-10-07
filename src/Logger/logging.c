@@ -19,6 +19,8 @@ void copy_task_result(task_result_t* task_result, task_result_t* source) {
     task_result->bin_position = source->bin_position;
     task_result->csv_position = source->csv_position;
     task_result->result = source->result;
+    task_result->optim_mode = source->optim_mode;
+    task_result->iteration = source->iteration;
 }
 
 void open_file(task_result_queue_t* task_result_queue)
@@ -116,13 +118,14 @@ void close_file(task_result_queue_t* task_result_queue)
 
 void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t* adaptive_memory, thread_param_t* thread_param, gene_pool_t* gene_pool, int best_result) {
 	task_result_t task_result = {0};
+	task_result.optim_mode = task->config_ga.fx_param.fx_optim_mode;
 	uint32_t log_top_n;
 
 	if (best_result == 1) {
 		task_result.task_type = BEST_RESULT_TASK;
         task_result.iteration = gene_pool->iteration_number;
         log_top_n = 1;
-		task_result.result = gene_pool->pop_result_set[gene_pool->sorted_indexes[gene_pool->individuals - 1]];
+		task_result.result = task_result.optim_mode * gene_pool->pop_result_set[gene_pool->sorted_indexes[gene_pool->individuals - 1]];
     }
     else {
         task_result.task_type = LOG_TASK;
@@ -136,7 +139,7 @@ void report_task(task_queue_t* task_queue, task_param_t* task, adaptive_memory_t
 
         // invert the index to get best individuals (highest idx) first and lowest last
 		int individual_id = gene_pool->sorted_indexes[gene_pool->individuals - position - 1];
-		double result = gene_pool->pop_result_set[individual_id]; // result and invert if optim mode is minimisation
+		double result = task_result.optim_mode * gene_pool->pop_result_set[individual_id];
 		
 		copy_to_bin_buffer(&task_result, &gene_pool->iteration_number, sizeof(int));
 		copy_to_bin_buffer(&task_result, &task->task_id, sizeof(int));

@@ -3,6 +3,11 @@ target_link_libraries(test_runtime PRIVATE ga)
 target_compile_features(test_runtime PRIVATE c_std_11)
 add_test(NAME test_runtime COMMAND test_runtime)
 
+add_executable(test_results test_results.c)
+target_link_libraries(test_results PRIVATE ga)
+target_compile_features(test_results PRIVATE c_std_11)
+add_test(NAME test_results COMMAND test_results)
+
 add_executable(test_fitness test_fitness.c)
 target_link_libraries(test_fitness PRIVATE ga)
 target_compile_features(test_fitness PRIVATE c_std_11)
@@ -27,7 +32,7 @@ add_test(NAME test_runtime_invalid_fx_no_batch
         -P "${CMAKE_CURRENT_SOURCE_DIR}/expect_runtime_error.cmake")
 
 set_tests_properties(
-    test_runtime test_fitness test_selection_boundaries
+    test_runtime test_results test_fitness test_selection_boundaries
     test_runtime_invalid_fx_no_workers test_runtime_invalid_fx_no_batch
     PROPERTIES LABELS "agentic"
 )

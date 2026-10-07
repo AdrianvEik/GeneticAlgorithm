@@ -37,6 +37,8 @@ struct task_result_s {
     unsigned char* bin_buffer;
     /** Best or reported objective value for this record. */
     double result;
+    /** Effective direction used during evaluation: -1 minimize, +1 maximize. */
+    int optim_mode;
     /** Generation at which the result was reported. */
     uint32_t iteration;
     /** Current write position in ``bin_buffer``. */
@@ -63,17 +65,17 @@ typedef struct task_result_s task_result_t;
 struct progress_s {
     /** Elapsed wall-clock time tracked by the logger. */
     double elapsed_time;
-    /** Best result observed across completed solver tasks. */
+    /** Best final task result in objective units; NAN before any completion. */
     double best_result;
-    /** Sum of completed task results, used to compute the average. */
+    /** Mean of final task results in objective units; NAN with no completions. */
     double average_result;
-    /** Accumulated variance term for completed task results. */
+    /** Sample standard deviation; NAN with fewer than two completions. */
     double result_standard_deviation;
     /** Number of solver tasks that reported a final best result. */
     uint32_t tasks_completed;
     /** Expected number of solver tasks. */
     uint32_t max_tasks;
-    /** Iteration number at which the best result was reported. */
+    /** Winning task's final report iteration, not discovery; UINT32_MAX if empty. */
     uint32_t best_result_iteration;
     /** Optimization direction associated with the progress record. */
     int optim_mode;
@@ -105,6 +107,8 @@ struct task_result_queue_s {
     console_queue_t* console_queue;
     /** Aggregate progress updated by the logger. */
     progress_t progress;
+    /** Private Welford M2 accumulator; never exposed as a standard deviation. */
+    double result_m2;
     /** Read cursor in ``result_list``. */
     uint32_t first_task_id;
     /** Write cursor in ``result_list``. */
@@ -135,6 +139,12 @@ void init_task_result_queue(task_result_queue_t* task_result_queue, runtime_para
  * :param task_result_queue: Initialized result queue to release.
  */
 void free_task_result_queue(task_result_queue_t* task_result_queue);
+
+/** Aggregate a completed task in the logger; return 1 on a new best result.
+ * result and serialized values are in original objective units. Non-final
+ * records are ignored. All tasks in one solve must use the same direction.
+ */
+int record_completed_result(task_result_queue_t* queue, const task_result_t* result);
 
 /**
  * Allocate CSV and binary buffers for a result record.

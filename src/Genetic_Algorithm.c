@@ -94,10 +94,8 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
 
 	open_file(task_result_queue);
 
-    double current_best_res = -INFINITY;
-
 	// Save the best gene_pool
-	task_result_t best_result;
+	task_result_t best_result = {0};
 	init_task_result(task_result_queue, &best_result, 1);
 
 	clock_t start, current;
@@ -114,7 +112,8 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
     while (!done) {
         while(get_result(task_result_queue, &task_result)) {
 			if (task_result.task_type == TERMINATE_THREAD) {
-				write_file_buffer(task_result_queue, &best_result);
+				if (task_result_queue->progress.tasks_completed > 0)
+					write_file_buffer(task_result_queue, &best_result);
 
 				current = clock(); 
 				task_result_queue->progress.elapsed_time = (double)(current - start) / CLOCKS_PER_SEC;
@@ -131,23 +130,8 @@ static void process_log_thread(task_result_queue_t* task_result_queue) {
 				break;
 			}
 
-			if (task_result.task_type == BEST_RESULT_TASK) {
-				task_result_queue->progress.tasks_completed++;
-				// add the results to be processed to an answer in the console
-				// to be divided by the number of tasks completed
-				task_result_queue->progress.average_result += task_result.result;
-				// to be divided by the number of tasks completed - 1 and sqrt
-				task_result_queue->progress.result_standard_deviation += pow(
-					(task_result.result - (task_result_queue->progress.average_result) / task_result_queue->progress.tasks_completed), 2
-				);
-
-				if (task_result.result > current_best_res) {
-					current_best_res = task_result.result;
-					task_result_queue->progress.best_result = current_best_res;
-                    task_result_queue->progress.best_result_iteration = task_result.iteration;
-					copy_task_result(&best_result, &task_result);
-				}
-			}
+			if (record_completed_result(task_result_queue, &task_result))
+				copy_task_result(&best_result, &task_result);
 			write_file_buffer(task_result_queue, &task_result);
 
 			free_task_result(&task_result);

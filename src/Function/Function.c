@@ -92,7 +92,8 @@ static double optimize_fx_ga(uint32_t* paramset, uint32_t parent_individual, uin
 
 	free_config_ga(&config_ga);
     free(runtime_param.logging_param.fully_qualified_basename);
-	return weigh_result(result, progress);
+	/* This WIP scorer still expects the historical maximize-oriented score. */
+	return weigh_result(result * progress.optim_mode, progress);
 }
 
 void process_fx_set(gene_pool_t* gene_pool, task_param_t* task, uint32_t individual_min, uint32_t individual_max) {

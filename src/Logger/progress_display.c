@@ -9,9 +9,8 @@ void display_progress(progress_t* ga_progress, uint32_t message_list_size, int e
     //static int saved_cursor = 0;
     uint32_t bar_width = 40; // Adjust as needed
 
-    double progress = (double) ga_progress->tasks_completed / ga_progress->max_tasks;
-    double average_result = ga_progress->average_result / ga_progress->tasks_completed;
-    double average_standard_deviation = sqrt(ga_progress->result_standard_deviation / (ga_progress->tasks_completed-1));
+    double progress = ga_progress->max_tasks > 0
+        ? (double)ga_progress->tasks_completed / ga_progress->max_tasks : 0;
 
 
     if (!initialized) {
@@ -46,7 +45,7 @@ void display_progress(progress_t* ga_progress, uint32_t message_list_size, int e
     }
 
     printf("\033[2;18H%.3f", ga_progress->best_result);   // Update current best
-    printf("\033[3;18H%.3f e: %.3f", average_result, average_standard_deviation);     // average and standard deviation
+    printf("\033[3;18H%.3f e: %.3f", ga_progress->average_result, ga_progress->result_standard_deviation);
     printf("\033[4;8H%.3f [s]       ", ga_progress->elapsed_time); // Update elapsed time
     printf("\033[5;12H%.2f%% [%d]   ", progress * 100, ga_progress->tasks_completed); // Update progress
     if (ga_progress->tasks_completed > 0)

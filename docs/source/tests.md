@@ -12,6 +12,7 @@ Agent-authored regression tests and their error-checking helper are in
 [`Tests/agentic`](../../Tests/agentic), with their own CMake registration:
 
 - [`test_runtime.c`](../../Tests/agentic/test_runtime.c)
+- [`test_results.c`](../../Tests/agentic/test_results.c)
 - [`test_fitness.c`](../../Tests/agentic/test_fitness.c)
 - [`test_selection_boundaries.c`](../../Tests/agentic/test_selection_boundaries.c)
 - [`expect_runtime_error.cmake`](../../Tests/agentic/expect_runtime_error.cmake)
@@ -67,6 +68,15 @@ configure/build needs network access unless CMocka is already available in the
 build cache.
 
 ## Test Notes
+
+`test_results` checks empty/single/completed result semantics, sample standard
+deviation against a known dataset, reversed completion order, large offsets,
+minimize/maximize best selection, tie handling, periodic/final CSV and binary
+score conversion, effective task direction, and unchanged internal scores.
+Two short constant-objective solves verify the public scalar and progress
+statistics for both directions. These checks use zero elitism and a
+sorter-compatible population; they do not validate elite preservation or
+integer candidate correspondence.
 
 `test_runtime` links the library and covers defaults, queue completion, task RNG
 streams, and mutation ownership. `test_fitness` also links the library and covers

@@ -21,7 +21,12 @@
  *     seed, and logging settings.
  * :param end_result: Optional progress snapshot filled with the final run
  *     statistics. Pass ``NULL`` when only the best result is needed.
- * :returns: Best weighted objective value observed across all completed tasks.
+ * Mean and sample standard deviation describe final results across completed
+ * tasks, in original objective units. Empty results have NAN best/mean/stddev;
+ * sample standard deviation is also NAN for one task. The best iteration is
+ * the winning task's final reporting iteration, not its discovery iteration.
+ *
+ * :returns: Best final task result in original objective units, or NAN if empty.
  */
 double Genetic_Algorithm(config_ga_t config_ga, runtime_param_t runtime_param, progress_t* end_result);
 
